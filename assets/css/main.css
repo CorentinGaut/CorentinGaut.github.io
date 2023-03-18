@@ -1,74 +1,138 @@
-/* Style de base */
-
-* {
+/* Utilisation des variables pour les couleurs */
+:root {
+    --color-bg: #1a1a1a;
+    --color-text: #fff;
+    --color-header: #33333320;
+    --color-link: #5a0343;
+  }
+  
+  * {
     box-sizing: border-box;
-    }
-    body {
+  }
+
+  a {
+    color: #cb0b68;
+  }
+
+  i {
+    color: lightsteelblue;
+  }
+  
+  body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #1a1a1a;
-    color: #fff;
-    }
-    
-    /* Style pour l'en-tête */
-    header {
-    background-color: #333;
-    color: #fff;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+  }
+  
+  /* Image de fond avec une transition en hover */
+  .bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('./../img/nz.jpg') no-repeat center center fixed;
+    background-size: cover;
+    filter: brightness(70%);
+    z-index: -1;
+    transition: filter 0.5s ease-in-out;
+  }
+  
+  .bg-img:hover {
+    filter: brightness(100%);
+  }
+  
+  /* Style pour l'en-tête avec une bordure et une ombre */
+  header {
+    background-color: var(--color-header);
+    color: var(--color-text);
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 20px;
-    }
-    
-    .intro {
+    border-bottom: 1px solid var(--color-text);
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Style pour le texte d'introduction avec une animation */
+  .intro {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin-bottom: 20px;
-    }
-
-    a {
-        color: #0077b5;
-    }
-    
-    .intro img {
+  }
+  
+  .intro h1 {
+    font-size: 3rem;
+    margin: 0;
+    text-align: center;
+    animation: fade-in 1s ease-in-out;
+  }
+  
+  .intro img {
     width: 200px;
     height: 200px;
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 10px;
+    animation: scale-up 0.5s ease-in-out;
+  }
+  
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
     }
-    
-    nav {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes scale-up {
+    from {
+      transform: scale(0);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+  
+  /* Style pour la navigation avec des effets de survol */
+  nav {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
-    }
-    
-    nav ul {
+  }
+  
+  nav ul {
     list-style: none;
     margin: 0;
     padding: 0;
     display: flex;
-    }
-    
-    nav li {
+  }
+  
+  nav li {
     margin-right: 20px;
-    }
-    
-    nav a {
-    color: #fff;
+  }
+  
+  nav a {
+    color: var(--color-text);
     text-decoration: none;
     font-weight: bold;
-    }
-    
-    nav a:hover {
+    transition: color 0.2s ease-in-out;
+  }
+  
+  nav a:hover {
+    color: var(--color-link);
     text-decoration: underline;
-    }
+  }
+  
     
-    /* Style pour les sections */
-    section {
+/* Style pour les sections */
+section {
     padding: 20px;
     margin-bottom: 20px;
     background-color: #2a2a2a;
@@ -95,8 +159,13 @@
     
     section h2 {
     margin-top: 0;
+    color: #fff;
+    text-align: center;
+    font-size: 2rem;
+    text-shadow: 2px 2px 5px #111;
     }
     
+    /* Style pour les projets */
     .projets-liste {
     display: flex;
     flex-wrap: wrap;
@@ -111,6 +180,7 @@
     border-radius: 5px;
     position: relative;
     overflow: hidden;
+    transition: all 0.3s ease-in-out;
     }
     
     .projet:before {
@@ -131,10 +201,14 @@
     
     .projet h3 {
     margin-top: 0;
+    color: #fff;
+    text-shadow: 2px 2px 5px #111;
     }
     
     .projet p {
     margin-bottom: 10px;
+    color: #fff;
+    text-shadow: 2px 2px 5px #111;
     }
     
     .projet a {
@@ -153,13 +227,6 @@
     background-color: #888;
     transform: translateY(-2px);
     box-shadow: 2px 2px 5px #111;
-    }
-    
-    .formations-liste,
-    .enseignements-liste,
-    .publications-liste {
-    display: flex;
-    flex-direction: column;
     }
     
     .formation,
@@ -216,6 +283,22 @@
     .projet:hover a {
     transform: translateY(-5px);
     }
+
+    .projet-icons {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+    
+    .projet-icons a {
+        margin: 0 10px;
+        color: #333;
+        font-size: 20px;
+    }
+    
+    .projet-icons a:hover {
+        color: #0077b5;
+    }
     
     /* Animation sur les formations et enseignements */
     .formation img,
@@ -258,23 +341,24 @@
     }
     
     .social-icons a:hover {
-        color: #0077b5;
+        color: #5a0343;
     }
     
+/* Media queries */
+@media screen and (max-width: 768px) {
+    .projet {
+        flex-basis: calc(50% - 20px);
+    }
+    
+    .publication img {
+        width: 30%;
+        margin-right: 10px;
+    }
+    
+    .publication-texte {
+        width: 70%;
+    }
+}
 
-    .projet-icons {
-        display: flex;
-        justify-content: center;
-        margin-top: 10px;
-    }
-    
-    .projet-icons a {
-        margin: 0 10px;
-        color: #333;
-        font-size: 20px;
-    }
-    
-    .projet-icons a:hover {
-        color: #0077b5;
-    }
+
     
