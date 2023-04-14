@@ -164,6 +164,14 @@ section {
     font-size: 2rem;
     text-shadow: 2px 2px 5px #111;
     }
+
+    section h3 {
+      margin-top: 0;
+      color: #fff;
+      text-align: left;
+      font-size: 1.5rem;
+      text-shadow: 2px 2px 5px #111;
+      }
     
     /* Style pour les projets */
     .projets-liste {
