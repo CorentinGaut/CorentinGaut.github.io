@@ -3,7 +3,7 @@
     --color-bg: #1a1a1a;
     --color-text: #fff;
     --color-header: #33333320;
-    --color-link: #5a0343;
+    --color-link: #2323d6;
   }
   
   * {
@@ -11,7 +11,7 @@
   }
 
   a {
-    color: #cb0b68;
+    color: #0000CD;
   }
 
   i {
@@ -341,7 +341,7 @@ section {
     }
     
     .social-icons a:hover {
-        color: #5a0343;
+        color: #0000CD;
     }
     
 /* Media queries */
