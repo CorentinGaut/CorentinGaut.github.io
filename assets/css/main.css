@@ -11,7 +11,7 @@
   }
 
   a {
-    color: lightsteelblue;
+    color: #1062cd;
   }
 
   i {
@@ -22,7 +22,7 @@
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background: url('./../img/nz.jpg') no-repeat center center fixed;
+    background: rgb(0, 0, 0);
     background-size: cover;
     background-attachment: fixed;
     color: var(--color-text);
@@ -70,10 +70,6 @@
     text-shadow: 2px 2px 5px #111;
     text-align: center;
     animation: fade-in 1s ease-in-out;
-  }
-
-  .intro h3{
-    text-shadow: 2px 2px 5px #111;
   }
   
   .intro img {
@@ -125,7 +121,7 @@
   }
   
   nav a {
-    color: lightsteelblue;
+    color: rgb(196, 198, 200);
     text-decoration: none;
     font-weight: bold;
     font-size: 2rem;
@@ -143,7 +139,7 @@
 section {
     padding: 20px;
     margin-bottom: 20px;
-    background-color: #ffffffb7;
+    background-color: #ffffff;
     /* border-radius: 10px; */
     position: relative;
     overflow: hidden;
@@ -178,7 +174,6 @@ section {
       color: #fff;
       text-align: left;
       font-size: 1.5rem;
-      text-shadow: 2px 2px 5px #111;
       }
     
     /* Style pour les projets */
@@ -218,7 +213,6 @@ section {
     .projet h3 {
     margin-top: 0;
     color: #fff;
-    text-shadow: 2px 2px 5px #111;
     }
     
     .projet p {
@@ -250,7 +244,7 @@ section {
     .publication,
     .projet {
     margin-bottom: 10px;
-    background-color: #595f70;
+    background-color: #000000;
     padding: 10px;
     box-shadow: 2px 2px 5px #111;
     /* border-radius: 5px; */
@@ -348,7 +342,7 @@ section {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
-    color: #919191;
+    color: #000000;
     font-size: 12px;
     }
 
