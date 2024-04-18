@@ -1,7 +1,7 @@
 /* Utilisation des variables pour les couleurs */
 :root {
   --color-bg: #1a1a1a;
-  --color-text: #fff;
+  --color-text: #000;
   --color-header: #33333320;
   --color-link: #2323d6;
 }
@@ -15,7 +15,7 @@ a {
 }
 
 i {
-  color: #67aacc;
+  color: #000000;
 }
 
 body {
@@ -25,11 +25,11 @@ body {
   background: rgb(255 255 255);
   background-size: cover;
   background-attachment: fixed;
-  color: #fff;
+  color: #000;
 }
 
 /* Image de fond avec une transition en hover */
-.bg-img {
+/* .bg-img {
   position: absolute;
   top: 0;
   left: 0;
@@ -43,7 +43,7 @@ body {
 
 .bg-img:hover {
   filter: brightness(100%);
-}
+} */
 
 /* Style pour l'en-tête avec une bordure et une ombre */
 header {
@@ -125,7 +125,7 @@ nav li {
 }
 
 nav a {
-  color: rgb(95 109 222);
+  color: rgb(0 0 0);
   text-decoration: none;
   font-weight: bold;
   font-size: 2rem;
@@ -134,7 +134,7 @@ nav a {
 }
 
 nav a:hover {
-  color: var(--color-link);
+  color: #000000;
   text-decoration: underline;
 }
 
@@ -143,31 +143,35 @@ nav a:hover {
 section {
   padding: 20px;
   margin-bottom: 20px;
-  background-color: #07223c;
+  background-color: #ffffff;
   /* border-radius: 10px; */
   position: relative;
   overflow: hidden;
   }
   
-  section:before {
+  section p {
+    font-size: 1.2em;
+  }
+
+  /* section:before {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  /* background-color: #ffffff23; */
+  background-color: #ffffff23;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
-  }
+  } */
   
-  section:hover:before {
+  /* section:hover:before {
   opacity: 1;
-  }
+  } */
   
   section h2 {
   margin-top: 0;
-  color: #b3a1ff;
+  color: #000000;
   text-align: left;
   font-size: 2rem;
   /* text-shadow: 2px 2px 5px #111; */
@@ -176,9 +180,9 @@ section {
 
   section h3 {
     margin-top: 0;
-    color: #67aacc;
+    color: #000000;
     text-align: left;
-    font-size: 1.5rem;
+    font-size: 2rem;
     }
   
   /* Style pour les projets */
@@ -217,13 +221,13 @@ section {
   
   .projet h3 {
   margin-top: 0;
-  color: #fff;
+  color: #000;
   }
   
   .projet p {
   margin-bottom: 10px;
-  color: #fff;
-  text-shadow: 2px 2px 5px #111;
+  color: #000;
+  /* text-shadow: 2px 2px 5px #111; */
   }
   
   .projet a {
@@ -231,7 +235,7 @@ section {
   text-align: center;
   padding: 10px;
   background-color: #fefefe;
-  color: #67aacc;
+  color: #000000;
   font-weight: bold;
   text-decoration: none;
   /* border-radius: 5px; */
@@ -288,10 +292,16 @@ section {
   transition: transform 0.3s ease-in-out;
   }
   
-  section:hover {
+  hr {
+    border: 2px solid;
+    border-radius: 1px;
+    margin-left: 20%;
+    margin-right: 20%;
+  }
+  /* section:hover {
   transform: translateY(-5px);
   box-shadow: 2px 5px 10px #111;
-  }
+  } */
   
   /* Animation sur les projets */
   .projet img {
@@ -347,7 +357,7 @@ section {
   display: flex;
   align-items: center;
   margin-bottom: 10px;
-  color: #ffffff;
+  color: #000000;
   font-size: 12px;
   }
 
