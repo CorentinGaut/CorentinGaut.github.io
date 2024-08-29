@@ -184,6 +184,13 @@ section {
     text-align: left;
     font-size: 2rem;
     }
+
+    .publication h3 {
+      margin-top: 0;
+      color: #000000;
+      text-align: left;
+      font-size: 1.5rem;
+      }
   
   /* Style pour les projets */
   .projets-liste {
