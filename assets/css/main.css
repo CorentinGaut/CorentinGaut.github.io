@@ -184,13 +184,6 @@ section {
     text-align: left;
     font-size: 2rem;
     }
-
-    .publication h3 {
-      margin-top: 0;
-      color: #000000;
-      text-align: left;
-      font-size: 1.5rem;
-      }
   
   /* Style pour les projets */
   .projets-liste {
@@ -269,26 +262,39 @@ section {
   }
 
   .publication {
-      display: flex;
-      align-items: center;
+    margin-left: 8%;
+    margin-right: 8%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .publication img {
-      width: 40%;
-      height: auto;
-      margin-right: 40px;
-      margin-left: 40px;
+    width: 40%;
+    height: auto;
+    margin-right: 40px;
+    margin-left: 40px;
   }
 
   .publication iframe {
-    width: 40%;
-    height: 463px;
+    width: 30%;
+    height: 320px;
     margin-right: 40px;
     margin-left: 40px;
 }
   
   .publication-texte {
       width: 50%;
+  }
+
+  .publication h3 {
+    margin-top: 0;
+    color: #000000;
+    text-align: left;
+    font-size: 1.5rem;
+  }
+  .publication p {
+    font-size: 0.8rem;
   }
   
 
