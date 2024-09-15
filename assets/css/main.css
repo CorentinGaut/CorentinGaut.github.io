@@ -394,18 +394,52 @@ section {
 /* Media queries */
 @media screen and (max-width: 768px) {
   .projet {
-      flex-basis: calc(50% - 20px);
+    flex-basis: 100%;
   }
   
-  .publication img {
-      width: 30%;
-      margin-right: 10px;
+  .publication {
+    flex-direction: column;
+  }
+  
+  .publication img, .publication iframe {
+    width: 100%;
+    margin: 10px 0;
   }
   
   .publication-texte {
-      width: 70%;
+    width: 100%;
+  }
+  
+  hr {
+    margin-left: 5%;
+    margin-right: 5%;
   }
 }
+
+/* Ajouts pour améliorer la lisibilité sur mobile */
+@media screen and (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+  
+  .intro h1 {
+    font-size: 1.5rem;
+  }
+  
+  .intro h3 {
+    font-size: 0.9rem;
+  }
+  
+  nav a {
+    font-size: 1rem;
+  }
+  
+  section h2, section h3 {
+    font-size: 1.3rem;
+  }
+}
+
+
 
 
   
