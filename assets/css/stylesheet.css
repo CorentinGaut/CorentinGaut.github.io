@@ -197,3 +197,69 @@ a.toc {
 ul > li {
   line-height: 1.5;
 }
+
+/* Animated thumbnail: plays on hover of the row */
+.thumb-anim {
+  position: relative;
+  display: inline-block;
+}
+.thumb-anim .anim {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity .2s ease-in-out;
+}
+tr.hover-play:hover .thumb-anim .anim {
+  opacity: 1;
+}
+
+/* Phone layout: stack image above text */
+@media (max-width: 600px) {
+  td.media-cell,
+  td.text-cell {
+    display: block;
+    width: auto !important;
+  }
+  td.media-cell {
+    text-align: center;
+    padding-bottom: 0 !important;
+  }
+  th.toc {
+    display: inline-block;
+    width: auto;
+    padding: 4px 8px;
+  }
+}
+
+/* Dark mode, following the system setting */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #161618;
+    color: #e4e4e7;
+  }
+  a {
+    color: #6cb2ff;
+  }
+  a:focus,
+  a:hover {
+    color: #f5a54a;
+  }
+  subtitle,
+  a.toc {
+    color: #d4d4d8;
+  }
+  table.toc {
+    background-color: #161618;
+    border-color: #3f3f46;
+  }
+  span.highlight,
+  tr.highlight {
+    background-color: #b45cd02e;
+  }
+  .circle-container {
+    background-color: #161618;
+  }
+}
