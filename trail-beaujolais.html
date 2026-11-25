@@ -11,6 +11,8 @@
     <link rel="stylesheet" type="text/css" href="./assets/css/stylesheet.css">
     <link rel="stylesheet" type="text/css" href="./assets/css/trail.css">
     <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.148.0/examples/js/controls/OrbitControls.js"></script>
 </head>
 <body>
 <table style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;table-layout:fixed;"><tbody>
@@ -58,6 +60,11 @@
         et une vitesse d'effort qui baisse de <span id="b-drop">—</span> %. <span id="b-z4">—</span> min passées en zone 4 :
         sur 7 à 8 h de montagne, ce rythme ne tiendrait pas.
     </p>
+    <div class="card" style="margin-bottom:16px">
+        <h3>Tracé 3D — parcours GPS</h3>
+        <p class="muted">Données Garmin, 45,7 km · 1 488 m D+. Dénivelé amplifié ×4 pour la lisibilité. Faites glisser pour faire pivoter.</p>
+        <div id="ch-3d"></div>
+    </div>
     <div class="grid2">
         <div class="card">
             <h3>Profil et fréquence cardiaque</h3>
@@ -366,6 +373,144 @@
     }
 
     function charts() { chProfil(); chEffort(); chPente(); chForme(); chMaratrail(); }
+
+    function ch3D() {
+        var box = document.getElementById('ch-3d');
+        if (!box || !window.THREE) return;
+
+        var loadTxt = document.createElement('p');
+        loadTxt.className = 'muted';
+        loadTxt.style.cssText = 'text-align:center;padding:24px 0;margin:0';
+        loadTxt.textContent = 'Chargement du tracé GPS…';
+        box.appendChild(loadTxt);
+
+        fetch('./assets/data/activity_25161287113.gpx')
+            .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+            .then(function (text) {
+                // --- Parse & downsample GPX ---
+                var doc = new DOMParser().parseFromString(text, 'application/xml');
+                var tpts = Array.from(doc.querySelectorAll('trkpt'));
+                var step = Math.max(1, Math.floor(tpts.length / 500));
+                var raw = [];
+                for (var i = 0; i < tpts.length; i += step) {
+                    var eleEl = tpts[i].querySelector('ele');
+                    raw.push({
+                        lat: parseFloat(tpts[i].getAttribute('lat')),
+                        lon: parseFloat(tpts[i].getAttribute('lon')),
+                        ele: eleEl ? parseFloat(eleEl.textContent) : 0
+                    });
+                }
+
+                // --- Project lat/lon to metres ---
+                var latA = raw.reduce(function (a, p) { return a + p.lat; }, 0) / raw.length;
+                var lonA = raw.reduce(function (a, p) { return a + p.lon; }, 0) / raw.length;
+                var kL = Math.cos(latA * Math.PI / 180) * 111319;
+                var xs = raw.map(function (p) { return (p.lon - lonA) * kL; });
+                var zs = raw.map(function (p) { return (p.lat - latA) * 111319; });
+                var eles = raw.map(function (p) { return p.ele; });
+
+                var eleMin = Math.min.apply(null, eles), eleMax = Math.max.apply(null, eles);
+                var xMin = Math.min.apply(null, xs), xMax = Math.max.apply(null, xs);
+                var zMin = Math.min.apply(null, zs), zMax = Math.max.apply(null, zs);
+                var xC = (xMin + xMax) / 2, zC = (zMin + zMax) / 2;
+                var hExtent = Math.max(xMax - xMin, zMax - zMin);
+                var EXAG = 5;
+                var yRange = (eleMax - eleMin) / hExtent * EXAG;
+
+                // --- Normalised Three.js vectors ---
+                var pts = raw.map(function (p, i) {
+                    return new THREE.Vector3(
+                        (xs[i] - xC) / hExtent,
+                        (p.ele - eleMin) / hExtent * EXAG,
+                        (zs[i] - zC) / hExtent
+                    );
+                });
+
+                // --- TubeGeometry along the path ---
+                var curve = new THREE.CatmullRomCurve3(pts);
+                var tubeGeo = new THREE.TubeGeometry(curve, 400, 0.004, 7, false);
+
+                // Vertex colours from elevation (green → orange)
+                var posAttr = tubeGeo.getAttribute('position');
+                var colBuf = new Float32Array(posAttr.count * 3);
+                var c = new THREE.Color();
+                for (var i = 0; i < posAttr.count; i++) {
+                    var t = Math.max(0, Math.min(1, posAttr.getY(i) / yRange));
+                    c.setHSL(0.33 - t * 0.25, 0.90, 0.52);
+                    colBuf[i * 3] = c.r; colBuf[i * 3 + 1] = c.g; colBuf[i * 3 + 2] = c.b;
+                }
+                tubeGeo.setAttribute('color', new THREE.BufferAttribute(colBuf, 3));
+                var tubeMesh = new THREE.Mesh(tubeGeo, new THREE.MeshBasicMaterial({ vertexColors: true }));
+
+                // Start (green) / end (red) sphere markers
+                var sGeo = new THREE.SphereGeometry(0.012, 12, 8);
+                var startM = new THREE.Mesh(sGeo, new THREE.MeshBasicMaterial({ color: 0x4caf50 }));
+                startM.position.copy(pts[0]);
+                var endM = new THREE.Mesh(sGeo, new THREE.MeshBasicMaterial({ color: 0xef5350 }));
+                endM.position.copy(pts[pts.length - 1]);
+
+                // Ground grid
+                var isDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+                var grid = new THREE.GridHelper(1.4, 14,
+                    isDark ? 0x444444 : 0xbbbbbb,
+                    isDark ? 0x2e2e2e : 0xdddddd);
+                grid.position.y = -0.005;
+
+                // --- Renderer & scene ---
+                var W = box.clientWidth || 600, H = Math.max(280, Math.round(W * 0.5));
+                var renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+                renderer.setSize(W, H);
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+                if (loadTxt.parentNode) loadTxt.parentNode.removeChild(loadTxt);
+                box.appendChild(renderer.domElement);
+
+                var scene = new THREE.Scene();
+                var camera = new THREE.PerspectiveCamera(40, W / H, 0.001, 50);
+                camera.position.set(0.9, 0.5, 0.9);
+
+                var controls = new THREE.OrbitControls(camera, renderer.domElement);
+                controls.enableDamping = true;
+                controls.dampingFactor = 0.07;
+                controls.autoRotate = true;
+                controls.autoRotateSpeed = 0.6;
+                controls.target.set(0, yRange * 0.4, 0);
+                camera.lookAt(controls.target);
+                controls.update();
+
+                // Stop auto-rotate on first user interaction
+                renderer.domElement.addEventListener('pointerdown', function () {
+                    controls.autoRotate = false;
+                }, { once: true });
+
+                scene.add(grid);
+                scene.add(tubeMesh);
+                scene.add(startM);
+                scene.add(endM);
+
+                // Render loop
+                (function animate() {
+                    requestAnimationFrame(animate);
+                    controls.update();
+                    renderer.render(scene, camera);
+                })();
+
+                // Responsive resize
+                var resT;
+                window.addEventListener('resize', function () {
+                    clearTimeout(resT);
+                    resT = setTimeout(function () {
+                        var nW = box.clientWidth;
+                        var nH = Math.max(280, Math.round(nW * 0.5));
+                        renderer.setSize(nW, nH);
+                        camera.aspect = nW / nH;
+                        camera.updateProjectionMatrix();
+                    }, 150);
+                });
+            })
+            .catch(function () { loadTxt.textContent = 'Tracé GPS non disponible.'; });
+    }
+
+    ch3D(); // start loading GPX immediately, independent of JSON data
 
     fetch('./assets/data/trail-beaujolais.json', { cache: 'no-cache' })
         .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
