@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>Trail du Beaujolais — Corentin Gautier</title>
+
+    <meta name="author" content="Corentin Gautier">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Analyse des données Garmin du Trail du Beaujolais (22/11/2026) et écart avec le Maratrail de l'Échappée Belle.">
+
+    <link rel="stylesheet" type="text/css" href="./assets/css/stylesheet.css">
+    <link rel="stylesheet" type="text/css" href="./assets/css/trail.css">
+    <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+</head>
+<body>
+<table style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;table-layout:fixed;"><tbody>
+<tr style="padding:0px">
+<td style="padding:20px" class="prep">
+
+    <p><a href="./index.html#hobbies">← Corentin Gautier</a></p>
+    <nav class="nav" aria-label="Pages trail">
+        <a href="./trail-beaujolais.html" aria-current="page">Trail du Beaujolais</a>
+        <a href="./trail.html">Préparation Échappée Belle</a>
+    </nav>
+
+    <heading>Trail du Beaujolais — analyse des données</heading>
+    <p>
+        Trail du Beaujolais bouclé en <b id="t-duree">—</b> pour <b id="t-km">—</b> km et <b id="t-dp">—</b> m D+.
+        Le Maratrail de l'Échappée Belle en demande <b id="t-ratio">—</b> fois plus en dénivelé, en montagne au-dessus de 2 000 m :
+        c'est l'écart principal à combler d'ici fin août.
+    </p>
+    <p class="muted" id="t-source">—</p>
+
+    <div class="stats">
+        <div class="stat"><div class="l">VO2max Garmin (course)</div><div class="v" id="k-vo2">—</div><div class="l">ml/kg/min, estimation montre</div></div>
+        <div class="stat"><div class="l">FC de repos, dernier jour</div><div class="v" id="k-rhr">—</div><div class="l" id="k-rhr-d">—</div></div>
+        <div class="stat"><div class="l">Vitesse ascensionnelle (pentes &gt; 8 %)</div><div class="v" id="k-vam">—</div><div class="l">mesurée au Trail du Beaujolais</div></div>
+        <div class="stat"><div class="l">Prédiction marathon route (Garmin)</div><div class="v" id="k-mar">—</div><div class="l">au dernier jour de l'export</div></div>
+    </div>
+
+    <br>
+    <heading>Sorties enregistrées</heading>
+    <p class="muted">Zones cardiaques en % de FC max (201 bpm) : Z4 ≥ 161, Z5 ≥ 181 bpm, calculées à partir des fichiers de la montre.</p>
+    <div class="tw">
+        <table class="weeks">
+            <thead><tr>
+                <th class="l">Date</th><th class="l">Sortie</th><th>km</th><th>D+ (m)</th><th>Durée</th>
+                <th>Allure /km</th><th>Allure ajustée pente</th><th>FC moy.</th><th>Z4 (min)</th><th>Z5 (min)</th>
+            </tr></thead>
+            <tbody id="tab-sorties"></tbody>
+        </table>
+    </div>
+
+    <br>
+    <heading>Trail du Beaujolais — 22 novembre 2026</heading>
+    <p>
+        Départ trop rapide : FC moyenne de <span id="b-h1">—</span> bpm sur la première moitié contre <span id="b-h2">—</span> sur la seconde,
+        et une vitesse d'effort qui baisse de <span id="b-drop">—</span> %. <span id="b-z4">—</span> min passées en zone 4 :
+        sur 7 à 8 h de montagne, ce rythme ne tiendrait pas.
+    </p>
+    <div class="grid2">
+        <div class="card">
+            <h3>Profil et fréquence cardiaque</h3>
+            <div class="legend"><span><i class="sw" style="background:var(--plan)"></i>Altitude (m)</span><span><i class="sw" style="background:var(--under)"></i>FC (bpm, moyenne glissante 1 min)</span></div>
+            <div class="chart" id="ch-profil"></div>
+        </div>
+        <div class="card">
+            <h3>Vitesse d'effort par demi-heure</h3>
+            <p class="muted">Kilomètres-effort par heure (km + D+/100). La barre suit la vitesse, le point la FC moyenne.</p>
+            <div class="chart" id="ch-effort"></div>
+        </div>
+        <div class="card">
+            <h3>Allure médiane selon la pente</h3>
+            <p class="muted">Segments de 200 m. Les montées raides (&gt; 15 %) ne représentent que <span id="p-raide">—</span> km du parcours.</p>
+            <div class="chart" id="ch-pente"></div>
+        </div>
+        <div class="card">
+            <h3>Récupération : FC de repos et VFC nocturne</h3>
+            <div class="legend"><span><i class="sw" style="background:var(--under)"></i>FC repos (bpm)</span><span><i class="sw" style="background:var(--done)"></i>VFC (ms)</span></div>
+            <div class="chart" id="ch-forme"></div>
+            <p class="muted">Sommeil moyen : <span id="f-sleep">—</span> h par nuit sur la période.</p>
+        </div>
+    </div>
+
+    <br>
+    <heading>Objectif : Maratrail de l'Échappée Belle</heading>
+    <p>
+        Valgelon-la-Rochette → Aiguebelle, massif de Belledonne. Le 42 km de l'Échappée Belle annonce environ 2 790 m D+
+        (2 728 m sur la <a href="https://tracedetrail.fr/fr/trace/321412" target="_blank">trace officielle 2026</a>).
+        L'édition 2026 s'est courue le 22 août ; la date 2027 reste à confirmer.
+    </p>
+    <div class="grid2">
+        <div class="card">
+            <h3>Profil du parcours (points de passage officiels)</h3>
+            <div class="chart" id="ch-maratrail"></div>
+            <p class="muted">Première montée : <span id="m-climb">—</span> m D+ sur 10,5 km, puis crêtes autour de 2 000 m jusqu'au km 19.</p>
+        </div>
+        <div class="card">
+            <h3>Écart entre l'acquis et l'objectif</h3>
+            <div class="tw">
+                <table class="weeks">
+                    <thead><tr><th class="l">Critère</th><th>Beaujolais</th><th>Maratrail</th><th>Rapport</th></tr></thead>
+                    <tbody id="tab-ecart"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <heading>Temps estimé sur le Maratrail</heading>
+    <p>
+        Méthode : vitesse d'effort moyenne du Beaujolais (<span id="e-kme">—</span> km-effort/h) appliquée aux
+        <span id="e-km">—</span> km-effort du Maratrail, corrigée d'un coefficient montagne (sentier technique, montées longues, altitude).
+        Ce coefficient est une hypothèse, à recaler sur une sortie test en montagne au printemps.
+    </p>
+    <div class="stats" id="estimations"></div>
+    <p>Le plan de préparation semaine par semaine est sur la page <a href="./trail.html">Préparation Échappée Belle</a>.</p>
+
+    <br>
+    <details>
+        <summary>Définitions et limites des données</summary>
+        <ul>
+            <li>Km-effort : distance + D+/100. Indicateur simple de charge d'un parcours de trail ; il sous-estime les terrains techniques et la descente.</li>
+            <li>Allure ajustée pente : allure équivalente sur plat calculée par Garmin.</li>
+            <li>L'historique ne couvre que 2,5 semaines : pas de tendance de charge exploitable. Les entraînements antérieurs n'y figurent pas.</li>
+            <li>La VO2max et les prédictions sont des estimations de la montre, calibrées sur la route.</li>
+        </ul>
+    </details>
+
+    <p style="text-align:right;font-size:small;"><a href="./index.html">Retour à l'accueil</a></p>
+</td>
+</tr>
+</tbody></table>
+
+<script>
+(function () {
+    var NS = 'http://www.w3.org/2000/svg';
+    var D = null;
+    var nf = function (v, d) { return v == null || isNaN(v) ? '—' : Number(v).toLocaleString('fr-FR', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); };
+    var hhmm = function (h) { var t = Math.round(h * 60); return Math.floor(t / 60) + 'h' + String(t % 60).padStart(2, '0'); };
+    var pace = function (m) { var s = Math.round(m * 60); return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0'); };
+    var setText = function (id, t) { var e = document.getElementById(id); if (e) e.textContent = t; };
+    var parse = function (s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); };
+
+    function el(name, attrs, parent) {
+        var e = document.createElementNS(NS, name);
+        for (var k in attrs) e.setAttribute(k, attrs[k]);
+        if (parent) parent.appendChild(e);
+        return e;
+    }
+    function scale(d0, d1, r0, r1) { var f = function (v) { return r0 + (v - d0) / (d1 - d0) * (r1 - r0); }; f.inv = function (p) { return d0 + (p - r0) / (r1 - r0) * (d1 - d0); }; return f; }
+    function niceTicks(lo, hi, n) {
+        var raw = (hi - lo) / n, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+        var st = [1, 2, 2.5, 5, 10].map(function (f) { return f * mag; }).filter(function (f) { return f >= raw; })[0];
+        var out = []; for (var v = Math.ceil(lo / st) * st; v <= hi + 1e-9; v += st) out.push(+v.toFixed(6)); return out;
+    }
+    function frame(box, h, m) {
+        box.replaceChildren();
+        var W = Math.max(280, box.clientWidth);
+        var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + h, role: 'img' }, box);
+        var tip = document.createElement('div'); tip.className = 'tip'; box.appendChild(tip);
+        return { svg: svg, tip: tip, W: W, H: h, x0: m.l, x1: W - m.r, y0: m.t, y1: h - m.b };
+    }
+    function grid(f, ticks, y, fmt, side) {
+        ticks.forEach(function (v) {
+            if (!side) el('line', { x1: f.x0, x2: f.x1, y1: y(v), y2: y(v), style: 'stroke:var(--line)' }, f.svg);
+            var t = el('text', { x: side ? f.x1 + 6 : f.x0 - 6, y: y(v) + 4, 'text-anchor': side ? 'start' : 'end' }, f.svg);
+            t.textContent = fmt ? fmt(v) : nf(v);
+        });
+    }
+    function xLabels(f, ticks, x, fmt) {
+        ticks.forEach(function (v) { var t = el('text', { x: x(v), y: f.H - 8, 'text-anchor': 'middle' }, f.svg); t.textContent = fmt(v); });
+    }
+    function showTip(f, box, ev, lines) {
+        var r = box.getBoundingClientRect();
+        f.tip.replaceChildren();
+        lines.forEach(function (l) { var d = document.createElement('div'); d.textContent = l; f.tip.appendChild(d); });
+        f.tip.style.display = 'block';
+        var left = ev.clientX - r.left + 12;
+        if (left + f.tip.offsetWidth > box.clientWidth) left = ev.clientX - r.left - f.tip.offsetWidth - 12;
+        f.tip.style.left = Math.max(0, left) + 'px';
+        f.tip.style.top = Math.max(0, ev.clientY - r.top - 10) + 'px';
+    }
+    function hover(f, box, pick) {
+        var hit = el('rect', { x: f.x0, y: f.y0, width: f.x1 - f.x0, height: f.y1 - f.y0, style: 'fill:transparent' }, f.svg);
+        hit.addEventListener('pointermove', function (ev) {
+            var p = f.svg.createSVGPoint(); p.x = ev.clientX; p.y = ev.clientY;
+            var loc = p.matrixTransform(f.svg.getScreenCTM().inverse());
+            var lines = pick(loc.x); if (lines) showTip(f, box, ev, lines);
+        });
+        hit.addEventListener('pointerleave', function () { f.tip.style.display = 'none'; });
+        return hit;
+    }
+    function path(pts) { return pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(''); }
+    function nearest(arr, key, v) { var b = 0; arr.forEach(function (a, i) { if (Math.abs(a[key] - v) < Math.abs(arr[b][key] - v)) b = i; }); return arr[b]; }
+
+    // ---- Calculs dérivés -------------------------------------------------
+    function derive() {
+        var r = D.resume, m = D.maratrail, last = m[m.length - 1];
+        var low = D.profil[0].alt, peak = low, longest = 0;
+        D.profil.forEach(function (p) { var a = p.alt; if (a > peak) peak = a; longest = Math.max(longest, peak - low); if (a < peak - 40 || a < low) { low = a; peak = a; } });
+        var firstClimb = m.filter(function (p) { return p.point.indexOf('Val Pelouse') === 0; })[0].dplus;
+        var altMax = Math.max.apply(null, m.map(function (p) { return p.alt; }));
+        D.ecart = [
+            ['Distance (km)', r.km, last.km, 1],
+            ['D+ (m)', r.dplus, last.dplus, 0],
+            ['D+ par km (m)', Math.round(r.dplus / r.km), Math.round(last.dplus / last.km), 0],
+            ['Km-effort', r.km + r.dplus / 100, last.km + last.dplus / 100, 1],
+            ['Plus longue montée (m)', Math.round(longest), firstClimb, 0],
+            ['Altitude max. (m)', r.alt_max, altMax, 0]
+        ].map(function (x) { return { critere: x[0], b: x[1], m: x[2], dec: x[3], ratio: x[2] / x[1] }; });
+        var kme = last.km + last.dplus / 100;
+        D.estim = { kme: kme, rows: [['Hypothèse favorable', 0.85, 1, 'niveau actuel'], ['Hypothèse centrale', 0.80, 1, 'niveau actuel'], ['Hypothèse prudente', 0.75, 1, 'niveau actuel'], ['Avec la préparation', 0.80, 1.10, '+10 % de vitesse d\'effort, hypothèse centrale']]
+            .map(function (s) { var h = kme / (r.kme_moy * s[1] * s[2]); h = Math.round(h * 12) / 12; return { label: s[0], coef: s[1], note: s[3], h: h }; }) };
+        var q = D.quotidien.filter(function (x) { return x.rhr != null; });
+        var sl = D.quotidien.filter(function (x) { return x.sleep_h != null; });
+        D.forme = { rhr0: q[0].rhr, rhr1: q[q.length - 1].rhr, sleep: sl.reduce(function (a, x) { return a + x.sleep_h; }, 0) / sl.length };
+    }
+
+    // ---- Textes et tableaux ---------------------------------------------
+    function texts() {
+        var r = D.resume;
+        setText('t-duree', hhmm(r.duree_h)); setText('t-km', nf(r.km, 1)); setText('t-dp', nf(r.dplus));
+        setText('t-ratio', nf(D.ecart[1].ratio, 1)); setText('t-source', 'Données : ' + D.source + '.');
+        var vo2 = D.predictions.filter(function (x) { return x.vo2max != null; }).pop();
+        setText('k-vo2', vo2 ? nf(vo2.vo2max) : '—');
+        setText('k-rhr', nf(D.forme.rhr1) + ' bpm');
+        var dr = D.forme.rhr1 - D.forme.rhr0; setText('k-rhr-d', (dr > 0 ? '+' : '') + nf(dr) + ' bpm depuis le 07/11');
+        setText('k-vam', nf(r.vam) + ' m/h');
+        var mar = D.predictions[D.predictions.length - 1].marathon; setText('k-mar', hhmm(mar / 3600));
+        setText('b-h1', nf(r.fc_h1)); setText('b-h2', nf(r.fc_h2));
+        setText('b-drop', nf(Math.round((1 - r.kme_h2 / r.kme_h1) * 100))); setText('b-z4', nf(r.z4_min));
+        var raide = D.pente.filter(function (x) { return x.bin === '> +15 %'; })[0]; setText('p-raide', raide ? nf(raide.km, 1) : '—');
+        setText('f-sleep', nf(D.forme.sleep, 1));
+        setText('m-climb', nf(D.ecart[4].m));
+        setText('e-kme', nf(r.kme_moy, 1)); setText('e-km', nf(D.estim.kme, 1));
+
+        var tb = document.getElementById('tab-sorties');
+        D.sorties.forEach(function (s) {
+            var tr = tb.insertRow();
+            [[parse(s.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }), 'l'], [s.sortie, 'l'], [nf(s.km, 1)], [nf(s.dplus)],
+             [Math.floor(s.minutes / 60) + 'h' + String(s.minutes % 60).padStart(2, '0')], [pace(s.allure)], [pace(s.gap)], [nf(s.fc)], [nf(s.z4)], [nf(s.z5)]]
+                .forEach(function (c) { var td = tr.insertCell(); td.textContent = c[0]; if (c[1]) td.className = c[1]; });
+        });
+        var te = document.getElementById('tab-ecart');
+        D.ecart.forEach(function (x) {
+            var tr = te.insertRow();
+            [[x.critere, 'l wrap'], [nf(x.b, x.dec)], [nf(x.m, x.dec)], ['×' + nf(x.ratio, 1), x.ratio >= 1.5 ? 'ko' : '']]
+                .forEach(function (c) { var td = tr.insertCell(); td.textContent = c[0]; if (c[1]) td.className = c[1]; });
+        });
+        var es = document.getElementById('estimations');
+        D.estim.rows.forEach(function (x) {
+            var d = document.createElement('div'); d.className = 'stat';
+            [['l', x.label + (x.label.indexOf('Avec') === 0 ? '' : ' (×' + nf(x.coef, 2) + ')')], ['v', hhmm(x.h)], ['l', x.note]]
+                .forEach(function (c) { var e = document.createElement('div'); e.className = c[0]; e.textContent = c[1]; d.appendChild(e); });
+            es.appendChild(d);
+        });
+    }
+
+    // ---- Graphiques -----------------------------------------------------
+    function chProfil() {
+        var box = document.getElementById('ch-profil'), data = D.profil;
+        var f = frame(box, 250, { l: 44, r: 36, t: 10, b: 26 });
+        f.svg.setAttribute('aria-label', 'Profil altimétrique et fréquence cardiaque du Trail du Beaujolais');
+        var xmax = data[data.length - 1].km, amax = Math.max.apply(null, data.map(function (d) { return d.alt; })) * 1.1;
+        var x = scale(0, xmax, f.x0, f.x1), ya = scale(0, amax, f.y1, f.y0), yh = scale(100, 200, f.y1, f.y0);
+        grid(f, niceTicks(0, amax, 4), ya, function (v) { return v + ' m'; });
+        grid(f, [100, 120, 140, 160, 180, 200], yh, null, true);
+        var area = data.map(function (d) { return [x(d.km), ya(d.alt)]; });
+        el('path', { d: path([[x(0), f.y1]].concat(area, [[x(xmax), f.y1]])) + 'Z', style: 'fill:var(--plan);opacity:.55' }, f.svg);
+        el('path', { d: path(data.map(function (d) { return [x(d.km), yh(d.hr)]; })), style: 'fill:none;stroke:var(--under);stroke-width:1.5' }, f.svg);
+        el('line', { x1: f.x0, x2: f.x1, y1: yh(161), y2: yh(161), style: 'stroke:var(--muted);stroke-dasharray:4 3' }, f.svg);
+        var tz = el('text', { x: f.x1 - 4, y: yh(161) - 4, 'text-anchor': 'end' }, f.svg); tz.textContent = 'seuil Z4 · 161 bpm';
+        xLabels(f, niceTicks(0, xmax, Math.max(3, Math.floor((f.x1 - f.x0) / 70))), x, function (v) { return v + ' km'; });
+        var dot = el('circle', { r: 3.5, style: 'fill:var(--under);display:none' }, f.svg);
+        var hit = hover(f, box, function (px) {
+            var d = nearest(data, 'km', x.inv(px));
+            dot.setAttribute('cx', x(d.km)); dot.setAttribute('cy', yh(d.hr)); dot.style.display = '';
+            return ['km ' + nf(d.km, 1) + ' · ' + hhmm(d.t / 60), 'Altitude ' + nf(d.alt) + ' m', 'FC ' + nf(d.hr) + ' bpm'];
+        });
+        hit.addEventListener('pointerleave', function () { dot.style.display = 'none'; });
+    }
+
+    function chEffort() {
+        var box = document.getElementById('ch-effort'), data = D.effort;
+        var f = frame(box, 240, { l: 34, r: 36, t: 10, b: 26 });
+        f.svg.setAttribute('aria-label', 'Kilomètres-effort par heure et FC moyenne par tranche de 30 minutes');
+        var ymax = Math.max.apply(null, data.map(function (d) { return d.kme; })) * 1.15;
+        var y = scale(0, ymax, f.y1, f.y0), yh = scale(130, 190, f.y1, f.y0);
+        var step = (f.x1 - f.x0) / data.length, bw = step * 0.7;
+        grid(f, niceTicks(0, ymax, 4), y); grid(f, [140, 160, 180], yh, null, true);
+        var cx = function (i) { return f.x0 + i * step + step / 2; };
+        data.forEach(function (d, i) {
+            el('rect', { x: cx(i) - bw / 2, y: y(d.kme), width: bw, height: f.y1 - y(d.kme), rx: 1.5, style: 'fill:var(--plan)' }, f.svg);
+            if (step >= 40 || i % 2 === 1) { var t = el('text', { x: cx(i), y: f.H - 8, 'text-anchor': 'middle' }, f.svg); t.textContent = nf(d.h, 1) + ' h'; }
+        });
+        el('path', { d: path(data.map(function (d, i) { return [cx(i), yh(d.hr)]; })), style: 'fill:none;stroke:var(--under);stroke-width:1.5' }, f.svg);
+        data.forEach(function (d, i) { el('circle', { cx: cx(i), cy: yh(d.hr), r: 3, style: 'fill:var(--under)' }, f.svg); });
+        hover(f, box, function (px) {
+            var i = Math.max(0, Math.min(data.length - 1, Math.floor((px - f.x0) / step))), d = data[i];
+            return [nf(d.h - 0.5, 1) + ' → ' + nf(d.h, 1) + ' h', nf(d.kme, 1) + ' km-effort/h', 'FC ' + nf(d.hr) + ' bpm'];
+        });
+    }
+
+    function chPente() {
+        var box = document.getElementById('ch-pente'), data = D.pente;
+        var f = frame(box, 230, { l: 70, r: 44, t: 4, b: 8 });
+        f.svg.setAttribute('aria-label', 'Allure médiane par classe de pente');
+        var xmax = Math.max.apply(null, data.map(function (d) { return d.pace; })) * 1.05;
+        var x = scale(0, xmax, f.x0, f.x1), step = (f.y1 - f.y0) / data.length, bh = step * 0.7;
+        data.forEach(function (d, i) {
+            var yy = f.y0 + i * step + (step - bh) / 2, up = d.bin.indexOf('+8') >= 0 || d.bin.indexOf('> +15') === 0;
+            el('rect', { x: f.x0, y: yy, width: x(d.pace) - f.x0, height: bh, rx: 1.5, style: 'fill:' + (up ? 'var(--under)' : 'var(--plan)') }, f.svg);
+            var l = el('text', { x: f.x0 - 6, y: yy + bh / 2 + 4, 'text-anchor': 'end' }, f.svg); l.textContent = d.bin;
+            var v = el('text', { x: x(d.pace) + 5, y: yy + bh / 2 + 4 }, f.svg); v.textContent = pace(d.pace);
+        });
+        var hit = el('rect', { x: f.x0, y: f.y0, width: f.x1 - f.x0, height: f.y1 - f.y0, style: 'fill:transparent' }, f.svg);
+        hit.addEventListener('pointermove', function (ev) {
+            var p = f.svg.createSVGPoint(); p.x = ev.clientX; p.y = ev.clientY; var loc = p.matrixTransform(f.svg.getScreenCTM().inverse());
+            var d = data[Math.max(0, Math.min(data.length - 1, Math.floor((loc.y - f.y0) / step)))];
+            showTip(f, box, ev, ['Pente ' + d.bin, 'Allure ' + pace(d.pace) + ' /km', 'FC ' + nf(d.hr) + ' bpm', nf(d.km, 1) + ' km']);
+        });
+        hit.addEventListener('pointerleave', function () { f.tip.style.display = 'none'; });
+    }
+
+    function chForme() {
+        var box = document.getElementById('ch-forme');
+        var data = D.quotidien.filter(function (d) { return d.rhr != null; }).map(function (d) { var o = Object.assign({}, d); o.t = parse(d.date).getTime(); return o; });
+        var f = frame(box, 230, { l: 34, r: 36, t: 10, b: 26 });
+        f.svg.setAttribute('aria-label', 'FC de repos et VFC nocturne par jour');
+        var t0 = data[0].t, t1 = data[data.length - 1].t;
+        var x = scale(t0, t1, f.x0, f.x1), yr = scale(45, 70, f.y1, f.y0), yv = scale(40, 100, f.y1, f.y0);
+        grid(f, [45, 50, 55, 60, 65, 70], yr); grid(f, [40, 60, 80, 100], yv, null, true);
+        el('path', { d: path(data.map(function (d) { return [x(d.t), yr(d.rhr)]; })), style: 'fill:none;stroke:var(--under);stroke-width:1.8' }, f.svg);
+        el('path', { d: path(data.filter(function (d) { return d.hrv != null; }).map(function (d) { return [x(d.t), yv(d.hrv)]; })), style: 'fill:none;stroke:var(--done);stroke-width:1.5' }, f.svg);
+        var race = parse('2026-11-22').getTime();
+        el('line', { x1: x(race), x2: x(race), y1: f.y0, y2: f.y1, style: 'stroke:var(--muted);stroke-dasharray:4 3' }, f.svg);
+        var rt = el('text', { x: x(race) - 4, y: f.y0 + 10, 'text-anchor': 'end' }, f.svg); rt.textContent = 'Beaujolais';
+        var days = []; for (var t = t0; t <= t1; t += 4 * 864e5) days.push(t);
+        xLabels(f, days, x, function (v) { return new Date(v).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' }); });
+        hover(f, box, function (px) {
+            var d = nearest(data, 't', x.inv(px));
+            return [new Date(d.t).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }), 'FC repos ' + nf(d.rhr) + ' bpm',
+                'VFC ' + (d.hrv == null ? '—' : nf(d.hrv) + ' ms'), 'Sommeil ' + (d.sleep_h == null ? '—' : nf(d.sleep_h, 1) + ' h')];
+        });
+    }
+
+    function chMaratrail() {
+        var box = document.getElementById('ch-maratrail'), data = D.maratrail;
+        var f = frame(box, 250, { l: 52, r: 12, t: 14, b: 26 });
+        f.svg.setAttribute('aria-label', 'Profil du Maratrail de l\'Échappée Belle par points de passage');
+        var xmax = data[data.length - 1].km, x = scale(0, xmax, f.x0, f.x1), y = scale(0, 2200, f.y1, f.y0);
+        grid(f, [0, 500, 1000, 1500, 2000], y, function (v) { return nf(v) + ' m'; });
+        var pts = data.map(function (d) { return [x(d.km), y(d.alt)]; });
+        el('path', { d: path([[x(0), f.y1]].concat(pts, [[x(xmax), f.y1]])) + 'Z', style: 'fill:var(--plan);opacity:.55' }, f.svg);
+        el('path', { d: path(pts), style: 'fill:none;stroke:var(--done);stroke-width:1.5' }, f.svg);
+        var top = D.resume.alt_max;
+        el('line', { x1: f.x0, x2: f.x1, y1: y(top), y2: y(top), style: 'stroke:var(--muted);stroke-dasharray:4 3' }, f.svg);
+        var tt = el('text', { x: f.x1, y: y(top) - 4, 'text-anchor': 'end' }, f.svg); tt.textContent = 'point culminant du Beaujolais';
+        data.forEach(function (d) { el('circle', { cx: x(d.km), cy: y(d.alt), r: 3.5, style: 'fill:var(--done)' }, f.svg); });
+        xLabels(f, niceTicks(0, xmax, Math.max(3, Math.floor((f.x1 - f.x0) / 70))), x, function (v) { return v + ' km'; });
+        hover(f, box, function (px) {
+            var d = nearest(data, 'km', x.inv(px));
+            return [d.point, 'km ' + nf(d.km, 1) + ' · ' + nf(d.alt) + ' m', 'D+ cumulé ' + nf(d.dplus) + ' m'];
+        });
+    }
+
+    function charts() { chProfil(); chEffort(); chPente(); chForme(); chMaratrail(); }
+
+    fetch('./assets/data/trail-beaujolais.json', { cache: 'no-cache' })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(function (j) {
+            D = j; derive(); texts(); charts();
+            var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(charts, 150); });
+        })
+        .catch(function () { setText('t-source', 'Les données n\'ont pas pu être chargées.'); });
+})();
+</script>
+</body>
+</html>

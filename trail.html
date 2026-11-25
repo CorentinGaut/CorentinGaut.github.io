@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>Préparation trail — Corentin Gautier</title>
+
+    <meta name="author" content="Corentin Gautier">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Suivi hebdomadaire de la préparation au Maratrail de l'Échappée Belle 2027 (42 km, 2 728 m D+).">
+
+    <link rel="stylesheet" type="text/css" href="./assets/css/stylesheet.css">
+    <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+
+    <link rel="stylesheet" type="text/css" href="./assets/css/trail.css">
+</head>
+<body>
+<table style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;table-layout:fixed;"><tbody>
+<tr style="padding:0px">
+<td style="padding:20px" class="prep">
+
+    <p><a href="./index.html#hobbies">← Corentin Gautier</a></p>
+    <nav class="nav" aria-label="Pages trail">
+        <a href="./trail-beaujolais.html">Trail du Beaujolais</a>
+        <a href="./trail.html" aria-current="page">Préparation Échappée Belle</a>
+    </nav>
+    <heading>Préparation trail — Échappée Belle 2027</heading>
+    <p>
+        Objectif : le <b>Maratrail de l'Échappée Belle</b>, <span id="course-distance">42,1</span> km et <span id="course-dplus">2 728</span> m D+ entre Valgelon-la-Rochette et Aiguebelle, dans le massif de Belledonne
+        (<a id="course-trace" href="https://tracedetrail.fr/fr/trace/321412" target="_blank">trace officielle 2026</a>).
+        Course prévue le <span id="course-date">—</span><span id="course-date-note"></span>.
+        Point de départ : le Trail du Beaujolais (22/11/2026, 45,7 km, 1 470 m D+).
+    </p>
+
+    <div class="stats">
+        <div class="stat"><div class="l">Semaine du plan</div><div class="v" id="s-week">—</div><div class="l" id="s-left">—</div></div>
+        <div class="stat"><div class="l">D+ réalisé depuis le début du plan</div><div class="v" id="s-dplus">—</div><div class="l" id="s-dplus-plan">—</div></div>
+        <div class="stat"><div class="l">Kilomètres depuis le début du plan</div><div class="v" id="s-km">—</div><div class="l" id="s-km-plan">—</div></div>
+        <div class="stat"><div class="l">Plus longue sortie du plan</div><div class="v" id="s-long">—</div><div class="l">objectif : sortie de 5–6 h en juillet</div></div>
+    </div>
+    <p class="muted" id="s-maj">—</p>
+
+    <br>
+    <heading>Volume hebdomadaire</heading>
+    <div>
+        <div class="toggle" role="group" aria-label="Indicateur affiché">
+            <button type="button" data-metric="dplus" aria-pressed="true">D+ (m)</button>
+            <button type="button" data-metric="km" aria-pressed="false">Distance (km)</button>
+        </div>
+    </div>
+    <div class="legend">
+        <span><i class="sw" style="background:var(--plan)"></i>Objectif</span>
+        <span><i class="sw" style="background:var(--done)"></i>Réalisé</span>
+        <span><i class="sw" style="background:var(--today)"></i>Semaine en cours</span>
+    </div>
+    <div class="chart" id="chart"><div class="tip" id="tip"></div></div>
+
+    <br>
+    <heading>Semaine par semaine</heading>
+    <p class="muted">Les semaines allégées (une sur quatre) réduisent le volume d'environ 30 % pour assimiler la charge. L'écart compare le D+ réalisé à l'objectif.</p>
+    <div class="tw">
+        <table class="weeks">
+            <thead><tr>
+                <th class="l">Semaine du</th>
+                <th>Objectif</th>
+                <th class="l">Séance clé</th>
+                <th>Réalisé</th>
+                <th>Écart D+</th>
+            </tr></thead>
+            <tbody id="weeks-body"></tbody>
+        </table>
+    </div>
+
+    <br>
+    <details>
+        <summary>Méthode et sources</summary>
+        <ul>
+            <li>Plan indicatif en cinq phases (récupération, base, spécifique montée, montagne, affûtage), à raison de trois séances par semaine.</li>
+            <li>Le réalisé provient de l'export Garmin Connect, agrégé du lundi au dimanche (script <code>_tools/garmin_semaines.py</code>).</li>
+            <li>Date 2027 non confirmée : l'édition 2026 s'est courue le 22 août. Le plan sera recalé dès l'annonce officielle.</li>
+            <li>Parcours : trace officielle du Maratrail publiée sur Trace de Trail.</li>
+        </ul>
+    </details>
+
+    <p style="text-align:right;font-size:small;"><a href="./index.html">Retour à l'accueil</a></p>
+</td>
+</tr>
+</tbody></table>
+
+<script>
+(function () {
+    var NS = 'http://www.w3.org/2000/svg';
+    var data = null, metric = 'dplus';
+    var nf = function (v, d) { return v == null || isNaN(v) ? '—' : Number(v).toLocaleString('fr-FR', { minimumFractionDigits: d || 0, maximumFractionDigits: d || 0 }); };
+    var parse = function (s) { var p = s.split('-'); return new Date(+p[0], +p[1] - 1, +p[2]); };
+    var fmt = function (d, opt) { return d.toLocaleDateString('fr-FR', opt || { day: '2-digit', month: '2-digit' }); };
+    var addDays = function (d, n) { var x = new Date(d); x.setDate(x.getDate() + n); return x; };
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var setText = function (id, t) { var el = document.getElementById(id); if (el) el.textContent = t; };
+
+    function el(name, attrs, parent) {
+        var e = document.createElementNS(NS, name);
+        for (var k in attrs) e.setAttribute(k, attrs[k]);
+        if (parent) parent.appendChild(e);
+        return e;
+    }
+
+    function summary() {
+        var c = data.course, w = data.semaines, plan = w.filter(function (x) { return x.phase !== 'avant'; });
+        var race = parse(c.date);
+        setText('course-distance', nf(c.distance_km, 1));
+        setText('course-dplus', nf(c.dplus));
+        setText('course-date', fmt(race, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }));
+        setText('course-date-note', c.date_confirmee ? '' : ' (date à confirmer)');
+
+        var idx = -1;
+        plan.forEach(function (x, i) { if (parse(x.debut) <= today) idx = i; });
+        var days = Math.round((race - today) / 864e5);
+        setText('s-week', idx < 0 ? 'Pas encore commencé' : (idx + 1) + ' / ' + plan.length);
+        setText('s-left', days >= 0 ? 'J−' + days + ' avant la course' : 'Course passée');
+
+        // Cumuls sur les semaines terminées uniquement
+        var past = plan.filter(function (x) { return addDays(parse(x.debut), 7) <= today; });
+        var sum = function (arr, k) { return arr.reduce(function (a, x) { return a + (x[k] || 0); }, 0); };
+        if (!past.length) {
+            ['s-dplus', 's-km', 's-long'].forEach(function (id) { setText(id, '—'); });
+            setText('s-dplus-plan', 'aucune semaine terminée'); setText('s-km-plan', 'aucune semaine terminée');
+            setText('s-maj', data.mis_a_jour ? 'Données Garmin importées le ' + fmt(parse(data.mis_a_jour), { day: 'numeric', month: 'long', year: 'numeric' }) + '.' : 'Aucune donnée importée pour le moment.');
+            return;
+        }
+        setText('s-dplus', nf(sum(past, 'realise_dplus')) + ' m');
+        setText('s-dplus-plan', 'prévu à date : ' + nf(sum(past, 'objectif_dplus')) + ' m');
+        setText('s-km', nf(sum(past, 'realise_km'), 0) + ' km');
+        setText('s-km-plan', 'prévu à date : ' + nf(sum(past, 'objectif_km')) + ' km');
+        var longest = past.reduce(function (a, x) { return Math.max(a, x.plus_longue_km || 0); }, 0);
+        setText('s-long', longest ? nf(longest, 1) + ' km' : '—');
+        setText('s-maj', data.mis_a_jour ? 'Données Garmin importées le ' + fmt(parse(data.mis_a_jour), { day: 'numeric', month: 'long', year: 'numeric' }) + '.' : 'Aucune donnée importée pour le moment.');
+    }
+
+    function chart() {
+        var box = document.getElementById('chart'), tip = document.getElementById('tip');
+        var old = box.querySelector('svg'); if (old) old.remove();
+        var w = data.semaines, W = Math.max(320, box.clientWidth), H = 280;
+        var m = { l: 48, r: 8, t: 24, b: 30 }, iw = W - m.l - m.r, ih = H - m.t - m.b;
+        var oKey = metric === 'dplus' ? 'objectif_dplus' : 'objectif_km', rKey = metric === 'dplus' ? 'realise_dplus' : 'realise_km';
+        var unit = metric === 'dplus' ? ' m' : ' km';
+        var max = Math.max.apply(null, w.map(function (x) { return Math.max(x[oKey] || 0, x[rKey] || 0); })) * 1.1 || 1;
+        var step = iw / w.length, bw = Math.max(2, step * 0.72);
+        var y = function (v) { return m.t + ih - (v / max) * ih; };
+        var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H, role: 'img', 'aria-label': (metric === 'dplus' ? 'Dénivelé positif' : 'Distance') + ' hebdomadaire, objectif et réalisé, de novembre 2026 à août 2027' });
+        box.insertBefore(svg, tip);
+
+        // Bandes de phases
+        var start = 0;
+        for (var i = 1; i <= w.length; i++) {
+            if (i === w.length || w[i].phase !== w[start].phase) {
+                var ph = w[start].phase;
+                el('rect', { x: m.l + start * step, y: m.t, width: (i - start) * step, height: ih, style: 'fill:var(--ph-' + ph + ')' }, svg);
+                if ((i - start) * step > data.phases[ph].length * 6 + 8) {
+                    var t = el('text', { x: m.l + start * step + 4, y: m.t - 8 }, svg);
+                    t.textContent = data.phases[ph];
+                }
+                start = i;
+            }
+        }
+        // Grille et axe vertical
+        var raw = max / 4, mag = Math.pow(10, Math.floor(Math.log10(raw)));
+        var tick = [1, 2, 2.5, 5, 10].map(function (f) { return f * mag; }).filter(function (f) { return f >= raw; })[0];
+        for (var v = 0; v <= max; v += tick) {
+            var yy = y(v);
+            el('line', { x1: m.l, x2: W - m.r, y1: yy, y2: yy, style: 'stroke:var(--line)' }, svg);
+            var tl = el('text', { x: m.l - 6, y: yy + 4, 'text-anchor': 'end' }, svg);
+            tl.textContent = nf(v);
+        }
+        // Barres
+        w.forEach(function (x, i) {
+            var cx = m.l + i * step + (step - bw) / 2, d = parse(x.debut);
+            var isNow = today >= d && today < addDays(d, 7);
+            if (x[oKey] != null) el('rect', { x: cx, y: y(x[oKey]), width: bw, height: m.t + ih - y(x[oKey]), rx: 1.5, style: 'fill:var(--plan)' }, svg);
+            if (x[rKey] != null) el('rect', { x: cx + bw * 0.2, y: y(x[rKey]), width: bw * 0.6, height: m.t + ih - y(x[rKey]), rx: 1.5, style: 'fill:var(--done)' }, svg);
+            if (isNow) el('rect', { x: cx - 1, y: m.t + ih + 2, width: bw + 2, height: 4, style: 'fill:var(--today)' }, svg);
+            var hit = el('rect', { x: m.l + i * step, y: m.t, width: step, height: ih, style: 'fill:transparent' }, svg);
+            hit.addEventListener('pointermove', function (ev) {
+                var r = box.getBoundingClientRect();
+                tip.replaceChildren();
+                [ 'Semaine du ' + fmt(d, { day: 'numeric', month: 'short', year: 'numeric' }) + ' · ' + data.phases[x.phase],
+                  'Objectif : ' + (x[oKey] == null ? '—' : nf(x[oKey]) + unit),
+                  'Réalisé : ' + (x[rKey] == null ? '—' : nf(x[rKey], metric === 'km' ? 1 : 0) + unit),
+                  x.seance_cle ].forEach(function (line) { var div = document.createElement('div'); div.textContent = line; tip.appendChild(div); });
+                tip.style.display = 'block';
+                var left = ev.clientX - r.left + 12;
+                if (left + tip.offsetWidth > box.clientWidth) left = ev.clientX - r.left - tip.offsetWidth - 12;
+                tip.style.left = Math.max(0, left) + 'px';
+                tip.style.top = Math.max(0, ev.clientY - r.top - 10) + 'px';
+            });
+            hit.addEventListener('pointerleave', function () { tip.style.display = 'none'; });
+        });
+        // Axe horizontal : premier jour de chaque mois
+        var lastMonth = -1, lastX = -1e9;
+        w.forEach(function (x, i) {
+            var d = parse(x.debut), mo = addDays(d, 3).getMonth();
+            if (mo !== lastMonth) {
+                lastMonth = mo;
+                if (m.l + i * step - lastX < 36) return;
+                lastX = m.l + i * step;
+                var tx = el('text', { x: m.l + i * step, y: H - 8 }, svg);
+                tx.textContent = addDays(d, 3).toLocaleDateString('fr-FR', { month: 'short' });
+            }
+        });
+    }
+
+    function table() {
+        var body = document.getElementById('weeks-body');
+        body.replaceChildren();
+        var cur = null;
+        data.semaines.forEach(function (x) {
+            if (x.phase !== cur) {
+                cur = x.phase;
+                var trp = body.insertRow(); trp.className = 'phase';
+                var c = trp.insertCell(); c.colSpan = 5; c.textContent = data.phases[x.phase];
+            }
+            var d = parse(x.debut), tr = body.insertRow();
+            if (today >= d && today < addDays(d, 7)) tr.className = 'now';
+            var cells = [
+                [fmt(d, { day: 'numeric', month: 'short' }), 'l'],
+                [x.objectif_km == null ? '—' : nf(x.objectif_km) + ' km · ' + nf(x.objectif_dplus) + ' m', ''],
+                [x.seance_cle + (x.note ? ' — ' + x.note : ''), 'l s'],
+                [x.realise_km == null ? (d > today ? '' : '—') : nf(x.realise_km, 1) + ' km · ' + nf(x.realise_dplus) + ' m', '']
+            ];
+            cells.forEach(function (c) { var td = tr.insertCell(); td.textContent = c[0]; if (c[1]) td.className = c[1]; });
+            var gap = tr.insertCell();
+            if (x.realise_dplus != null && x.objectif_dplus) {
+                var pct = Math.round((x.realise_dplus / x.objectif_dplus - 1) * 100);
+                gap.textContent = (pct > 0 ? '+' : '') + pct + ' %';
+                gap.className = pct >= -10 ? 'ok' : 'ko';
+            }
+        });
+    }
+
+    document.querySelectorAll('.prep .toggle button').forEach(function (b) {
+        b.addEventListener('click', function () {
+            metric = b.getAttribute('data-metric');
+            document.querySelectorAll('.prep .toggle button').forEach(function (o) { o.setAttribute('aria-pressed', o === b ? 'true' : 'false'); });
+            chart();
+        });
+    });
+
+    fetch('./assets/data/trail-prep.json', { cache: 'no-cache' })
+        .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+        .then(function (j) {
+            data = j; summary(); chart(); table();
+            var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(chart, 150); });
+        })
+        .catch(function () { setText('s-maj', 'Le fichier de suivi n\'a pas pu être chargé.'); });
+})();
+</script>
+</body>
+</html>
