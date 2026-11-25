@@ -117,39 +117,7 @@
         </div>
     </div>
 
-    <br>
-    <heading>Objectif : Maratrail de l'Échappée Belle</heading>
-    <p>
-        Valgelon-la-Rochette → Aiguebelle, massif de Belledonne. Le 42 km de l'Échappée Belle annonce environ 2 790 m D+
-        (2 728 m sur la <a href="https://tracedetrail.fr/fr/trace/321412" target="_blank">trace officielle 2026</a>).
-        L'édition 2026 s'est courue le 22 août ; la date 2027 reste à confirmer.
-    </p>
-    <div class="grid2">
-        <div class="card">
-            <h3>Profil du parcours (points de passage officiels)</h3>
-            <div class="chart" id="ch-maratrail"></div>
-            <p class="muted">Première montée : <span id="m-climb">—</span> m D+ sur 10,5 km, puis crêtes autour de 2 000 m jusqu'au km 19.</p>
-        </div>
-        <div class="card">
-            <h3>Écart entre l'acquis et l'objectif</h3>
-            <div class="tw">
-                <table class="weeks">
-                    <thead><tr><th class="l">Critère</th><th>Beaujolais</th><th>Maratrail</th><th>Rapport</th></tr></thead>
-                    <tbody id="tab-ecart"></tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <br>
-    <heading>Temps estimé sur le Maratrail</heading>
-    <p>
-        Méthode : vitesse d'effort moyenne du Beaujolais (<span id="e-kme">—</span> km-effort/h) appliquée aux
-        <span id="e-km">—</span> km-effort du Maratrail, corrigée d'un coefficient montagne (sentier technique, montées longues, altitude).
-        Ce coefficient est une hypothèse, à recaler sur une sortie test en montagne au printemps.
-    </p>
-    <div class="stats" id="estimations"></div>
-    <p>Le plan de préparation semaine par semaine est sur la page <a href="./trail.html">Préparation Échappée Belle</a>.</p>
+    <p>La comparaison avec le Maratrail et l'estimation de temps sont sur la page <a href="./trail.html">Préparation Échappée Belle</a>.</p>
 
     <br>
     <details>
@@ -232,21 +200,7 @@
     // ---- Calculs dérivés -------------------------------------------------
     function derive() {
         var r = D.resume, m = D.maratrail, last = m[m.length - 1];
-        var low = D.profil[0].alt, peak = low, longest = 0;
-        D.profil.forEach(function (p) { var a = p.alt; if (a > peak) peak = a; longest = Math.max(longest, peak - low); if (a < peak - 40 || a < low) { low = a; peak = a; } });
-        var firstClimb = m.filter(function (p) { return p.point.indexOf('Val Pelouse') === 0; })[0].dplus;
-        var altMax = Math.max.apply(null, m.map(function (p) { return p.alt; }));
-        D.ecart = [
-            ['Distance (km)', r.km, last.km, 1],
-            ['D+ (m)', r.dplus, last.dplus, 0],
-            ['D+ par km (m)', Math.round(r.dplus / r.km), Math.round(last.dplus / last.km), 0],
-            ['Km-effort', r.km + r.dplus / 100, last.km + last.dplus / 100, 1],
-            ['Plus longue montée (m)', Math.round(longest), firstClimb, 0],
-            ['Altitude max. (m)', r.alt_max, altMax, 0]
-        ].map(function (x) { return { critere: x[0], b: x[1], m: x[2], dec: x[3], ratio: x[2] / x[1] }; });
-        var kme = last.km + last.dplus / 100;
-        D.estim = { kme: kme, rows: [['Hypothèse favorable', 0.85, 1, 'niveau actuel'], ['Hypothèse centrale', 0.80, 1, 'niveau actuel'], ['Hypothèse prudente', 0.75, 1, 'niveau actuel'], ['Avec la préparation', 0.80, 1.10, '+10 % de vitesse d\'effort, hypothèse centrale']]
-            .map(function (s) { var h = kme / (r.kme_moy * s[1] * s[2]); h = Math.round(h * 12) / 12; return { label: s[0], coef: s[1], note: s[3], h: h }; }) };
+        D.ratioDplus = last.dplus / r.dplus;
         var q = D.quotidien.filter(function (x) { return x.rhr != null; });
         var sl = D.quotidien.filter(function (x) { return x.sleep_h != null; });
         D.forme = { rhr0: q[0].rhr, rhr1: q[q.length - 1].rhr, sleep: sl.reduce(function (a, x) { return a + x.sleep_h; }, 0) / sl.length };
@@ -256,7 +210,7 @@
     function texts() {
         var r = D.resume;
         setText('t-duree', hhmm(r.duree_h)); setText('t-km', nf(r.km, 1)); setText('t-dp', nf(r.dplus));
-        setText('t-ratio', nf(D.ecart[1].ratio, 1)); setText('t-source', 'Données : ' + D.source + '.');
+        setText('t-ratio', nf(D.ratioDplus, 1)); setText('t-source', 'Données : ' + D.source + '.');
         var vo2 = D.predictions.filter(function (x) { return x.vo2max != null; }).pop();
         setText('k-vo2', vo2 ? nf(vo2.vo2max) : '—');
         setText('k-rhr', nf(D.forme.rhr1) + ' bpm');
@@ -267,8 +221,6 @@
         setText('b-drop', nf(Math.round((1 - r.kme_h2 / r.kme_h1) * 100))); setText('b-z4', nf(r.z4_min));
         var raide = D.pente.filter(function (x) { return x.bin === '> +15 %'; })[0]; setText('p-raide', raide ? nf(raide.km, 1) : '—');
         setText('f-sleep', nf(D.forme.sleep, 1));
-        setText('m-climb', nf(D.ecart[4].m));
-        setText('e-kme', nf(r.kme_moy, 1)); setText('e-km', nf(D.estim.kme, 1));
 
         var tb = document.getElementById('tab-sorties');
         D.sorties.forEach(function (s) {
@@ -276,19 +228,6 @@
             [[parse(s.date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }), 'l'], [s.sortie, 'l'], [nf(s.km, 1)], [nf(s.dplus)],
              [Math.floor(s.minutes / 60) + 'h' + String(s.minutes % 60).padStart(2, '0')], [pace(s.allure)], [pace(s.gap)], [nf(s.fc)], [nf(s.z4)], [nf(s.z5)]]
                 .forEach(function (c) { var td = tr.insertCell(); td.textContent = c[0]; if (c[1]) td.className = c[1]; });
-        });
-        var te = document.getElementById('tab-ecart');
-        D.ecart.forEach(function (x) {
-            var tr = te.insertRow();
-            [[x.critere, 'l wrap'], [nf(x.b, x.dec)], [nf(x.m, x.dec)], ['×' + nf(x.ratio, 1), x.ratio >= 1.5 ? 'ko' : '']]
-                .forEach(function (c) { var td = tr.insertCell(); td.textContent = c[0]; if (c[1]) td.className = c[1]; });
-        });
-        var es = document.getElementById('estimations');
-        D.estim.rows.forEach(function (x) {
-            var d = document.createElement('div'); d.className = 'stat';
-            [['l', x.label + (x.label.indexOf('Avec') === 0 ? '' : ' (×' + nf(x.coef, 2) + ')')], ['v', hhmm(x.h)], ['l', x.note]]
-                .forEach(function (c) { var e = document.createElement('div'); e.className = c[0]; e.textContent = c[1]; d.appendChild(e); });
-            es.appendChild(d);
         });
     }
 
@@ -380,27 +319,7 @@
         });
     }
 
-    function chMaratrail() {
-        var box = document.getElementById('ch-maratrail'), data = D.maratrail;
-        var f = frame(box, 250, { l: 52, r: 12, t: 14, b: 26 });
-        f.svg.setAttribute('aria-label', 'Profil du Maratrail de l\'Échappée Belle par points de passage');
-        var xmax = data[data.length - 1].km, x = scale(0, xmax, f.x0, f.x1), y = scale(0, 2200, f.y1, f.y0);
-        grid(f, [0, 500, 1000, 1500, 2000], y, function (v) { return nf(v) + ' m'; });
-        var pts = data.map(function (d) { return [x(d.km), y(d.alt)]; });
-        el('path', { d: path([[x(0), f.y1]].concat(pts, [[x(xmax), f.y1]])) + 'Z', style: 'fill:var(--plan);opacity:.55' }, f.svg);
-        el('path', { d: path(pts), style: 'fill:none;stroke:var(--done);stroke-width:1.5' }, f.svg);
-        var top = D.resume.alt_max;
-        el('line', { x1: f.x0, x2: f.x1, y1: y(top), y2: y(top), style: 'stroke:var(--muted);stroke-dasharray:4 3' }, f.svg);
-        var tt = el('text', { x: f.x1, y: y(top) - 4, 'text-anchor': 'end' }, f.svg); tt.textContent = 'point culminant du Beaujolais';
-        data.forEach(function (d) { el('circle', { cx: x(d.km), cy: y(d.alt), r: 3.5, style: 'fill:var(--done)' }, f.svg); });
-        xLabels(f, niceTicks(0, xmax, Math.max(3, Math.floor((f.x1 - f.x0) / 70))), x, function (v) { return v + ' km'; });
-        hover(f, box, function (px) {
-            var d = nearest(data, 'km', x.inv(px));
-            return [d.point, 'km ' + nf(d.km, 1) + ' · ' + nf(d.alt) + ' m', 'D+ cumulé ' + nf(d.dplus) + ' m'];
-        });
-    }
-
-    function charts() { chProfil(); chEffort(); chPente(); chForme(); chMaratrail(); }
+    function charts() { chProfil(); chEffort(); chPente(); chForme(); }
 
     fetch('./assets/data/trail-beaujolais.json', { cache: 'no-cache' })
         .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })

@@ -1,53 +1,1121 @@
-
-<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-    <title>Corentin Le Bihan Gautier</title>
-
-
-    <meta name="author" content="Corentin Gautier">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Modélisation géométrique — Corentin Le Bihan Gautier</title>
+    <meta name="author" content="Corentin Le Bihan Gautier">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <meta name="description" content="Cours de modélisation géométrique (GAMAGORA, M2) : surfaces, maillages, transformations, volumes, simplification, subdivision, courbes et surfaces paramétriques.">
     <link rel="stylesheet" type="text/css" href="./assets/css/stylesheet.css">
-
+    <link rel="stylesheet" type="text/css" href="./assets/css/cours.css">
     <link rel="icon" type="image/png" href="./assets/img/favicon.png">
-<style type="text/css" id="operaUserStyle"></style></head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, { delimiters: [{ left: '\\[', right: '\\]', display: true }, { left: '\\(', right: '\\)', display: false }] });"></script>
+    <script defer src="./assets/js/cours.js"></script>
+</head>
 <body>
-<table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-    <tr>
-        <td style="padding:20px;width:100%;vertical-align:middle">
-            <a class="anchor-point" id="teaching"></a>
-            <heading>Modélisation géométrique</heading>
-        <h4>1 - Représentation surfaciques, polyèdres et quadriques :</h4>
-            <li><a href="./assets/pdf/CM_02v3_Primitives.pdf">Cours</a></li>
-            <li><a href="./assets/pdf/TP02_Primitives_v2.pdf">TP-1</a></li>
-        <h4>2 - Maillages :</h4>
-            <li><a href="./assets/pdf/2018_2019_CM_03v2_Maillages3D.pdf">Cours</a></li>
-            <li><a href="./assets/pdf/TP_Charge_Maillage.pdf">TP-2</a></li>
-            <lu>
-                <li><a href="./assets/buddha.off">Buddha.off</a></li>
-                <li><a href="./assets/bunny.off">bunny.off</a></li>
-                <li><a href="./assets/cube.off">cube.off</a></li>
-                <li><a href="./assets/max.off">max.off</a></li>
-                <li><a href="./assets/plan.off">plan.off</a></li>
-            </lu>
-        <h4>3 - Transformations, visualisation</h4>
-            <li><a href="./assets/pdf/CM_04_transformation.pdf">Cours</a></li>
-        <h4>4 - Modèles Volumiques</h4>
-            <li><a href="./assets/pdf/CM_05_Volumes.pdf">Cours</a></li>
-            <li><a href="./assets/pdf/TP_Modeles_Volumiques.pdf">TP-3</a></li>
-        <h4>5 - Simplification de maillages</h4>
-            <li><a href="./assets/pdf/CM-06_Simplification_LOD.pdf">Cours</a></li>
-            <li><a href="./assets/pdf/TP-4_Simplification.pdf">TP-4</a></li>
-        <h4>6 - Subdivision de maillages</h4>
-            <li><a href="./assets/pdf/CM_07_Subdivision.pdf">Cours</a></li>
-            <li><a href="./assets/pdf/TP_Subdivision.pdf">TP-5</a></li>
-            <li><a href="./assets/Cube.obj">Cube.obj</a></li>
-        <h4>7 - Courbes paramétriques</h4>
-            <li><a href="./assets/pdf/CM_CourbesParametriques.pdf">Cours</a></li>
-            <li><a href="./assets/pdf/TP_Courbes_Bezier.pdf">TP-6</a></li>
-        <h4>8 - Surfaces paramétriques</h4>
-            <li><a href="./assets/pdf/CM_09_surfaces.pdf">Cours</a></li>
-        </td>
-    </tr>
-</tbody></table>
+<div class="cours" data-course="Modélisation géométrique">
+
+    <p class="top"><a href="./index.html#teaching">← Corentin Le Bihan Gautier</a> · <a href="./virtual world.html">Cours « Mondes virtuels »</a></p>
+
+    <header class="course-head">
+        <h1>Modélisation géométrique</h1>
+        <p>GAMAGORA, Université Lumière Lyon 2 — Master 2, 2024-2025</p>
+    </header>
+
+    <div class="layout">
+        <nav class="toc" aria-label="Sommaire du cours">
+            <h2>Chapitres</h2>
+            <ol></ol>
+        </nav>
+
+        <main>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c1" data-title="Surfaces, polyèdres et quadriques">
+    <header>
+        <p class="kicker">Chapitre 1</p>
+        <h2>Représentations surfaciques : polyèdres et quadriques</h2>
+        <p class="lead">Comment décrire la surface d'un objet ? Soit par une équation (surface continue), soit par un ensemble fini de faces (polyèdre). Ce chapitre montre comment passer de l'une à l'autre pour les quadriques usuelles.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM_02v3_Primitives.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+            <a href="./assets/pdf/TP02_Primitives_v2.pdf" download><span class="t">PDF</span>Sujet du TP 1</a>
+        </div>
+    </header>
+
+    <div class="side">
+        <div>
+            <h3>Représentation surfacique</h3>
+            <p>Dans une représentation surfacique, un modèle est entièrement défini par sa <b>surface extérieure</b> : on ne décrit pas la matière à l'intérieur, seulement l'enveloppe qui la sépare de l'extérieur. C'est la représentation la plus courante en synthèse d'images.</p>
+        </div>
+        <figure><img src="./assets/img/cours/mg/c1-voiture.webp" alt="Modèle 3D d'une voiture décapotable en rendu gris" loading="lazy"><figcaption>Un modèle défini par sa seule surface.</figcaption></figure>
+    </div>
+
+    <h3>Rappels de trigonométrie</h3>
+    <h4>Triangle rectangle</h4>
+    <p>Soit ABC un triangle rectangle en A ; [BC] est l'hypoténuse. Le théorème de Pythagore donne \(BC^2 = AB^2 + AC^2\), et pour l'angle \(\widehat{ABC}\) :</p>
+    <div class="math">\[ \cos\widehat{ABC} = \frac{BA}{BC}\ \text{(adjacent / hypoténuse)}, \quad \sin\widehat{ABC} = \frac{AC}{BC}\ \text{(opposé / hypoténuse)}, \quad \tan\widehat{ABC} = \frac{AC}{BA}\ \text{(opposé / adjacent)}. \]</div>
+    <h4>Valeurs remarquables</h4>
+    <div class="tw"><table class="t">
+        <tr><th>\(\theta\)</th><td>\(0\)</td><td>\(\pi/6\)</td><td>\(\pi/3\)</td><td>\(\pi/2\)</td><td>\(\pi\)</td><td>\(-\pi/2\)</td></tr>
+        <tr><th>\(\cos\theta\)</th><td>1</td><td>\(\sqrt3/2\)</td><td>\(1/2\)</td><td>0</td><td>−1</td><td>0</td></tr>
+        <tr><th>\(\sin\theta\)</th><td>0</td><td>\(1/2\)</td><td>\(\sqrt3/2\)</td><td>1</td><td>0</td><td>−1</td></tr>
+    </table></div>
+    <h4>Coordonnées sphériques</h4>
+    <p>Soit M(x, y, z) un point de l'espace, O l'origine et P(x, y, 0) la projection orthogonale de M sur le plan xOy. On note :</p>
+    <ul>
+        <li>\(r = OM\), la distance de M à l'origine ;</li>
+        <li>\(\varphi \in [0, \pi]\), l'angle entre l'axe Z et le vecteur \(\vec{OM}\) ;</li>
+        <li>\(\theta \in [0, 2\pi[\), l'angle entre l'axe X et le vecteur \(\vec{OP}\).</li>
+    </ul>
+    <p>Le triplet \((r, \theta, \varphi)\) forme les <b>coordonnées sphériques</b> de M. Comme \(z = r\cos\varphi\) et \(OP = r\sin\varphi\), on obtient :</p>
+    <div class="box"><span class="bt">À retenir</span>
+        <div class="math">\[ x = r\sin\varphi\cos\theta, \qquad y = r\sin\varphi\sin\theta, \qquad z = r\cos\varphi. \]</div>
+    </div>
+
+    <h3>Polyèdre ou surface continue ?</h3>
+    <div class="side">
+        <div>
+            <p>Un <b>polyèdre</b> décrit une surface de manière <b>finie</b> :</p>
+            <ul>
+                <li>un ensemble de points de \(\mathbb{R}^3\), les <b>sommets</b> du polyèdre ;</li>
+                <li>un ensemble de <b>faces</b>, chacune définie par une suite ordonnée de sommets.</li>
+            </ul>
+            <p>Exemple du cube de côté 10 centré à l'origine :</p>
+<pre><code>Sommets : S0(-5,-5,-5) S1(-5,-5,5) S2(-5,5,-5) S3(5,-5,-5)
+          S4(5,5,-5)   S5(5,-5,5)  S6(-5,5,5)  S7(5,5,5)
+Faces   : F0(S0,S1,S5,S3)  F1(S5,S7,S4,S3)  F2(S7,S4,S2,S6)
+          F3(S6,S2,S0,S1)  F4(S1,S5,S7,S6)  F5(S0,S3,S4,S2)</code></pre>
+        </div>
+        <figure><img src="./assets/img/cours/mg/c1-cube.webp" alt="Cube dont les sommets S0 à S7 et les faces F0, F1, F4 sont étiquetés" loading="lazy"><figcaption>Sommets et faces du cube.</figcaption></figure>
+    </div>
+    <p>Une <b>surface continue</b> est au contraire décrite par une équation. La sphère de centre \(C(x_c, y_c, z_c)\) et de rayon \(r\) est l'ensemble des points vérifiant :</p>
+    <div class="math">\[ (x - x_c)^2 + (y - y_c)^2 + (z - z_c)^2 = r^2. \]</div>
+    <p>On peut alors obtenir autant de points que l'on veut, n'importe où sur la surface — ce que le polyèdre ne permet pas : sa précision est figée par le nombre de faces.</p>
+
+    <h3>Les quadriques</h3>
+    <p>Les quadriques regroupent les cylindres, cônes, sphères, ellipsoïdes, paraboloïdes et hyperboloïdes. Ce sont les surfaces d'équation implicite \(F(x, y, z) = 0\) de degré 2 :</p>
+    <div class="math">\[ F(x,y,z) = Ax^2 + 2Bxy + 2Cxz + 2Dx + Ey^2 + 2Fyz + 2Gy + Hz^2 + 2Iz + J. \]</div>
+    <p>Pour la sphère, en développant \(x^2 - 2x x_c + y^2 - 2y y_c + z^2 - 2z z_c + x_c^2 + y_c^2 + z_c^2 - r^2 = 0\), on identifie :</p>
+    <div class="math">\[ A = E = H = 1,\quad B = C = F = 0,\quad D = -x_c,\ G = -y_c,\ I = -z_c,\quad J = x_c^2 + y_c^2 + z_c^2 - r^2. \]</div>
+
+    <h4>Cylindre</h4>
+    <div class="side">
+        <div>
+            <p>Le cylindre de révolution d'axe D et de rayon r est l'ensemble des points de \(\mathbb{R}^3\) situés à la distance r de la droite D. Lorsque l'axe est Oz, son équation est \(x^2 + y^2 = r^2\) ; une hauteur h &gt; 0 le limite entre les plans \(z = -h/2\) et \(z = h/2\).</p>
+            <p>Les <b>méridiens</b> du cylindre sont les segments de longueur h tracés sur son corps, parallèles à l'axe.</p>
+        </div>
+        <figure><img src="./assets/img/cours/mg/c1-cylindre.webp" alt="Cylindre incliné avec son axe D, un point de la surface et le plan limite" loading="lazy"></figure>
+    </div>
+    <p><b>Facettisation.</b> On choisit m méridiens régulièrement répartis, d'angles \(\theta_i = 2\pi i / m\) pour \(i = 0, \dots, m-1\). Chaque méridien \(M_i\) fournit deux sommets :</p>
+    <div class="math">\[ P_i = \big(r\cos\theta_i,\ r\sin\theta_i,\ -h/2\big), \qquad P'_i = \big(r\cos\theta_i,\ r\sin\theta_i,\ h/2\big). \]</div>
+    <ul>
+        <li><b>Corps</b> : pour \(i = 0, \dots, m-1\), la facette i est le rectangle \((P_i, P'_i, P'_{i+1}, P_{i+1})\), les indices étant pris modulo m (le dernier rectangle se referme sur \(P_0\)).</li>
+        <li><b>Face du bas</b> : \((P_0, P_1, \dots, P_{m-1})\).</li>
+        <li><b>Face du haut</b> : \((P'_{m-1}, \dots, P'_1, P'_0)\), dans l'ordre inverse pour que sa normale pointe vers l'extérieur.</li>
+    </ul>
+    <p>Les sommets sont partagés entre le corps et les couvercles : on les crée une seule fois.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c1-cylindre-meridiens.webp" alt="Méridien d'angle thêta sur un cylindre" loading="lazy"><figcaption>Méridien d'angle θ.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c1-cylindre-facettes.webp" alt="Cylindre facetté en prisme hexagonal" loading="lazy"><figcaption>Cylindre facetté.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c1-cone-facettes.webp" alt="Cône facetté" loading="lazy"><figcaption>Cône facetté.</figcaption></figure>
+    </div>
+
+    <h4>Cône</h4>
+    <p>Un cône est formé de droites passant toutes par un même point, le <b>sommet</b>, et s'appuyant sur une courbe, la <b>base</b>. Pour un cône de révolution, la base est un cercle. Avec un sommet \(S(0, 0, z_s)\) et une base de rayon r centrée en O dans le plan xOy :</p>
+    <div class="math">\[ (z - z_s)^2 = \frac{z_s^2}{r^2}\,(x^2 + y^2). \]</div>
+    <p>La facettisation reprend celle du cylindre : 2m sommets construits de la même façon (le cercle du haut a simplement un rayon plus petit, voire nul pour un cône non tronqué), des faces trapézoïdales entre méridiens et deux faces pour les plans limites.</p>
+
+    <h4>Sphère</h4>
+    <p>La sphère de centre O et de rayon r est l'ensemble des points \(M = (x_m, y_m, z_m)\) tels que \(x_m^2 + y_m^2 + z_m^2 = r^2\), soit en coordonnées sphériques les points \((r, \theta_m, \varphi_m)\).</p>
+    <ul>
+        <li>Un <b>méridien</b> d'angle \(\theta_i \in [0, 2\pi[\) est le demi-cercle des points tels que \(\theta_m = \theta_i\).</li>
+        <li>Un <b>parallèle</b> d'angle \(\varphi_i \in\ ]0, \pi[\) est le cercle des points tels que \(\varphi_m = \varphi_i\).</li>
+    </ul>
+    <p><b>Facettisation.</b> On découpe la sphère en m méridiens et p parallèles (\(m \ge 3\), \(p \ge 1\)), auxquels s'ajoutent le <b>pôle nord</b> \(N = (0, 0, r)\) et le <b>pôle sud</b> \(S = (0, 0, -r)\). On obtient \(m \cdot p + 2\) sommets : des faces à 4 sommets entre deux parallèles consécutifs, et des faces à 3 sommets (triangles) autour de chaque pôle.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c1-sphere-meridien.webp" alt="Méridien d'une sphère" loading="lazy"><figcaption>Un méridien (θ fixé).</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c1-sphere-parallele.webp" alt="Parallèle d'une sphère" loading="lazy"><figcaption>Un parallèle (φ fixé).</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c1-sphere-facettes.webp" alt="Sphère facettée avec pôles nord et sud" loading="lazy"><figcaption>Facettes autour du pôle nord.</figcaption></figure>
+    </div>
+
+    <h3>Conclusion</h3>
+    <p>Une surface se représente soit de manière continue (par une équation), soit de manière polyédrique. À partir de l'équation, on peut construire une facettisation, et l'équation sous-jacente permet de faire varier la résolution du modèle facetté.</p>
+
+    <div class="tp" id="tp1">
+        <h3>TP 1 — Polyèdres et quadriques</h3>
+        <p>Les objets sont construits en <b>facettes triangulaires</b> dans l'environnement de votre choix (Unity, OpenGL…).</p>
+        <h4>Exercice 0 — Plan</h4>
+        <p>Tracez un triangle, puis un second pour obtenir un rectangle. Pour aller plus loin, générez un plan découpé en <code>nbLignes × nbColonnes</code> cellules, chacune formée de deux triangles.</p>
+        <figure class="s"><img src="./assets/img/cours/mg/tp1-grille.webp" alt="Grille de 4 lignes et 6 colonnes, chaque cellule coupée en deux triangles" loading="lazy"></figure>
+        <h4>Exercice 1 — Cylindre</h4>
+        <p>Écrivez une méthode <code>Cylindre(rayon, hauteur, nbMeridiens)</code> qui construit un cylindre fermé par deux « couvercles ». Soignez la liaison entre les couvercles et le corps.</p>
+        <h4>Exercice 2 — Sphère</h4>
+        <p>Écrivez une méthode <code>Sphere(rayon, nbParalleles, nbMeridiens)</code>. Attention au traitement des pôles nord et sud.</p>
+        <h4>Exercice 3 <span class="opt">(optionnel)</span> — Cône, tronqué ou non</h4>
+        <p>Paramètres : rayon, hauteur, et hauteur à laquelle le cône est tronqué.</p>
+        <h4>Exercice 4 <span class="opt">(optionnel)</span> — Objets tronqués</h4>
+        <p>Reprenez les exercices précédents pour produire des objets tronqués, par exemple une sphère dont on retire un quartier. Pensez à bien refermer les objets.</p>
+        <figure class="s"><img src="./assets/img/cours/mg/tp1-sphere-tronquee.webp" alt="Sphère jaune dont un quartier a été retiré, refermée par deux faces planes" loading="lazy"><figcaption>Sphère tronquée attendue.</figcaption></figure>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c2" data-title="Maillages">
+    <header>
+        <p class="kicker">Chapitre 2</p>
+        <h2>Maillages</h2>
+        <p class="lead">Le maillage est la structure standard pour afficher des scènes 3D complexes. Ce chapitre en donne le vocabulaire, les propriétés topologiques (dualité, fermeture, formule d'Euler, normales) et les structures de données pour le stocker.</p>
+        <div class="res">
+            <a href="./assets/pdf/2018_2019_CM_03v2_Maillages3D.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+            <a href="./assets/pdf/TP_Charge_Maillage.pdf" download><span class="t">PDF</span>Sujet du TP 2</a>
+            <a href="./assets/buddha.off" download><span class="t f">OFF</span>buddha.off</a>
+            <a href="./assets/bunny.off" download><span class="t f">OFF</span>bunny.off</a>
+            <a href="./assets/cube.off" download><span class="t f">OFF</span>cube.off</a>
+            <a href="./assets/max.off" download><span class="t f">OFF</span>max.off</a>
+            <a href="./assets/plan.off" download><span class="t f">OFF</span>plan.off</a>
+        </div>
+    </header>
+
+    <div class="side">
+        <div>
+            <h3>Pourquoi des maillages ?</h3>
+            <ul>
+                <li>La surface est représentée par un ensemble de polygones, le plus souvent des <b>triangles</b> (le simplexe de dimension 2).</li>
+                <li>L'affichage est optimisé par toutes les cartes graphiques.</li>
+                <li>La surface est continue (C<sup>0</sup>) mais pas lisse : elle présente des discontinuités de dérivée aux arêtes.</li>
+                <li>Le maillage porte à la fois la <b>géométrie</b> (positions) et la <b>topologie</b> (qui est relié à qui).</li>
+                <li>L'équation d'une surface n'est pas toujours disponible, par exemple pour un objet numérisé par scanner.</li>
+            </ul>
+        </div>
+        <figure><img src="./assets/img/cours/mg/c2-shrek.webp" alt="Tête de personnage moitié en fil de fer, moitié en rendu lisse" loading="lazy"><figcaption>Même maillage en fil de fer et en rendu.</figcaption></figure>
+    </div>
+
+    <h3>Vocabulaire</h3>
+    <dl>
+        <dt>Sommets</dt><dd>des points (x, y, z).</dd>
+        <dt>Arêtes</dt><dd>définies par 2 sommets.</dd>
+        <dt>Faces</dt><dd>définies par n sommets ou n arêtes ; en général des triangles (n = 3).</dd>
+    </dl>
+
+    <h3>Propriétés</h3>
+    <h4>Dualité</h4>
+    <div class="side">
+        <div>
+            <p>Le <b>maillage dual</b> s'obtient ainsi :</p>
+            <ul>
+                <li>chaque face est remplacée par un sommet, placé à son barycentre ;</li>
+                <li>deux sommets du dual sont reliés par une arête si les faces correspondantes sont voisines dans le maillage d'origine ;</li>
+                <li>chaque sommet d'origine devient une face.</li>
+            </ul>
+            <p>Plus généralement, les objets de dimension k (0 : point, 1 : segment, 2 : face) deviennent des objets de dimension 2 − k. Le dual du dual d'un maillage fermé est le maillage d'origine.</p>
+        </div>
+        <figure><img src="./assets/img/cours/mg/c2-dual.webp" alt="Maillage triangulaire (sommets blancs) et son dual (sommets orange aux barycentres)" loading="lazy"><figcaption>Maillage (blanc) et son dual (orange).</figcaption></figure>
+    </div>
+    <h4>Fermeture</h4>
+    <p>Un maillage est <b>fermé</b> s'il n'a pas de bord : chaque arête est partagée par deux faces (exactement deux pour une surface « variété »). Une arête qui n'appartient qu'à une seule face fait partie d'un bord.</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c2-fermeture.webp" alt="Un cube fermé et une surface ouverte dont le bord est surligné en rouge" loading="lazy"></figure>
+    <h4>Formule d'Euler</h4>
+    <p>Elle relie le nombre d'entités de chaque type dans un maillage :</p>
+    <div class="box"><span class="bt">Formule d'Euler</span>
+        <div class="math">\[ S - A + F = 2C - 2G - T \]</div>
+        <p>S : sommets, A : arêtes, F : faces, C : composantes connexes, G : genre (nombre d'« anses » ou de trous traversants), T : nombre de bords (trous).</p>
+    </div>
+    <figure class="s"><img src="./assets/img/cours/mg/c2-genre.webp" alt="Objets de genre 0, 1 et 2" loading="lazy"><figcaption>Genre 0, 1 et 2.</figcaption></figure>
+    <p>Exemples :</p>
+    <ul>
+        <li>Sphère (C = 1, G = 0, T = 0) : S − A + F = 2. C'est le cas de tous les polyèdres convexes : tétraèdre 4 − 6 + 4, cube 8 − 12 + 6, octaèdre 6 − 12 + 8, dodécaèdre 20 − 30 + 12, icosaèdre 12 − 30 + 20.</li>
+        <li>Tore (C = 1, G = 1, T = 0) : S − A + F = 0.</li>
+        <li>Un seul triangle (C = 1, G = 0, T = 1) : 3 − 3 + 1 = 1.</li>
+    </ul>
+    <figure class="s"><img src="./assets/img/cours/mg/c2-sphere-tore.webp" alt="Sphère et tore maillés" loading="lazy"></figure>
+    <p>La formule sert de test de cohérence : un maillage chargé qui ne la vérifie pas a des faces manquantes, des sommets dupliqués ou des arêtes mal partagées.</p>
+
+    <h4>Normales</h4>
+    <p><b>Normale par face.</b> Elle définit l'orientation de la face, et donc l'extérieur et l'intérieur ; elle sert aussi à l'éclairage. Pour un triangle \((P_1, P_2, P_3)\), c'est le produit vectoriel des deux premières arêtes, normalisé :</p>
+    <div class="math">\[ \vec n = \frac{\vec{P_1P_2} \wedge \vec{P_1P_3}}{\lVert \vec{P_1P_2} \wedge \vec{P_1P_3} \rVert}. \]</div>
+    <p>L'ordre des sommets compte : inverser deux sommets retourne la normale.</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c2-normale-face.webp" alt="Deux triangles aux sommets énumérés dans un ordre différent ont des normales opposées" loading="lazy"></figure>
+    <p><b>Normale par sommet.</b> On la calcule à partir des normales des faces qui contiennent le sommet : leur moyenne, de préférence pondérée par une propriété du triangle (son aire, ou l'angle au sommet), puis normalisée. Elle permet un éclairage lissé.</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c2-normale-sommet.webp" alt="La normale au sommet (rouge) moyenne les normales des faces voisines (bleu)" loading="lazy"></figure>
+
+    <h3>Structures de données</h3>
+    <p>On stocke les entités (sommets, arêtes, faces), les normales (par sommet ou par face), les couleurs ou coordonnées de texture… Il faut arbitrer entre trois objectifs :</p>
+    <ul>
+        <li><b>minimiser la mémoire</b> : répéter le moins possible les coordonnées ;</li>
+        <li><b>faciliter le parcours</b> : passer d'un sommet à ses voisins ;</li>
+        <li><b>extraire la topologie</b> : retrouver les sommets liés à un sommet, les arêtes autour d'un sommet, etc.</li>
+    </ul>
+    <p>Exemple commun : un quadrilatère P1 P2 P4 P3 coupé en deux triangles T1 = (P1, P2, P4) et T2 = (P1, P4, P3).</p>
+
+    <h4>Maillage non indexé (approche naïve)</h4>
+    <p>Un unique tableau de sommets, trois par triangle. Les coordonnées sont répétées autant de fois que de faces qui les contiennent : simple, mais <b>coûteux en mémoire</b>.</p>
+<pre><code>sommets = [ x1,y1,z1, x2,y2,z2, x4,y4,z4,     // T1
+            x1,y1,z1, x4,y4,z4, x3,y3,z3 ]    // T2</code></pre>
+    <h4>Maillage indexé (approche classique)</h4>
+    <p>Un tableau de sommets, un tableau de faces qui référence les sommets par leur indice, et éventuellement d'autres tableaux (couleurs, normales). Les coordonnées ne sont plus répétées, mais retrouver les voisins d'un sommet impose de parcourir toutes les faces.</p>
+<pre><code>sommets   = [ x1,y1,z1, x2,y2,z2, x3,y3,z3, x4,y4,z4 ]
+triangles = [ 1,2,4,  1,4,3 ]
+couleurs  = [ r1,g1,b1, r2,g2,b2, r3,g3,b3, r4,g4,b4 ]</code></pre>
+    <h4>Bandes et éventails (strip, fan)</h4>
+    <p>Dans un <b>strip</b>, chaque nouveau sommet forme un triangle avec les deux précédents ; dans un <b>fan</b>, tous les triangles partagent le premier sommet. Très compact, mais ne convient pas à tous les maillages et ne donne pas la topologie.</p>
+<pre><code>strip : [ 3,1,4,2 ]  →  (3,1,4), (1,4,2)
+fan   : [ 4,3,1,2 ]  →  (4,3,1), (4,1,2)</code></pre>
+    <h4>Structure par arêtes</h4>
+    <p>Les sommets ont leurs 3 coordonnées, chaque arête référence ses 2 sommets et ses 2 faces, chaque face ses 3 arêtes. Plus de mémoire, mais la topologie devient simple à parcourir.</p>
+    <h4>Demi-arêtes (half-edge)</h4>
+    <p>Chaque arête est coupée en deux demi-arêtes de sens opposés. Une demi-arête connaît :</p>
+    <ul>
+        <li>sa demi-arête <b>opposée</b> (l'autre moitié de l'arête) ;</li>
+        <li>la demi-arête <b>suivante</b> dans sa face ;</li>
+        <li>la <b>face</b> qu'elle borde ;</li>
+        <li>son sommet d'<b>arrivée</b>.</li>
+    </ul>
+    <p>Chaque sommet et chaque face gardent en plus une de leurs demi-arêtes. Cette structure prend de la place, mais le parcours de voisinage et les opérations locales (ajout, suppression, retournement d'arête) deviennent simples : c'est la base des algorithmes de simplification et de subdivision des chapitres 5 et 6.</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c2-demi-arete.webp" alt="Quadrilatère découpé en deux triangles avec ses demi-arêtes et les tableaux correspondants" loading="lazy"></figure>
+
+    <h4>Formats de fichier</h4>
+    <ul>
+        <li>Indexés : <b>OFF</b>, <b>OBJ</b>, PLY, glTF.</li>
+        <li>Non indexé : <b>STL</b> (chaque triangle porte ses trois sommets).</li>
+    </ul>
+
+    <h3>Affichage avec OpenGL</h3>
+    <p>Plutôt que d'envoyer les sommets un par un, on transmet des tableaux :</p>
+    <ul>
+        <li><b>VA</b> (<i>Vertex Array</i>) : tableaux stockés en mémoire centrale, envoyés à chaque image ;</li>
+        <li><b>VBO</b> (<i>Vertex Buffer Object</i>) : tableaux stockés sur la carte graphique, ce qui évite de les renvoyer à chaque rafraîchissement.</li>
+    </ul>
+    <p>Les VBO sont aujourd'hui la norme : ils sont gérés par toutes les cartes depuis OpenGL 1.5, et c'est le seul mode du profil « core » d'OpenGL 3.x, de WebGL et de Vulkan.</p>
+    <div class="side">
+        <div>
+            <p>Types de primitives : <code>GL_TRIANGLES</code>, <code>GL_TRIANGLE_STRIP</code>, <code>GL_TRIANGLE_FAN</code>, et historiquement <code>GL_QUADS</code>, <code>GL_QUAD_STRIP</code> et <code>GL_POLYGON</code>.</p>
+            <div class="box warn"><span class="bt">Attention</span><p><code>GL_QUADS</code> et <code>GL_POLYGON</code> ont disparu du profil core d'OpenGL 3.2 et n'existent pas en WebGL : on triangule les faces avant l'envoi.</p></div>
+        </div>
+        <figure><img src="./assets/img/cours/mg/c2-gl-primitives.webp" alt="Ordre des sommets pour GL_POLYGON, GL_TRIANGLES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_QUADS et GL_QUAD_STRIP" loading="lazy"></figure>
+    </div>
+
+    <h3>Conclusion</h3>
+    <p>Un maillage est un ensemble de sommets, d'arêtes et de faces, complété par d'autres propriétés (normales, couleurs…). Les arêtes ou les faces ne sont pas forcément stockées explicitement, et les liaisons disponibles (sommets/faces, sommets/sommets, arêtes/faces) dépendent de la structure choisie : il faut arbitrer entre taille mémoire, parcours et accès à la topologie.</p>
+    <figure><img src="./assets/img/cours/mg/c2-numerisation.webp" alt="Centrale électrique de 13 millions de triangles et statue de David numérisée en 2 milliards de polygones" loading="lazy"><figcaption>Ordres de grandeur : 13 millions de triangles (centrale, UNC) et 2 milliards de polygones pour le David numérisé (Digital Michelangelo, Stanford).</figcaption></figure>
+    <p class="credit">Ce chapitre s'appuie sur les cours de Loïc Barthe (IRIT), Nicolas Roussel (Inria Lille), Sylvain Brandel (LIRIS), Gilles Gesquière et Rémi Bénière (C4W).</p>
+
+    <div class="tp" id="tp2">
+        <h3>TP 2 — Charger et exporter un fichier OFF</h3>
+        <p>Les maillages utilisés sont au format <b>OFF</b>, un format texte (ASCII) :</p>
+<pre><code>OFF
+8 12 0            ← nombre de sommets, de faces, d'arêtes
+0.256 0.365 0.569 ← sommet 0 : x y z
+2.365 2.654 8.145 ← sommet 1
+...
+3 0 1 2           ← face : nombre de sommets, puis leurs indices
+3 2 5 9
+3 6 0 4</code></pre>
+        <ul>
+            <li>La première ligne rappelle le format : <code>OFF</code>.</li>
+            <li>Viennent ensuite le nombre de sommets, le nombre de faces et le nombre d'arêtes, ce dernier souvent laissé à 0.</li>
+            <li>La liste des sommets suit : trois flottants par sommet, numérotés à partir de 0.</li>
+            <li>Enfin, la liste des faces : le nombre de sommets de la face (ici toujours 3), puis leurs indices. La première face relie les sommets 0, 1 et 2.</li>
+        </ul>
+        <p>Téléchargez <a href="./assets/buddha.off" download>buddha.off</a> (ou un autre fichier en haut du chapitre), vérifiez dans un éditeur qu'il respecte ce format, et visualisez-le par exemple avec <a href="https://www.meshlab.net/" target="_blank" rel="noopener">MeshLab</a>.</p>
+        <ol>
+            <li><b>Chargement.</b> Écrivez la lecture du fichier dans vos propres structures de données (ou dans celles de Unity).</li>
+            <li><b>Centrage.</b> On ne connaît ni la taille ni la position de l'objet. Calculez son centre de gravité (somme des sommets divisée par leur nombre) et recentrez le maillage sur l'origine.</li>
+            <li><b>Normalisation.</b> Divisez toutes les coordonnées par la plus grande coordonnée en valeur absolue : le maillage tient alors dans \([-1, 1]^3\) et tous les objets chargés ont à peu près la même taille.</li>
+            <li><b>Normales.</b> Les fichiers OFF ne contiennent pas de normales : calculez la normale de chaque triangle, puis celle de chaque sommet. Comparez les deux éclairages.</li>
+            <li><b>Export.</b> Écrivez la sauvegarde au format OFF. Pour tester, chargez un maillage, retirez-lui n faces ainsi que les sommets devenus isolés, enregistrez-le, puis ouvrez le résultat dans MeshLab.</li>
+        </ol>
+        <p class="credit">Exercice inspiré d'un TP de Loïc Barthe (IRIT).</p>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c3" data-title="Transformations et projections">
+    <header>
+        <p class="kicker">Chapitre 3</p>
+        <h2>Transformations et projections</h2>
+        <p class="lead">Placer, orienter et dimensionner des objets, puis les projeter sur l'écran : tout s'écrit avec des matrices 4 × 4 en coordonnées homogènes.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM_04_transformation.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+        </div>
+    </header>
+
+    <h3>Rappels sur les vecteurs</h3>
+    <p>Le vecteur \(\vec{AB}\) a pour coordonnées \((B_x - A_x,\ B_y - A_y,\ B_z - A_z)\). On peut additionner, soustraire des vecteurs et les multiplier par un scalaire.</p>
+    <h4>Norme</h4>
+    <p>Dans un repère orthonormé, \(\lVert\vec u\rVert = \sqrt{u_x^2 + u_y^2 + u_z^2}\). La norme de \(\vec{AB}\) est la distance de A à B. Un vecteur de norme 1 est dit <b>normé</b> ; tout vecteur non nul \(\vec u\) a une version normée de même direction : \(\vec u / \lVert\vec u\rVert\).</p>
+    <h4>Produit scalaire</h4>
+    <div class="math">\[ \vec u \cdot \vec v = u_x v_x + u_y v_y + u_z v_z = \lVert\vec u\rVert\,\lVert\vec v\rVert\cos(\vec u, \vec v). \]</div>
+    <p>Il est symétrique, distributif et homogène, et \(\vec u \cdot \vec u = \lVert\vec u\rVert^2\). Il sert à calculer l'angle entre deux vecteurs, et son <b>signe</b> indique de quel côté se trouve \(\vec v\) par rapport au plan orthogonal à \(\vec u\) : positif si l'angle est aigu, nul s'ils sont orthogonaux, négatif si l'angle est obtus. C'est le test utilisé pour savoir si une face est tournée vers la caméra ou vers une lumière.</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c3-signe-scalaire.webp" alt="Trois cas : produit scalaire positif, nul et négatif selon l'angle entre u et v" loading="lazy"></figure>
+    <h4>Produit vectoriel</h4>
+    <div class="side">
+        <div>
+            <div class="math">\[ \vec u \wedge \vec v = \begin{pmatrix} u_y v_z - u_z v_y \\ u_z v_x - u_x v_z \\ u_x v_y - u_y v_x \end{pmatrix} \]</div>
+            <p>Le résultat est orthogonal aux deux vecteurs de départ : c'est l'outil pour construire un repère ou calculer une normale (chapitre 2).</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/mg/c3-vectoriel.webp" alt="Le vecteur u vectoriel v est perpendiculaire à u et à v" loading="lazy"></figure>
+    </div>
+    <h4>Matrices</h4>
+    <p>On utilise l'addition, la multiplication par un scalaire et surtout le <b>produit de matrices</b>, ainsi que la transposée, le déterminant et l'inverse (qui n'existe pas toujours). Les transformations sont des matrices ; les enchaîner revient à multiplier ces matrices.</p>
+
+    <h3>Transformations en 2D</h3>
+    <div class="figs">
+        <figure><img src="./assets/img/cours/mg/c3-translation.webp" alt="Une maison translatée du vecteur (6, -4)" loading="lazy"><figcaption>Translation : \(P' = P + \vec v\).</figcaption></figure>
+        <figure><img src="./assets/img/cours/mg/c3-rotation2d.webp" alt="Une maison tournée de 45° autour de l'origine" loading="lazy"><figcaption>Rotation de centre O et d'angle t : \(P' = R_t \cdot P\).</figcaption></figure>
+        <figure><img src="./assets/img/cours/mg/c3-homothetie.webp" alt="Une maison réduite par une homothétie de rapport 1/√2" loading="lazy"><figcaption>Homothétie de centre O et de rapport k : \(P' = k \cdot P\).</figcaption></figure>
+    </div>
+    <div class="math">\[ R_t = \begin{pmatrix} \cos t & -\sin t \\ \sin t & \cos t \end{pmatrix}, \qquad H_k = \begin{pmatrix} k & 0 \\ 0 & k \end{pmatrix}. \]</div>
+    <p>Les mêmes relations s'écrivent en 3D, mais trois difficultés apparaissent : la translation est une addition alors que les autres transformations sont des produits ; l'ordre des transformations compte ; la rotation 3D demande de choisir un axe.</p>
+
+    <h3>Coordonnées homogènes</h3>
+    <p>Pour écrire <b>toutes</b> les transformations affines comme des produits de matrices, on ajoute une quatrième coordonnée w : \(w = 1\) pour un point, \(w = 0\) pour un vecteur (une direction, qu'une translation ne doit pas déplacer). Le point homogène \((x_h, y_h, z_h, w_h)\) correspond au point 3D \((x_h/w_h,\ y_h/w_h,\ z_h/w_h)\).</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c3-homogene-w.webp" alt="Le point P sur le plan w = 1" loading="lazy"><figcaption>Les points 3D vivent dans l'hyperplan w = 1.</figcaption></figure>
+    <div class="math">\[ T = \begin{pmatrix} 1&0&0&T_x \\ 0&1&0&T_y \\ 0&0&1&T_z \\ 0&0&0&1 \end{pmatrix}, \quad S = \begin{pmatrix} S_x&0&0&0 \\ 0&S_y&0&0 \\ 0&0&S_z&0 \\ 0&0&0&1 \end{pmatrix}, \quad M_{y} = \begin{pmatrix} 1&0&0&0 \\ 0&-1&0&0 \\ 0&0&1&0 \\ 0&0&0&1 \end{pmatrix}. \]</div>
+    <p>Translation \(P' = T P\), mise à l'échelle \(P' = S P\), réflexion par rapport au plan xOz \(P' = M_y P\) (on inverse y).</p>
+    <h4>Rotations</h4>
+    <p>Autour des axes du repère, d'angle \(\alpha\) :</p>
+    <div class="math">\[ R_x = \begin{pmatrix} 1&0&0&0 \\ 0&\cos\alpha&-\sin\alpha&0 \\ 0&\sin\alpha&\cos\alpha&0 \\ 0&0&0&1 \end{pmatrix}, \quad R_y = \begin{pmatrix} \cos\alpha&0&\sin\alpha&0 \\ 0&1&0&0 \\ -\sin\alpha&0&\cos\alpha&0 \\ 0&0&0&1 \end{pmatrix}, \quad R_z = \begin{pmatrix} \cos\alpha&-\sin\alpha&0&0 \\ \sin\alpha&\cos\alpha&0&0 \\ 0&0&1&0 \\ 0&0&0&1 \end{pmatrix}. \]</div>
+    <p>Autour d'un axe quelconque de vecteur directeur <b>unitaire</b> \((x, y, z)\), avec \(c = \cos\alpha\), \(s = \sin\alpha\) et \(t = 1 - \cos\alpha\) :</p>
+    <div class="math">\[ R = \begin{pmatrix} tx^2 + c & txy - sz & txz + sy & 0 \\ txy + sz & ty^2 + c & tyz - sx & 0 \\ txz - sy & tyz + sx & tz^2 + c & 0 \\ 0&0&0&1 \end{pmatrix}. \]</div>
+    <p>Pour l'axe z (x = y = 0, z = 1), on retrouve bien \(R_z\).</p>
+
+    <h3>Composer des transformations</h3>
+    <p>Une suite de transformations est un produit de matrices, appliqué de droite à gauche. Une rotation suivie d'une mise à l'échelle donne \(P'' = S_k R_\alpha P = (S_k R_\alpha) P\) : on peut calculer la matrice composée une fois pour toutes. Sans coordonnées homogènes, une translation suivie d'une mise à l'échelle donnerait \(P'' = S_k P + S_k \vec T\), qui n'est plus un simple produit ; en homogène, c'est \(P'' = S_k\,T\,P\).</p>
+    <div class="box warn"><span class="bt">L'ordre compte</span><p>Le produit de matrices n'est pas commutatif : tourner puis translater ne donne pas le même résultat que translater puis tourner, et de même pour rotation et mise à l'échelle non uniforme.</p></div>
+    <div class="figs">
+        <figure><img src="./assets/img/cours/mg/c3-commut-rs.webp" alt="Un triangle tourné puis mis à l'échelle, comparé à mis à l'échelle puis tourné" loading="lazy"><figcaption>Rotation puis mise à l'échelle (rouge) ≠ l'inverse (bleu).</figcaption></figure>
+        <figure><img src="./assets/img/cours/mg/c3-commut-rt.webp" alt="Un triangle tourné puis translaté, comparé à translaté puis tourné" loading="lazy"><figcaption>Rotation puis translation (rouge) ≠ l'inverse (bleu).</figcaption></figure>
+    </div>
+    <div class="side">
+        <p><b>Application : modélisation hiérarchique.</b> Un bras articulé se décrit par une chaîne de repères : la base est placée dans le repère du sol, le bras dans celui de la base, l'avant-bras dans celui du bras. Chaque pièce a sa matrice locale ; sa position finale est le produit des matrices depuis la racine. Tourner l'épaule entraîne automatiquement l'avant-bras : c'est le principe des graphes de scène (la hiérarchie de Unity, par exemple).</p>
+        <figure><img src="./assets/img/cours/mg/c3-bras.webp" alt="Bras articulé avec ses repères base, bras et avant-bras" loading="lazy"></figure>
+    </div>
+
+    <h3>Projections</h3>
+    <p>La projection est l'étape qui fait passer de la scène 3D à l'image 2D, dans la chaîne de rendu : changement de repère, découpage, projection, transformation de visualisation, tracé.</p>
+    <figure><img src="./assets/img/cours/mg/c3-pipeline.webp" alt="Chaîne de rendu et comparaison projection parallèle et perspective" loading="lazy"><figcaption>Chaîne de rendu ; projection parallèle (à gauche) et perspective (à droite).</figcaption></figure>
+
+    <h4>Projections parallèles</h4>
+    <p>Tous les rayons de projection sont parallèles. La projection est <b>orthographique</b> si leur direction est perpendiculaire au plan de projection, <b>oblique</b> sinon. Les projections parallèles conservent le parallélisme des droites et les rapports de distances le long d'une même direction : on les utilise en dessin technique.</p>
+    <div class="side">
+        <div>
+            <p>La projection orthographique revient à supprimer une coordonnée : supprimer z donne la vue de dessus, y la vue de côté, x la vue de face.</p>
+            <div class="math">\[ M_{\text{orth},z} = \begin{pmatrix} 1&0&0&0 \\ 0&1&0&0 \\ 0&0&0&0 \\ 0&0&0&1 \end{pmatrix}, \quad M_{\text{orth},x} = \begin{pmatrix} 0&0&0&0 \\ 0&1&0&0 \\ 0&0&1&0 \\ 0&0&0&1 \end{pmatrix}. \]</div>
+        </div>
+        <figure><img src="./assets/img/cours/mg/c3-ortho.webp" alt="Projection orthographique d'une maison sur un plan" loading="lazy"></figure>
+    </div>
+    <div class="side">
+        <div>
+            <p>En projection <b>oblique</b>, les fuyantes sont tracées à 45° : en perspective <b>cavalière</b> elles gardent leur longueur, en perspective <b>cabinet</b> elles sont réduites de moitié, ce qui paraît plus naturel. Faire tourner l'objet avant une projection orthographique donne une projection <b>axonométrique</b> : \(M_{\text{axo}} = M_{\text{orth},x}\, R_z R_y R_x\, T\).</p>
+            <p>Pour le découpage, on ramène le volume de vue (un parallélépipède entre les plans proche et lointain) à un volume canonique par un changement de repère.</p>
+        </div>
+        <figure><img src="./assets/img/cours/mg/c3-oblique.webp" alt="Cube en perspective cavalière (profondeur 1) et cabinet (profondeur 0,5)" loading="lazy"></figure>
+    </div>
+
+    <h4>Projection perspective</h4>
+    <p>L'image d'un point M par la projection perspective de centre O sur le plan P est l'intersection de la droite (OM) avec P. C'est le modèle de la caméra (ou de l'œil) ; une projection perspective dont le centre est rejeté à l'infini est une projection parallèle.</p>
+    <figure><img src="./assets/img/cours/mg/c3-camera.webp" alt="Analogie entre la projection perspective et une chambre noire" loading="lazy"><figcaption>Le plan de projection virtuel joue le rôle de l'image dans la boîte noire.</figcaption></figure>
+    <p>Elle ne conserve pas le parallélisme des droites non parallèles au plan de projection, et la taille apparente d'un objet est inversement proportionnelle à sa distance au centre de projection. Pour un segment [MM'] parallèle au plan de projection, à la distance d du centre, le plan étant à la distance \(d_0\) :</p>
+    <div class="math">\[ \lVert \mathrm{Proj}(M)\,\mathrm{Proj}(M') \rVert = \lVert \vec{MM'} \rVert \times \frac{d_0}{d}. \]</div>
+    <p>Avec le centre de projection à l'origine, l'axe de visée selon z et le plan de projection à la distance <i>near</i>, le point projeté s'obtient par Thalès :</p>
+    <div class="math">\[ x_{M'} = \frac{x_M}{z_M / near}, \qquad y_{M'} = \frac{y_M}{z_M / near}, \qquad z_{M'} = near. \]</div>
+    <figure><img src="./assets/img/cours/mg/c3-persp-coord.webp" alt="Projection du point M sur le plan near" loading="lazy"></figure>
+    <p>En coordonnées homogènes, la division par \(z_M\) est confiée à w :</p>
+    <div class="math">\[ \begin{pmatrix} x' \\ y' \\ z' \\ w' \end{pmatrix} = \begin{pmatrix} 1&0&0&0 \\ 0&1&0&0 \\ 0&0&1&0 \\ 0&0&1/near&0 \end{pmatrix} \begin{pmatrix} x \\ y \\ z \\ 1 \end{pmatrix}, \qquad w' = \frac{z}{near}. \]</div>
+    <p>Diviser par w' redonne les formules précédentes. C'est exactement ce que fait la carte graphique après le <i>vertex shader</i> (la « division perspective »). Les matrices de projection d'OpenGL ou de Unity conservent en plus une profondeur entre les plans <i>near</i> et <i>far</i>, utilisée par le tampon de profondeur.</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c3-volume-persp.webp" alt="Volume de vue en perspective entre le plan proche et le plan lointain" loading="lazy"><figcaption>Le volume de vue est une pyramide tronquée, ramenée à un volume canonique par rotation et translation.</figcaption></figure>
+
+    <h4>Points de fuite</h4>
+    <p>Si une droite D coupe le plan de projection, les projections de toutes les droites parallèles à D passent par un même point F, le <b>point de fuite</b>. On classe les perspectives par le nombre de points de fuite des axes du repère, c'est-à-dire le nombre d'axes qui coupent le plan de projection. On en a généralement deux (caméra verticale, non alignée sur un axe) ; un troisième n'apporte guère plus de réalisme.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c3-fuite-def.webp" alt="Deux droites parallèles projetées convergent vers un point de fuite" loading="lazy"><figcaption>Deux droites parallèles et leur point de fuite.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c3-fuite2.webp" alt="Église dessinée avec deux points de fuite" loading="lazy"><figcaption>Deux points de fuite.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c3-fuite3.webp" alt="Maison dessinée avec trois points de fuite" loading="lazy"><figcaption>Trois points de fuite.</figcaption></figure>
+    </div>
+    <p class="credit">Chapitre tiré du cours de Gilles Gesquière (LIRIS).</p>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c4" data-title="Modèles volumiques">
+    <header>
+        <p class="kicker">Chapitre 4</p>
+        <h2>Modèles volumiques</h2>
+        <p class="lead">Au lieu de décrire seulement l'enveloppe d'un objet, on décrit la matière qui le remplit : voxels, octrees, surfaces implicites, arbres CSG. On verra aussi comment revenir à une surface avec l'algorithme des <i>marching cubes</i>.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM_05_Volumes.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+            <a href="./assets/pdf/TP_Modeles_Volumiques.pdf" download><span class="t">PDF</span>Sujet du TP 3</a>
+        </div>
+    </header>
+
+    <h3>Surfacique ou volumique ?</h3>
+    <p>Un modèle 3D peut être <b>surfacique</b> (polygonal ou paramétrique, chapitres 1, 2, 7 et 8) ou <b>volumique</b> : voxels et octrees, surfaces implicites classiques ou discrètes. Les volumes sont indispensables dès que l'intérieur compte.</p>
+    <div class="figs">
+        <figure><img src="./assets/img/cours/mg/c4-minecraft.webp" alt="Paysage Minecraft fait de cubes" loading="lazy"><figcaption>Mondes en voxels : Infiniminer (2009) a inspiré Minecraft. Le décor, fait de cubes, se creuse et se construit.</figcaption></figure>
+        <figure><img src="./assets/img/cours/mg/c4-nuages.webp" alt="Nuage volumétrique et mer de nuages au-dessus de montagnes" loading="lazy"><figcaption>Phénomènes atmosphériques : nuages par fonctions implicites (Ebert, 1997) et <i>Procedural Cloudscapes</i> (Webanck et al., 2018).</figcaption></figure>
+    </div>
+    <h4>Pourquoi des terrains volumiques ?</h4>
+    <p>Un terrain est usuellement une <b>fonction d'élévation</b> h(x, y), continue ou interpolée entre des points (carte de hauteurs). On peut l'enrichir par un <b>modèle en couches</b> qui empile des matériaux (roche, sable, eau). Mais ces représentations ne savent pas décrire une arche, une grotte ou un surplomb : à chaque position (x, y) ne correspond qu'une seule hauteur. Une représentation en volume (cubes ou piles de matière) lève cette limite, au prix de son caractère discret.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c4-couches.webp" alt="Fonctions d'élévation et piles de couches de matériaux" loading="lazy"><figcaption>Élévation et couches de matériaux.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c4-voxels-surplombs.webp" alt="Voxels et piles de couches avec surplombs" loading="lazy"><figcaption>Voxels : arches et surplombs deviennent possibles.</figcaption></figure>
+    </div>
+    <figure class="s"><img src="./assets/img/cours/mg/c4-terrains-arches.webp" alt="Terrains volumiques comportant des arches" loading="lazy"><figcaption>Terrains volumiques avec arches. Figures tirées de Galin et al., <i>A Review of Digital Terrain Modeling</i>, Computer Graphics Forum, 2019.</figcaption></figure>
+
+    <h3>Voxels</h3>
+    <div class="side">
+        <p>Un <b>voxel</b> (<i>volume element</i>) est une case d'une grille 3D régulière ; chaque case indique la présence ou l'absence de matière (ou une densité, une couleur…). Pour voxeliser un objet, on l'englobe dans une grille et on marque les cases qu'il occupe. Le modèle est simple, mais la mémoire croît comme le cube de la résolution : 1024³ voxels représentent déjà un milliard de cases.</p>
+        <figure><img src="./assets/img/cours/mg/c4-voxels.webp" alt="Sphère lisse, sa version voxelisée et un assemblage de cubes" loading="lazy"></figure>
+    </div>
+
+    <h3>Octrees</h3>
+    <p>Un <b>octree</b> est un arbre dont chaque nœud a huit fils. L'octree <b>régulier</b> subdivise récursivement un cube en huit sous-cubes égaux, jusqu'à une profondeur fixée ; ses feuilles sont les voxels.</p>
+    <figure><img src="./assets/img/cours/mg/c4-octree-regulier.webp" alt="Cube subdivisé en 8 puis 64 sous-cubes et l'arbre correspondant" loading="lazy"><figcaption>Octree régulier : toutes les branches ont la même profondeur.</figcaption></figure>
+    <p>Dans un octree <b>adaptatif</b>, la profondeur varie selon les branches : on ne subdivise que là où c'est utile, typiquement près de la surface.</p>
+    <figure><img src="./assets/img/cours/mg/c4-octree-adaptatif.webp" alt="Octree adaptatif : seule une partie du cube est subdivisée" loading="lazy"><figcaption>Octree adaptatif.</figcaption></figure>
+    <h4>Représenter un objet par un octree</h4>
+    <dl>
+        <dt>Représentation surfacique</dt>
+        <dd>Seules comptent les cellules qui coupent la surface. Dans un octree régulier, une feuille est pleine (1) si sa cellule coupe la surface, vide (0) sinon. Dans un octree adaptatif, une cellule qui ne coupe pas la surface devient une feuille vide ; une cellule qui la coupe est soit une feuille pleine si la précision voulue est atteinte, soit un nœud à subdiviser.</dd>
+        <dt>Représentation volumique</dt>
+        <dd>On distingue en plus l'intérieur de l'extérieur : une feuille vaut par exemple 0 si elle coupe la surface, 1 à l'intérieur et −1 à l'extérieur. Dans un octree adaptatif, seules les cellules qui coupent la surface sont subdivisées ; les autres deviennent directement des feuilles « intérieures » ou « extérieures ».</dd>
+    </dl>
+    <figure class="s"><img src="./assets/img/cours/mg/c4-octree-sphere.webp" alt="Sphère représentée par un octree à des profondeurs croissantes" loading="lazy"><figcaption>Une sphère à des profondeurs croissantes d'octree (illustrations : Mathieu Livebardon).</figcaption></figure>
+    <div class="tw"><table class="t">
+        <tr><th>Avantages</th><th>Limites</th></tr>
+        <tr><td>
+            <ul>
+                <li>Représentation hiérarchique : affichage à plusieurs résolutions.</li>
+                <li>Représentation volumique possible.</li>
+                <li>Test simple de position d'un volume par rapport à l'objet (sécant ou non, intérieur ou extérieur).</li>
+                <li>Construction et parcours récursifs simples.</li>
+            </ul>
+        </td><td>
+            <ul>
+                <li>Afficher une surface à partir de cubes n'est pas direct.</li>
+                <li>Rendu temps réel difficile pour des scènes complexes.</li>
+                <li>Coût de stockage élevé.</li>
+            </ul>
+        </td></tr>
+    </table></div>
+    <h4>Variantes pour réduire encore le nombre de cellules</h4>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c4-ntree.webp" alt="Cube subdivisé en 27 sous-cubes" loading="lazy"><figcaption><b>N-tree</b> : chaque nœud est subdivisé en n³ cellules au lieu de 8, ce qui réduit la profondeur de l'arbre.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c4-levelset.webp" alt="Grille hiérarchique à deux niveaux autour d'une courbe" loading="lazy"><figcaption><b>Level set</b> : le volume est stocké dans une grille hiérarchique à deux niveaux, fine seulement près de l'interface.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c4-ondelettes.webp" alt="Objet voxelisé du niveau 0 (64³) au niveau 4 (4³)" loading="lazy"><figcaption><b>Ondelettes</b> : une décomposition multirésolution, de 64³ à 4³ voxels.</figcaption></figure>
+    </div>
+
+    <h3>Surfaces implicites</h3>
+    <p>Une surface implicite est l'ensemble des points où une fonction de potentiel f atteint une valeur seuil (<i>iso</i>) :</p>
+    <div class="math">\[ S = \{\, P(x, y, z) \mid f(x, y, z) = iso \,\}. \]</div>
+    <p>Avec la convention « f &gt; iso à l'intérieur », on combine facilement des objets :</p>
+    <div class="side">
+        <ul>
+            <li><b>union</b> : \(f = \max(f_1, f_2)\) ;</li>
+            <li><b>intersection</b> : \(f = \min(f_1, f_2)\) ;</li>
+            <li><b>mélange</b> : \(f = f_1 + f_2\). Les deux formes fusionnent progressivement quand elles se rapprochent, ce qui est idéal pour les formes organiques.</li>
+        </ul>
+        <figure class="s"><img src="./assets/img/cours/mg/c4-implicites.webp" alt="Deux sphères implicites qui fusionnent en se rapprochant" loading="lazy"><figcaption>Mélange de deux sphères implicites.</figcaption></figure>
+    </div>
+    <p>Les <b>surfaces implicites discrètes</b> stockent le potentiel dans une grille de voxels : une cellule est pleine si son potentiel dépasse le seuil. Sculpter revient alors à ajouter ou retirer du potentiel localement, comme avec un outil de modelage.</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c4-implicites-discretes.webp" alt="Grille de cubes contenant des valeurs de potentiel, et une forme sculptée en voxels" loading="lazy"><figcaption>Potentiels stockés par cellule et forme sculptée (image de droite : thèse d'Éric Ferley).</figcaption></figure>
+
+    <h3>Arbres CSG</h3>
+    <div class="side">
+        <p>La <i>Constructive Solid Geometry</i> décrit un objet par un <b>arbre de composition</b> : les feuilles sont des primitives (cube, sphère, cylindre…), les nœuds des opérateurs booléens (union ∪, intersection ∩, différence −) ou des transformations. C'est le modèle des logiciels de CAO et d'OpenSCAD ; il se marie naturellement avec les surfaces implicites, où les opérations booléennes deviennent des max et des min.</p>
+        <figure><img src="./assets/img/cours/mg/c4-csg.webp" alt="Arbre CSG : intersection d'un cube et d'une sphère, moins l'union de trois cylindres" loading="lazy"><figcaption>(cube ∩ sphère) − (union de trois cylindres).</figcaption></figure>
+    </div>
+
+    <h3>Du volume à la surface : marching cubes</h3>
+    <p>Pour afficher un volume, on extrait sa surface sous forme de triangles. L'algorithme des <b>marching cubes</b> (Lorensen et Cline, 1987) parcourt la grille cellule par cellule :</p>
+    <ol>
+        <li>on marque chaque sommet de la cellule « + » (dedans) ou « − » (dehors) selon le signe de f − iso ;</li>
+        <li>si tous les sommets ont le même signe, la cellule ne coupe pas la surface ;</li>
+        <li>sinon, la surface traverse chaque arête dont les extrémités sont de signes opposés : on y place un point ;</li>
+        <li>une table précalculée indique comment relier ces points en triangles.</li>
+    </ol>
+    <figure><img src="./assets/img/cours/mg/c4-mc2d.webp" alt="Cas du marching squares en 2D : non sécant, sécant, et cas ambigus" loading="lazy"><figcaption>En 2D (<i>marching squares</i>) : cellules non sécantes, sécantes, et cas ambigus où deux diagonales opposées ont le même signe.</figcaption></figure>
+    <p>En 3D, un cube a 2⁸ = 256 configurations de signes ; par symétries et rotations, il reste 15 configurations de base, dont la cellule vide, soit 14 cas non triviaux. L'ensemble des cellules sécantes fournit un maillage triangulaire de la surface.</p>
+    <figure><img src="./assets/img/cours/mg/c4-mc3d.webp" alt="Trois configurations 3D du marching cubes et leurs triangles" loading="lazy"></figure>
+    <p>Le point d'intersection sur une arête \([P_1 P_2]\), avec \(f(P_1) = a &lt; 0\) et \(f(P_2) = b &gt; 0\) (après soustraction du seuil), s'obtient par interpolation linéaire :</p>
+    <div class="math">\[ P = \frac{b}{b - a}\,P_1 + \frac{-a}{b - a}\,P_2. \]</div>
+    <div class="box warn"><span class="bt">Limite</span><p>Les arêtes vives sont arrondies, car un point d'intersection par arête ne suffit pas à capturer un angle. Les versions étendues (<i>Extended Marching Cubes</i>, Kobbelt et al., SIGGRAPH 2001) évaluent aussi la normale de la surface aux points d'intersection et ajoutent un sommet à l'intersection des plans tangents.</p></div>
+    <figure class="s"><img src="./assets/img/cours/mg/c4-mc-aretes.webp" alt="Une arête vive mal reconstruite par le marching cubes" loading="lazy"></figure>
+
+    <h3>Modèle B-Rep</h3>
+    <p>La <i>Boundary Representation</i> décrit un objet par ses <b>bords</b> (faces, arêtes, sommets et leurs relations), sans notion explicite de volume. Si le bord est fermé et cohérent (orientable, sans auto-intersection), il délimite un solide : on parle de B-Rep solide. C'est la représentation interne des modeleurs de CAO, souvent couplée à un arbre CSG.</p>
+    <p class="credit">Chapitre compilé à partir des cours de modélisation géométrique de l'IRIT (équipe Vortex), de Christian Jacquemin (LIMSI), Marc Daniel (LSIS) et Gilles Gesquière (LIRIS).</p>
+
+    <div class="tp" id="tp3">
+        <h3>TP 3 — Modèles volumiques</h3>
+        <h4>Exercice 1 — Énumération spatiale</h4>
+        <ol>
+            <li>Représentez une sphère par énumération spatiale : englobez-la dans une boîte, subdivisez la boîte en cubes, et gardez les cubes dont le centre est dans la sphère.</li>
+            <li>Gérez plusieurs sphères (deux pour commencer) ; la boîte englobe alors tous les objets.</li>
+            <li>Ajoutez des opérateurs d'union et d'intersection. Pour l'intersection, un cube n'est affiché que s'il appartient aux deux sphères.</li>
+            <li>Rendez la taille des cubes, donc la résolution, paramétrable.</li>
+            <li>Généralisez à une liste de n sphères.</li>
+            <li><span class="opt">(optionnel)</span> Remplacez les sphères par n'importe quel objet défini implicitement, par exemple une quadrique (chapitre 1).</li>
+        </ol>
+        <h4>Exercice 2 — Surfaces implicites discrètes</h4>
+        <p>Chaque cube stocke maintenant une valeur de potentiel, initialisée par exemple avec l'exercice 1 ; il est visible si son potentiel dépasse un seuil. Créez un outil qui ajoute ou retire de la matière : par exemple une sphère Unity que l'on déplace dans la scène et qui ajoute ou soustrait du potentiel aux cubes qu'elle touche.</p>
+        <p><span class="opt">Pour aller plus loin :</span> remplacez l'affichage par cubes par une surface extraite par marching cubes.</p>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c5" data-title="Simplification et niveaux de détail">
+    <header>
+        <p class="kicker">Chapitre 5</p>
+        <h2>Simplification de maillages et niveaux de détail</h2>
+        <p class="lead">Un terrain ou un objet numérisé peut compter des millions de triangles. Simplifier, c'est produire un maillage plus léger qui ressemble le plus possible à l'original, puis choisir à l'affichage la version adaptée.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM-06_Simplification_LOD.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+            <a href="./assets/pdf/TP-4_Simplification.pdf" download><span class="t">PDF</span>Sujet du TP 4</a>
+        </div>
+    </header>
+
+    <h3>Le problème</h3>
+    <p>Un terrain se représente naturellement par un maillage uniforme : une matrice de points (x, z) portant chacun une hauteur. Mais un terrain peut compter des millions de faces : le Grand Canyon échantillonné en 4 097 × 2 049 sommets représente environ 16,7 millions de triangles. Impossible d'afficher en temps réel une zone de plusieurs km², comme l'exige un simulateur de vol, sans réduire ce nombre.</p>
+    <div class="figs">
+        <figure><img src="./assets/img/cours/mg/c5-grille-terrain.webp" alt="Grille régulière de points de terrain et rendus correspondants" loading="lazy"><figcaption>Terrain en grille régulière.</figcaption></figure>
+        <figure><img src="./assets/img/cours/mg/c5-terrain.webp" alt="Modèle numérique de terrain du Grand Canyon" loading="lazy"><figcaption>Grand Canyon : ~16,7 millions de triangles.</figcaption></figure>
+    </div>
+
+    <h3>Simplifier un maillage</h3>
+    <p>La <b>simplification</b> (ou <b>décimation</b>) regroupe les algorithmes qui transforment un maillage en un autre comportant moins de faces, d'arêtes et de sommets. Elle est pilotée par des critères de qualité choisis par l'utilisateur, qui cherchent à préserver certaines propriétés de l'original : distance géométrique, apparence visuelle…</p>
+    <p>Les schémas de simplification sont en général <b>itératifs</b> (on retire un sommet ou une arête à la fois) et <b>réversibles</b> : on peut transmettre le maillage simplifié, puis la suite des opérations inverses pour retrouver progressivement l'original. On peut y voir une décomposition en une composante <b>basse fréquence</b> (le maillage décimé) et une composante <b>haute fréquence</b> (la différence avec l'original), que l'opérateur inverse sait recombiner.</p>
+    <figure><img src="./assets/img/cours/mg/c5-lapins.webp" alt="Le lapin de Stanford à 69 451, 2 502, 251 et 76 polygones" loading="lazy"><figcaption>69 451, 2 502, 251 et 76 polygones (Stanford 3D Scanning Repository).</figcaption></figure>
+    <h4>Cadre général</h4>
+    <ul>
+        <li><b>Opérateurs locaux</b> : ils agissent sur un sommet, une arête ou une face et font décroître localement le nombre de polygones.</li>
+        <li><b>Opérateurs globaux</b> : ils traitent l'objet dans son ensemble, plutôt comme un rééchantillonnage.</li>
+    </ul>
+    <div class="side">
+        <div>
+            <p><b>Préserver la topologie</b>, c'est conserver le genre de l'objet et ne pas fusionner des parties distinctes. Cela limite le taux de simplification, et ce n'est pas toujours nécessaire : un objet lointain peut perdre ses trous sans que cela se voie.</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/mg/c5-topologie.webp" alt="Engrenage simplifié de 4 736 à 1 418 triangles en conservant ses trous" loading="lazy"><figcaption>Simplification qui préserve les trous (4 736 → 1 418 triangles).</figcaption></figure>
+    </div>
+
+    <h3>Niveaux de détail (LOD)</h3>
+    <p>Le principe : pour chaque objet de la scène, stocker plusieurs versions plus ou moins détaillées et afficher la plus appropriée. Il faut donc savoir construire les versions simplifiées (combien, et à quel degré ?) et choisir la bonne au moment du rendu. Les usages : rendu dépendant du point de vue, scènes comportant un très grand nombre d'objets, navigation interactive, visualisation de terrains, transmission progressive par le réseau.</p>
+    <h4>LOD discret</h4>
+    <p>Plusieurs représentations du même objet sont précalculées ; à l'exécution, on en sélectionne une, par exemple selon la distance. Les niveaux peuvent aussi répondre à des besoins métier, comme les niveaux LOD0 à LOD3 de la maquette urbaine CityGML, de l'emprise au sol au bâtiment détaillé.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c5-lod-discret.webp" alt="Lapin détaillé de près, lapin simplifié de loin" loading="lazy"><figcaption>Version choisie selon la distance.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c5-lod-batiments.webp" alt="Bâtiments de LOD0 à LOD3" loading="lazy"><figcaption>Niveaux de détail des bâtiments (CityGML).</figcaption></figure>
+    </div>
+    <h4>LOD continu</h4>
+    <p>Une seule structure représente l'objet avec un niveau de détail réglable au polygone près : on utilise exactement le nombre de polygones voulu, et la géométrie est modifiée pendant l'exécution. Exemple : les <i>progressive meshes</i> de Hoppe, qui enregistrent la suite des fusions d'arêtes.</p>
+    <h4>LOD dépendant du point de vue</h4>
+    <p>Extension du LOD continu, avec un critère de simplification qui dépend du point de vue : la représentation est <b>anisotrope</b>, différentes zones d'un même objet sont affichées à des niveaux de détail différents (plus fin près de la caméra ou sur la silhouette). Pour les terrains, l'algorithme ROAM (<i>Real-time Optimally Adapting Meshes</i>) génère les triangles à la volée en fonction de la caméra.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c5-lod-vue.webp" alt="Visage plus détaillé sur la silhouette, puis rendu final" loading="lazy"><figcaption>Détails concentrés sur la silhouette.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c5-roam.webp" alt="Terrain affiché avec ROAM et son maillage adaptatif" loading="lazy"><figcaption>ROAM : terrain et maillage adapté à la caméra.</figcaption></figure>
+    </div>
+
+    <h3>Opérateurs locaux</h3>
+    <p>Les opérateurs usuels préservent la topologie et ont chacun leur inverse :</p>
+    <div class="tw"><table class="t">
+        <tr><th>Opérateur</th><th>Inverse</th></tr>
+        <tr><td><i>Vertex removal</i> (suppression de sommet)</td><td><i>Vertex insertion</i></td></tr>
+        <tr><td><i>Edge collapse</i> (fusion d'arête)</td><td><i>Vertex split</i></td></tr>
+        <tr><td><i>Half-edge collapse</i></td><td><i>Restricted vertex split</i></td></tr>
+    </table></div>
+    <h4>Suppression de sommet</h4>
+    <div class="side">
+        <p>On détruit un sommet ainsi que les arêtes et faces qui lui sont liées. Cela crée un trou à k côtés (k étant le nombre de voisins du sommet), que l'on retriangule avec k − 2 triangles. On perd donc 1 sommet et 2 triangles.</p>
+        <figure class="s"><img src="./assets/img/cours/mg/c5-vertex-removal.webp" alt="Sommet central supprimé puis trou hexagonal retriangulé" loading="lazy"></figure>
+    </div>
+    <h4>Fusion d'arête</h4>
+    <p>L'arête est contractée en un seul sommet ; les deux triangles qui la bordent disparaissent (on perd 1 sommet, 3 arêtes, 2 faces). L'opération inverse, le <i>vertex split</i>, réinsère l'arête et ses triangles. Dans la variante <i>half-edge collapse</i>, le nouveau sommet est l'une des deux extrémités : aucune nouvelle position n'est créée, et les sommets du résultat sont un sous-ensemble de ceux de l'original.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c5-edge-collapse.webp" alt="Edge collapse : l'arête est remplacée par un sommet au milieu" loading="lazy"><figcaption><i>Edge collapse</i> / <i>vertex split</i>.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c5-half-edge-collapse.webp" alt="Half-edge collapse : l'arête est ramenée sur une de ses extrémités" loading="lazy"><figcaption><i>Half-edge collapse</i>.</figcaption></figure>
+    </div>
+    <div class="box warn"><span class="bt">Quand ne pas fusionner</span>
+        <p>Avant d'appliquer une fusion, on vérifie qu'elle ne crée pas de <b>repliement</b> : un triangle voisin qui se retourne et recouvre ses voisins (sa normale s'inverse). Il faut aussi éviter les triangles <b>dégénérés</b>, très allongés, qui rendent le maillage non conforme.</p>
+    </div>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c5-recouvrement.webp" alt="Une fusion d'arête qui fait se replier un triangle" loading="lazy"><figcaption>Recouvrement.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c5-non-conforme.webp" alt="Une fusion d'arête qui crée un triangle très allongé" loading="lazy"><figcaption>Triangle dégénéré.</figcaption></figure>
+    </div>
+    <h4>Fusion de polygones</h4>
+    <p>Plusieurs polygones adjacents presque coplanaires sont fusionnés en un seul, qui est ensuite retriangulé. Cet opérateur généralise la suppression de sommet : il s'applique à des polygones quelconques, élimine plusieurs sommets d'un coup et peut boucher des trous.</p>
+    <h4>Décimation incrémentale et métrique quadrique</h4>
+    <p>La décimation incrémentale applique ces opérateurs un par un, en choisissant à chaque étape l'opération qui introduit le moins d'erreur selon un critère choisi par l'utilisateur. Elle donne en général des maillages de bonne qualité. La méthode la plus répandue est celle de Garland et Heckbert (1997), la <i>Quadric Edge Collapse Decimation</i> de MeshLab : chaque sommet porte une matrice 4 × 4 (une « quadrique ») qui mesure la somme des distances au carré aux plans de ses faces d'origine. Le coût d'une fusion se calcule alors très vite, et la position optimale du nouveau sommet s'obtient en minimisant cette quadrique.</p>
+
+    <h3>Opérateur global : regroupement de sommets</h3>
+    <p>Dans le <b>regroupement de sommets</b> (<i>vertex clustering</i> ou <i>cell collapse</i>), tous les sommets situés dans une même cellule d'une grille sont unifiés en un seul :</p>
+    <figure><img src="./assets/img/cours/mg/c5-cell-collapse.webp" alt="Quatre étapes du regroupement de sommets sur une grille" loading="lazy"></figure>
+    <ol>
+        <li>Pour une tolérance ε &gt; 0, on partitionne une boîte englobant le maillage en cellules de taille au plus ε.</li>
+        <li>Dans chaque cellule, on calcule un <b>sommet représentatif</b> qui remplace tous les sommets de la cellule.</li>
+        <li>Les triangles dont deux ou trois sommets tombent dans la même cellule dégénèrent en arête ou en point : on les supprime.</li>
+        <li>Deux représentants P et Q sont reliés si au moins un sommet de la cellule de P était relié à un sommet de la cellule de Q dans le maillage d'origine.</li>
+    </ol>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c5-vc1.webp" alt="Maillage dans une grille avec un sommet représentatif par cellule" loading="lazy"><figcaption>Un représentant par cellule.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c5-vc2.webp" alt="Maillage d'origine en trait plein et maillage simplifié en pointillés" loading="lazy"><figcaption>Original (plein) et simplifié (pointillés).</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c5-vc3.webp" alt="Le maillage simplifié peut devenir non variété" loading="lazy"><figcaption>Le résultat peut ne plus être une variété.</figcaption></figure>
+    </div>
+    <p>Le représentant le plus simple est la moyenne des sommets \(P_1, \dots, P_k\) de la cellule. On peut aussi donner un poids \(w_i \ge 0\) à chaque sommet selon son importance (courbure, aire des faces voisines…) :</p>
+    <div class="math">\[ P = \frac{w_1 P_1 + w_2 P_2 + \dots + w_k P_k}{w_1 + w_2 + \dots + w_k}. \]</div>
+    <p>La méthode est rapide, robuste et en O(n) pour n sommets, et elle garantit une approximation globale (erreur bornée par la taille des cellules). En revanche, elle ne préserve pas la topologie : un morceau de surface peut se réduire à un point, et le résultat n'est pas forcément une variété (<i>2-manifold</i>) même si l'original l'était. La qualité n'est jamais excellente, et le taux de simplification dépend de la résolution de la grille.</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c5-vc-buddha.webp" alt="Bouddha simplifié par regroupement de sommets avec des cellules de plus en plus grandes" loading="lazy"><figcaption>Regroupement de sommets dans MeshLab, avec des cellules de plus en plus grandes.</figcaption></figure>
+
+    <h3>Mesurer l'erreur</h3>
+    <p>Mesurer l'erreur permet de guider la simplification, de connaître la qualité du résultat, de savoir quand afficher un niveau de détail donné et d'équilibrer la qualité dans la scène. On distingue l'erreur <b>géométrique</b> et l'erreur sur les <b>attributs</b> (normales, couleurs, coordonnées de texture).</p>
+    <div class="side">
+        <div>
+            <p>Pour comparer deux surfaces C et D, on utilise la <b>distance de Hausdorff</b> : la plus grande distance entre un point de l'une et la surface de l'autre, dans les deux sens.</p>
+            <div class="math">\[ \delta(C, D) = \max\Big( \sup_{c \in C} d(c, D),\ \sup_{d \in D} d(d, C) \Big). \]</div>
+            <p>On peut retenir l'erreur maximale ou une erreur moyenne ; en pratique, on l'estime sur des points échantillonnés (outil <i>Metro</i>, ou le filtre « Hausdorff Distance » de MeshLab).</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/mg/c5-hausdorff.webp" alt="Distance de Hausdorff entre un carré et un disque" loading="lazy"><figcaption>δ(C, D) = max(a, b).</figcaption></figure>
+    </div>
+
+    <h3>Sélection du niveau de détail</h3>
+    <ul>
+        <li>Type de LOD : discret, continu ou dépendant de la vue.</li>
+        <li>Critère de sélection : distance à la caméra, taille projetée à l'écran, facteurs perceptifs, conditions d'environnement (brouillard, vitesse…).</li>
+        <li>Transitions : un changement brutal de niveau se voit (<i>popping</i>) ; on mélange les deux versions par fondu (<i>alpha blending</i>) ou on les interpole (<i>geomorphing</i>).</li>
+    </ul>
+
+    <h3>Simplification structurelle : les imposteurs</h3>
+    <p>Ces méthodes changent la nature de la représentation : on remplace par exemple un objet polygonal par un quadrilatère texturé avec une image rendue à partir de la version détaillée. Ces LOD sont appelés <b>imposteurs</b> (ou <i>billboards</i>). Leurs limites : l'image dépend souvent du point de vue, et l'éclairage ne suit pas.</p>
+    <figure><img src="./assets/img/cours/mg/c5-imposteurs.webp" alt="Arbres à plusieurs niveaux de détail et quadrilatères texturés croisés" loading="lazy"><figcaption>Arbres représentés par de moins en moins de facettes, jusqu'à quelques quadrilatères texturés.</figcaption></figure>
+    <p>Exemple d'une prairie (Frank Perbet, Imagis) : de près, chaque brin d'herbe est modélisé en 3D ; plus loin, une texture semi-transparente de brins est plaquée sur des polygones ; au loin, une simple texture verte suffit.</p>
+    <p class="credit">Chapitre adapté du cours de Gilles Gesquière (LIRIS).</p>
+
+    <div class="tp" id="tp4">
+        <h3>TP 4 — Simplification</h3>
+        <h4>Exercice 1 — Simplification par partitionnement</h4>
+        <p>Implémentez le regroupement de sommets vu en cours :</p>
+        <ol>
+            <li>construire une grille englobant le maillage ;</li>
+            <li>fusionner les sommets de chaque cellule en un représentant ;</li>
+            <li>mettre à jour les triangles et supprimer ceux qui dégénèrent.</li>
+        </ol>
+        <p>Testez sur les maillages du TP 2 et faites varier la taille de la grille pour régler la résolution.</p>
+        <h4>Exercice 2 <span class="opt">(pour aller plus loin)</span> — Comparer les méthodes de MeshLab</h4>
+        <p>La complexité des objets d'une scène 3D a ses limites, et des outils de sculpture comme ZBrush produisent vite des millions de faces. On peut les réduire après coup avec <a href="https://www.meshlab.net/" target="_blank" rel="noopener">MeshLab</a> (Windows, macOS, Linux), même s'il vaut mieux que l'infographiste vise le bon budget de polygones dès le départ.</p>
+        <figure><img src="./assets/img/cours/mg/tp4-voitures.webp" alt="Une voiture simplifiée de 480 000 à 15 000 faces" loading="lazy"><figcaption>De 480 000 à 15 000 faces : jusqu'à 120 000, la différence se voit à peine.</figcaption></figure>
+        <p>Dans MeshLab : <b>Filters › Remeshing, Simplification and Reconstruction › Simplification: Quadric Edge Collapse Decimation</b> (variante <i>with texture</i> pour un modèle texturé). Les paramètres principaux :</p>
+        <dl>
+            <dt>Quality threshold (0 à 1)</dt><dd>Pénalise les triangles mal formés. 0 accepte toutes les formes ; plus la valeur est haute, plus les triangles restent bien formés, ce qui demande davantage de faces pour une même fidélité. Une valeur de 1 donne de bons résultats.</dd>
+            <dt>Preserve Boundary of the mesh</dt><dd>Évite de modifier les bords du maillage. Sans effet sur un maillage fermé.</dd>
+            <dt>Preserve Normal</dt><dd>Empêche les faces de se retourner, au prix d'un calcul un peu plus long. Si des normales sont malgré tout inversées : <i>Filters › Normals, Curvatures and Orientation › Re-Orient all faces coherently</i> (maillages variétés uniquement).</dd>
+            <dt>Optimal position of simplified vertices</dt><dd>Place le sommet issu de la fusion à la position qui minimise l'erreur ; désactivé, l'arête est ramenée sur l'une de ses extrémités (<i>half-edge collapse</i>).</dd>
+            <dt>Planar simplification</dt><dd>Ajoute des contraintes pour garder des triangles bien formés dans les zones parfaitement planes et finement découpées.</dd>
+        </dl>
+        <p>Comparez au moins <i>Quadric Edge Collapse Decimation</i> et <i>Clustering Decimation</i>, sur deux types d'objets : sans arêtes vives (le Bouddha) et avec arêtes vives (une maison ou un immeuble, modélisé par exemple dans Blender). Rédigez un compte rendu illustré de captures d'écran ; pour chaque méthode :</p>
+        <ol>
+            <li>décrivez son fonctionnement en une dizaine de lignes ;</li>
+            <li>expliquez sur une page ce que vous observez selon les paramètres ;</li>
+            <li>trouvez et testez des modèles qui lui posent problème (arêtes vives, changement de topologie…), sur une page.</li>
+        </ol>
+        <p class="credit">Réglages MeshLab adaptés du tutoriel <i>Polygon reduction with MeshLab</i> de Shapeways (page aujourd'hui retirée).</p>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c6" data-title="Subdivision">
+    <header>
+        <p class="kicker">Chapitre 6</p>
+        <h2>Subdivision de maillages</h2>
+        <p class="lead">L'inverse de la simplification : partir d'un maillage grossier et l'affiner par des règles simples, répétées, qui convergent vers une surface lisse.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM_07_Subdivision.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+            <a href="./assets/pdf/TP_Subdivision.pdf" download><span class="t">PDF</span>Sujet du TP 5</a>
+            <a href="./assets/Cube.obj" download><span class="t f">OBJ</span>Cube.obj</a>
+        </div>
+    </header>
+
+    <h3>Simplifier ou subdiviser ?</h3>
+    <p>Dans les deux cas, on veut accéder au même objet avec des nombres de polygones différents, c'est-à-dire construire une <b>hiérarchie de maillages</b>. Elle peut se construire :</p>
+    <ul>
+        <li><b>de bas en haut</b> (<i>bottom-up</i>) : on part du modèle détaillé, les feuilles de la hiérarchie, et on remonte vers la forme la plus simple. C'est le sens des méthodes du chapitre 5 ;</li>
+        <li><b>de haut en bas</b> (<i>top-down</i>) : on part de la version simplifiée, la racine, et on ajoute progressivement des détails. C'est le sens des surfaces de subdivision et des ondelettes.</li>
+    </ul>
+    <p>Subdiviser combine deux étapes : un <b>raffinement</b>, qui découpe chaque face en plusieurs (par exemple un triangle en quatre, ou en trois autour de son centre), et une <b>règle de positionnement</b> des sommets, anciens et nouveaux, qui lisse la forme.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c6-raffinage.webp" alt="Découpage d'un triangle en 4 ou en 3, et forme qui se lisse au fil des subdivisions" loading="lazy"><figcaption>Raffinement des triangles, puis subdivisions successives.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c6-cheval.webp" alt="Un cheval subdivisé de plus en plus finement" loading="lazy"><figcaption>Subdivisions successives d'un cheval.</figcaption></figure>
+    </div>
+
+    <h3>Rappels</h3>
+    <div class="side">
+        <div>
+            <p>Un schéma est <b>interpolant</b> si la courbe ou la surface limite passe par les points de contrôle, <b>approximant</b> si elle est seulement attirée par eux.</p>
+            <p>Entre deux points \(p_1\) et \(p_2\), l'interpolation linéaire est \(p(u) = u\,p_1 + (1 - u)\,p_2\), pour \(u \in [0, 1]\). Une polyligne est une courbe linéaire par morceaux, qui n'est que C<sup>0</sup> aux sommets.</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/mg/c6-interp-approx.webp" alt="Courbe d'interpolation passant par les points, courbe d'approximation attirée par les points" loading="lazy"></figure>
+    </div>
+
+    <h3>Courbes : couper les coins</h3>
+    <p>Le <b>corner cutting</b> consiste à prendre deux points sur deux arêtes d'un polygone, à les relier par un segment, et à remplacer par ce segment tous les sommets et arêtes situés entre eux. Une coupe est <b>locale</b> si elle supprime exactement un sommet et en ajoute deux ; sinon elle est <b>non locale</b>.</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c6-corner-cutting.webp" alt="Coupes locales et coupe non locale sur une polyligne" loading="lazy"><figcaption>Coupes locales (à gauche) et non locale (à droite).</figcaption></figure>
+    <p><b>Corner cutting simple.</b> Sur chaque arête, on choisit deux nombres \(u \ge 0\) et \(v \ge 0\) avec \(u + v \le 1\), et on découpe l'arête dans les proportions \(u : 1 - (u + v) : v\). Les deux points intérieurs de chaque arête forment la nouvelle polyligne \(P_1\) ; en recommençant, on obtient \(P_2, P_3, \dots\) et l'on s'intéresse à la limite \(P_\infty = \lim_{i \to \infty} P_i\). Les valeurs de u et v peuvent changer d'une arête à l'autre et d'une itération à l'autre. Pour un polygone fermé, on découpe aussi l'arête qui relie le dernier point au premier.</p>
+    <div class="side">
+        <figure><img src="./assets/img/cours/mg/c6-cc-exemple.webp" alt="Polyligne en créneau et sa courbe limite après corner cutting" loading="lazy"><figcaption>Avec u = 1/3 et v = 1/4.</figcaption></figure>
+        <div>
+            <p>Gregory et Qu, de Boor, puis Paluszny, Prautzsch et Schäfer ont montré que si tous les couples (u, v) sont à l'intérieur de la zone délimitée par \(u \ge 0\), \(v \ge 0\), \(u + 2v \le 1\) et \(2u + v \le 1\), alors \(P_\infty\) est une courbe C<sup>1</sup>.</p>
+            <figure class="s"><img src="./assets/img/cours/mg/c6-cc-region.webp" alt="Domaine des valeurs u et v donnant une courbe C1" loading="lazy"></figure>
+        </div>
+    </div>
+    <h4>L'algorithme de Chaikin</h4>
+    <p>C'est le cas \(u = v = 1/4\), étudié par Chaikin en 1974 : chaque arête \([P_i^k, P_{i+1}^k]\) est remplacée par deux points situés au quart et aux trois quarts.</p>
+    <div class="box"><span class="bt">Chaikin</span>
+        <div class="math">\[ P_{2i}^{k+1} = \tfrac34 P_i^k + \tfrac14 P_{i+1}^k, \qquad P_{2i+1}^{k+1} = \tfrac14 P_i^k + \tfrac34 P_{i+1}^k. \]</div>
+    </div>
+    <p>Le nombre de points double à chaque itération, et la courbe limite est une <b>B-spline quadratique</b> (de degré 2) : le schéma est approximant.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c6-chaikin-0.webp" alt="Polygone de contrôle et première itération de Chaikin" loading="lazy"><figcaption>Première itération.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c6-chaikin-inf.webp" alt="Courbe limite lisse de Chaikin" loading="lazy"><figcaption>Courbe limite.</figcaption></figure>
+    </div>
+
+    <h3>Surfaces de subdivision</h3>
+    <p>Elles permettent de modéliser facilement des surfaces très variées, en général lisses, à partir d'un maillage de contrôle simple et compact que l'on manipule intuitivement. Elles savent aussi représenter des arêtes vives ou semi-vives. C'est l'outil de modélisation standard du cinéma d'animation (Pixar, OpenSubdiv) et le modificateur « Subdivision Surface » de Blender.</p>
+    <p>On part d'un maillage initial \(M_0\) et de règles de subdivision S, que l'on applique en boucle :</p>
+    <div class="math">\[ M_{k+1} = S \cdot M_k, \qquad M_k = S^k \cdot M_0 \ \longrightarrow\ \text{surface lisse}. \]</div>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c6-lapin-m0.webp" alt="Lapin grossier, maillage initial" loading="lazy"><figcaption>\(M_0\).</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c6-lapin-lisse.webp" alt="Lapin lisse après trois subdivisions" loading="lazy"><figcaption>\(M_3\).</figcaption></figure>
+    </div>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c6-interpolante.webp" alt="Surface interpolante passant par les sommets du maillage de contrôle" loading="lazy"><figcaption>Schéma interpolant (Butterfly, par exemple).</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c6-approximante.webp" alt="Surface approximante plus petite que le maillage de contrôle" loading="lazy"><figcaption>Schéma approximant (Loop, Catmull-Clark) : la surface se rétracte.</figcaption></figure>
+    </div>
+
+    <h4>Le schéma de Loop</h4>
+    <p>Proposé par Charles Loop en 1987 pour les maillages triangulaires, il est approximant. Chaque itération comporte trois étapes.</p>
+    <p><b>1. Un nouveau sommet par arête.</b> Pour une arête intérieure \((v_1, v_2)\), bordée par les triangles dont les sommets opposés sont \(v_{\text{left}}\) et \(v_{\text{right}}\) :</p>
+    <div class="side">
+        <div class="math">\[ e = \tfrac38 (v_1 + v_2) + \tfrac18 (v_{\text{left}} + v_{\text{right}}). \]</div>
+        <figure class="s"><img src="./assets/img/cours/mg/c6-loop-arete.webp" alt="Masque de Loop pour un sommet d'arête : poids 3 sur l'arête, 1 sur les sommets opposés" loading="lazy"></figure>
+    </div>
+    <p><b>2. Déplacement des anciens sommets.</b> Un sommet v de valence n, de voisins \(v_1, \dots, v_n\), devient :</p>
+    <div class="math">\[ v' = (1 - n\alpha)\,v + \alpha \sum_{j=1}^{n} v_j, \qquad \alpha = \frac1n \left( \frac58 - \left( \frac38 + \frac14 \cos\frac{2\pi}{n} \right)^{2} \right) \ \ (\text{soit } \alpha = \tfrac{3}{16} \text{ pour } n = 3). \]</div>
+    <div class="side">
+        <p>La <b>valence</b> d'un sommet est le nombre d'arêtes qui y aboutissent. Pour un sommet intérieur d'un maillage triangulaire, elle est égale au nombre de faces adjacentes. Dans un maillage triangulaire régulier, tous les sommets intérieurs ont une valence de 6 (4 dans un maillage de quadrilatères).</p>
+        <figure class="s"><img src="./assets/img/cours/mg/c6-valence.webp" alt="Sommet de valence 6 dans une triangulation et de valence 4 dans une grille" loading="lazy"></figure>
+    </div>
+    <p><b>3. Quatre triangles par triangle.</b> Chaque triangle \((x_1, x_2, x_3)\), dont les arêtes ont reçu les nouveaux sommets \(x_{12}, x_{23}, x_{31}\), est remplacé par \((x_1, x_{12}, x_{31})\), \((x_2, x_{23}, x_{12})\), \((x_3, x_{31}, x_{23})\) et \((x_{12}, x_{23}, x_{31})\).</p>
+<pre><code>// Étape 1 : nouveaux sommets d'arêtes
+pour chaque arête e = (v1, v2) de M :
+    e' = 3/8 (v1 + v2) + 1/8 (vLeft(e) + vRight(e))
+// Étape 2 : anciens sommets
+pour chaque sommet v de M :
+    n = valence(v) ; a = alpha(n)
+    v' = (1 - n·a) v + a · somme(voisins(v))
+// Étape 3 : nouvelles faces
+pour chaque face (x1, x2, x3) de M :
+    ajouter (x1, x12, x31), (x2, x23, x12), (x3, x31, x23), (x12, x23, x31)</code></pre>
+    <div class="box warn"><span class="bt">Bords</span><p>Sur un bord, il manque \(v_{\text{left}}\) ou \(v_{\text{right}}\) : on prend alors le milieu de l'arête, \(e = \frac12(v_1 + v_2)\), et un sommet de bord ne tient compte que de ses deux voisins sur le bord, \(v' = \frac34 v + \frac18(v_a + v_b)\).</p></div>
+    <figure class="s"><img src="./assets/img/cours/mg/c6-loop-resultats.webp" alt="Deux maillages grossiers et leurs versions lissées par Loop" loading="lazy"><figcaption>Maillages de contrôle (en haut) et résultat de plusieurs subdivisions de Loop (en bas).</figcaption></figure>
+    <p>Pour les maillages de quadrilatères, le schéma équivalent est celui de <b>Catmull-Clark</b> (1978).</p>
+
+    <h3>Subdivision adaptative</h3>
+    <p>On ne subdivise que certaines zones, selon des critères : courbure, distance à la caméra, zone d'intérêt… Il faut décider où et comment subdiviser, en respectant trois contraintes : éviter les trous (un triangle subdivisé à côté d'un triangle qui ne l'est pas crée des sommets « pendants », ou <i>T-junctions</i>, qu'il faut raccorder), générer peu de faces et obtenir un maillage progressif.</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c6-adapt-trous.webp" alt="Un triangle subdivisé à côté d'un triangle non subdivisé crée une fissure" loading="lazy"><figcaption>Le triangle voisin doit être découpé (en magenta) pour éviter une fissure.</figcaption></figure>
+    <figure><img src="./assets/img/cours/mg/c6-adapt-dauphins.webp" alt="Dauphin subdivisé uniformément et de manière adaptative" loading="lazy"><figcaption>Subdivision adaptative d'un dauphin de 468 faces (S. Lanquetin) : 1 692, 5 022 et 5 133 faces, contre 1 872, 7 488 et 29 952 en subdivision uniforme.</figcaption></figure>
+    <p class="credit">Chapitre compilé à partir des cours de Loïc Barthe (IRIT), Sandrine Lanquetin (Université de Bourgogne), Gilles Gesquière (LIRIS) et Ching-Kuang Shene (Michigan Tech).</p>
+
+    <div class="tp" id="tp5">
+        <h3>TP 5 — Subdivision</h3>
+        <h4>Exercice 1 — Subdivision de courbes</h4>
+        <p>Implémentez l'algorithme de Chaikin, avec un nombre d'itérations paramétrable. Dans Unity, <code>Gizmos.DrawLine</code> suffit pour tracer le polygone de contrôle et la courbe obtenue.</p>
+        <figure class="s"><img src="./assets/img/cours/mg/tp5-chaikin-unity.webp" alt="Polygone de contrôle jaune et courbe de Chaikin bleue dans l'éditeur Unity" loading="lazy"><figcaption>Résultat attendu dans l'éditeur Unity.</figcaption></figure>
+        <p>Vérifiez que la courbe obtenue est bien une B-spline quadratique : comparez-la à la B-spline construite sur le même polygone de contrôle (chapitre 7).</p>
+        <h4>Exercice 2 <span class="opt">(optionnel)</span> — Subdivision de surfaces</h4>
+        <p>Implémentez le schéma de Loop sur l'un des modèles du TP 2 (par exemple <code>buddha.off</code>) ou sur <code>Cube.obj</code>, après l'avoir triangulé. Une structure de demi-arêtes (chapitre 2) facilite beaucoup l'accès aux sommets \(v_{\text{left}}\), \(v_{\text{right}}\) et aux voisins.</p>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c7" data-title="Courbes paramétriques">
+    <header>
+        <p class="kicker">Chapitre 7</p>
+        <h2>Courbes paramétriques : Hermite et Bézier</h2>
+        <p class="lead">Décrire une courbe par une fonction d'un paramètre, puis la piloter avec des points de contrôle intuitifs : cubiques d'Hermite, polynômes de Bernstein, courbes de Bézier et algorithme de De Casteljau.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM_CourbesParametriques.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+            <a href="./assets/pdf/TP_Courbes_Bezier.pdf" download><span class="t">PDF</span>Sujet du TP 6</a>
+        </div>
+    </header>
+
+    <h3>Courbe paramétrique</h3>
+    <div class="side">
+        <div>
+            <p>Une courbe est engendrée par le déplacement d'un point P dans l'espace. On peut prendre le temps t comme paramètre pour fixer les idées, mais n'importe quel scalaire u convient. Le point P(x, y, z) a les mêmes coordonnées que le vecteur \(\vec{OP}\).</p>
+            <p>Une courbe paramétrique de \(\mathbb{R}^3\) est une fonction \(f : \mathbb{R} \to \mathbb{R}^3\) :</p>
+            <div class="math">\[ u \mapsto P(u) = \begin{pmatrix} x(u) \\ y(u) \\ z(u) \end{pmatrix} = \begin{pmatrix} f_x(u) \\ f_y(u) \\ f_z(u) \end{pmatrix}. \]</div>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/mg/c7-courbe.webp" alt="Courbe parcourue par le point P(t)" loading="lazy"></figure>
+    </div>
+    <p>Pour chaque valeur de u, on calcule indépendamment les trois coordonnées. Une même courbe admet plusieurs paramétrisations : le cercle de rayon r centré à l'origine s'écrit par exemple</p>
+    <div class="side">
+        <div class="math">\[ \begin{cases} x(u) = r\cos u \\ y(u) = r\sin u \end{cases} u \in [0, 2\pi[ \qquad \text{ou} \qquad \begin{cases} x(u) = r\,\dfrac{1 - u^2}{1 + u^2} \\[2mm] y(u) = r\,\dfrac{2u}{1 + u^2} \end{cases} u \in\ ]-\infty, +\infty[. \]</div>
+        <figure class="s"><img src="./assets/img/cours/mg/c7-cercle.webp" alt="Position des points P(u) sur le cercle pour les deux paramétrisations" loading="lazy"></figure>
+    </div>
+    <h4>Droites</h4>
+    <p>La droite passant par \(P_1\) et \(P_2\) s'écrit \(P(u) = (1 - u)\,P_1 + u\,P_2\), pour \(u \in \mathbb{R}\). Quand u varie de 0 à 1, P parcourt linéairement le segment de \(P_1\) à \(P_2\) : c'est l'<b>interpolation linéaire</b>. Avec un point et un vecteur directeur : \(P(u) = P_1 + u\,\vec v\).</p>
+    <p>En modélisation géométrique, on utilise surtout un paramètre <b>borné et normalisé</b>, \(u \in [0, 1]\), ce qui est pratique pour manipuler des morceaux de courbes que l'on raccorde.</p>
+    <div class="side">
+        <p><b>Paramètre et abscisse curviligne.</b> Le paramètre u n'a pas de sens géométrique : avancer de \(\partial u\) ne fait pas toujours parcourir la même distance. L'<b>abscisse curviligne</b> \(s \in [0, \ell]\) est la longueur parcourue depuis l'origine de la courbe ; paramétrer par s permet par exemple de déplacer un objet à vitesse constante.</p>
+        <figure class="s"><img src="./assets/img/cours/mg/c7-abscisse.webp" alt="Paramètre u et abscisse curviligne s le long d'une courbe" loading="lazy"></figure>
+    </div>
+
+    <h3>Cubiques</h3>
+    <p>Les cubiques sont les courbes polynomiales paramétriques de degré 3 :</p>
+    <div class="math">\[ p(u) = a\,u^3 + b\,u^2 + c\,u + d, \quad u \in [0, 1], \qquad \text{c'est-à-dire} \quad x(u) = a_x u^3 + b_x u^2 + c_x u + d_x \ \text{(de même pour y et z)}. \]</div>
+    <p>Sous cette forme, les coefficients a, b, c, d n'ont aucun sens visuel : un utilisateur ne peut pas dessiner la courbe qu'il imagine. Il faut des paramètres de contrôle intuitifs.</p>
+
+    <h3>Cubique d'Hermite</h3>
+    <p>On réécrit la cubique en fonction de paramètres géométriques : le point de départ \(P_0 = p(0)\), le point d'arrivée \(P_1 = p(1)\) et les tangentes \(V_0 = \dot p(0)\) et \(V_1 = \dot p(1)\). Comme \(\dot p(u) = 3a u^2 + 2b u + c\) :</p>
+    <div class="math">\[ \begin{cases} P_0 = d \\ P_1 = a + b + c + d \\ V_0 = c \\ V_1 = 3a + 2b + c \end{cases} \quad\Longrightarrow\quad \begin{cases} d = P_0 \\ c = V_0 \\ b = -3P_0 + 3P_1 - 2V_0 - V_1 \\ a = 2P_0 - 2P_1 + V_0 + V_1 \end{cases} \]</div>
+    <p>En regroupant les termes, on obtient la courbe comme combinaison des quatre paramètres, pondérés par les <b>fonctions de base d'Hermite</b> :</p>
+    <div class="math">\[ p(u) = F_1(u)\,P_0 + F_2(u)\,P_1 + F_3(u)\,V_0 + F_4(u)\,V_1, \qquad \begin{aligned} F_1(u) &amp;= 2u^3 - 3u^2 + 1, &amp; F_2(u) &amp;= -2u^3 + 3u^2, \\ F_3(u) &amp;= u^3 - 2u^2 + u, &amp; F_4(u) &amp;= u^3 - u^2. \end{aligned} \]</div>
+    <h4>Forme matricielle</h4>
+    <div class="math">\[ p(u) = U M B = \begin{pmatrix} u^3 &amp; u^2 &amp; u &amp; 1 \end{pmatrix} \begin{pmatrix} 2 &amp; -2 &amp; 1 &amp; 1 \\ -3 &amp; 3 &amp; -2 &amp; -1 \\ 0 &amp; 0 &amp; 1 &amp; 0 \\ 1 &amp; 0 &amp; 0 &amp; 0 \end{pmatrix} \begin{pmatrix} P_0 \\ P_1 \\ V_0 \\ V_1 \end{pmatrix} \]</div>
+    <p>La vitesse et l'accélération s'obtiennent en dérivant la matrice :</p>
+    <div class="math">\[ \dot p(u) = U \begin{pmatrix} 0&amp;0&amp;0&amp;0 \\ 6&amp;-6&amp;3&amp;3 \\ -6&amp;6&amp;-4&amp;-2 \\ 0&amp;0&amp;1&amp;0 \end{pmatrix} B, \qquad \ddot p(u) = U \begin{pmatrix} 0&amp;0&amp;0&amp;0 \\ 0&amp;0&amp;0&amp;0 \\ 12&amp;-12&amp;6&amp;6 \\ -6&amp;6&amp;-4&amp;-2 \end{pmatrix} B. \]</div>
+    <h4>Exercices : effet des tangentes</h4>
+    <p>Au milieu de la courbe, \(F_1 = F_2 = \frac12\), \(F_3 = \frac18\) et \(F_4 = -\frac18\), d'où \(p(\tfrac12) = \frac12(P_0 + P_1) + \frac18(V_0 - V_1)\). Avec \(P_0 = (0, 0)\) et \(P_1 = (2, 0)\) :</p>
+    <div class="tw"><table class="t">
+        <tr><th>\(V_0\)</th><th>\(V_1\)</th><th>\(p(1/2)\)</th><th>Allure</th></tr>
+        <tr><td>(1, 1)</td><td>(1, −1)</td><td>(1 ; 0,25)</td><td>arche basse</td></tr>
+        <tr><td>(4, 4)</td><td>(4, −4)</td><td>(1 ; 1)</td><td>arche plus haute</td></tr>
+        <tr><td>(8, 8)</td><td>(8, −8)</td><td>(1 ; 2)</td><td>la courbe forme une boucle</td></tr>
+        <tr><td>(−4, 0)</td><td>(4, 0)</td><td>(0 ; 0)</td><td>la courbe recule puis revient, sur l'axe</td></tr>
+        <tr><td>(−1, −1)</td><td>(−1, −1)</td><td>(1 ; 0)</td><td>courbe en S</td></tr>
+    </table></div>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c7-hermite1.webp" alt="Courbe d'Hermite en arche, sommet à 0,25" loading="lazy"><figcaption>V₀ = (1, 1), V₁ = (1, −1).</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c7-hermite3.webp" alt="Courbe d'Hermite formant une boucle" loading="lazy"><figcaption>V₀ = (8, 8), V₁ = (8, −8) : boucle.</figcaption></figure>
+    </div>
+    <p>Plus les tangentes sont longues, plus elles « tirent » la courbe dans leur direction.</p>
+    <h4>Exercice : interpoler des positions</h4>
+    <p>On connaît les positions d'un objet à différents instants t. En reliant les points par des segments, on obtient une trajectoire C<sup>0</sup> ; en reliant par des cubiques d'Hermite dont les tangentes coïncident en chaque point, on obtient une trajectoire C<sup>1</sup>, sans changement brusque de direction. Les tangentes peuvent par exemple être estimées à partir des points voisins, comme dans les splines de Catmull-Rom.</p>
+    <figure class="s"><img src="./assets/img/cours/mg/c7-interp-c0c1.webp" alt="Mêmes positions reliées par une ligne brisée C0 puis par une courbe lisse C1" loading="lazy"></figure>
+
+    <h3>Polynômes de Bernstein</h3>
+    <p>On cherche une famille de courbes de la forme \(p(u) = \sum_{i} N_i(u)\,P_i\) dont les fonctions de base vérifient \(\sum_i N_i(u) = 1\) : chaque point de la courbe est alors une <b>combinaison affine</b> des points de contrôle \(P_i\). La courbe est invariante par transformation affine : pour transformer la courbe, il suffit de transformer ses points de contrôle.</p>
+    <p>On part du développement binomial :</p>
+    <div class="math">\[ 1 = \big(u + (1 - u)\big)^n = \sum_{i=0}^{n} \binom{n}{i} u^i (1 - u)^{n-i}, \qquad \binom{n}{i} = \frac{n!}{i!\,(n - i)!}. \]</div>
+    <div class="box"><span class="bt">Polynômes de Bernstein de degré n</span>
+        <div class="math">\[ B_i^n(u) = \binom{n}{i} u^i (1 - u)^{n-i}, \qquad i = 0, \dots, n. \]</div>
+    </div>
+    <p>Pour un degré donné, les n + 1 polynômes sont linéairement indépendants. Ils sont symétriques, \(B_i^n(u) = B_{n-i}^n(1 - u)\) ; ils forment une partition de l'unité, \(\sum_i B_i^n(u) = 1\) ; ils sont positifs sur [0, 1] ; et ils vérifient la récurrence</p>
+    <div class="math">\[ B_i^{n+1}(u) = u\,B_{i-1}^n(u) + (1 - u)\,B_i^n(u). \]</div>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c7-bernstein.webp" alt="Graphes des polynômes de Bernstein de degré 2 et 3" loading="lazy"><figcaption>Degré 2 : \(B_{0,2} = (1-t)^2\), \(B_{1,2} = 2t(1-t)\), \(B_{2,2} = t^2\). Degré 3 : \((1-t)^3\), \(3t(1-t)^2\), \(3t^2(1-t)\), \(t^3\).</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c7-portee.webp" alt="Les sept polynômes de Bernstein de degré 6" loading="lazy"><figcaption>Degré 6 : chaque point de contrôle influence toute la courbe, avec un maximum en u = i/n.</figcaption></figure>
+    </div>
+
+    <h3>Courbes de Bézier</h3>
+    <div class="box"><span class="bt">Définition</span>
+        <div class="math">\[ p(u) = \sum_{i=0}^{n} B_i^n(u)\,P_i, \qquad u \in [0, 1]. \]</div>
+    </div>
+    <p>Les \(n + 1\) points \(P_i\) sont les <b>points de contrôle</b> ; la courbe est de degré n (d'ordre n + 1), et les polynômes de Bernstein en sont les <b>fonctions de base</b> (ou de mélange). Le nombre de points de contrôle fixe donc le degré : 4 points donnent une cubique.</p>
+    <figure><img src="./assets/img/cours/mg/c7-bezier-exemples.webp" alt="Courbe de Bézier à 4 points et courbe à 7 points formant une boucle" loading="lazy"><figcaption>Points de contrôle (rouge), polygone de contrôle (vert) et courbe de Bézier (bleu).</figcaption></figure>
+    <h4>Propriétés</h4>
+    <ul>
+        <li><b>Symétrie</b> : \(\sum_i B_i^n(u)\,P_i = \sum_i B_i^n(1 - u)\,P_{n-i}\). Parcourue de 0 à 1 ou de 1 à 0, c'est la même courbe.</li>
+        <li><b>Reparamétrage</b> : pour \(t \in [a, b]\), on pose \(u = (t - a)/(b - a)\).</li>
+        <li><b>Extrémités</b> : la courbe interpole le premier et le dernier point, \(p(0) = P_0\) et \(p(1) = P_n\), et y est tangente au premier et au dernier segment du polygone de contrôle : \(\dot p(0) = n(P_1 - P_0)\) et \(\dot p(1) = n(P_n - P_{n-1})\).</li>
+        <li><b>Enveloppe convexe</b> : la courbe est contenue dans l'enveloppe convexe de ses points de contrôle, puisque chaque point est un barycentre à poids positifs. En prenant le min et le max de chaque coordonnée des points de contrôle, on obtient donc une boîte englobante alignée sur les axes, très utile pour les tests d'intersection.</li>
+        <li><b>Diminution de la variation</b> : une droite ne coupe pas la courbe plus de fois qu'elle ne coupe le polygone de contrôle. La courbe « oscille » moins que son polygone.</li>
+    </ul>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c7-enveloppe.webp" alt="Courbe de Bézier à l'intérieur de l'enveloppe convexe de ses points de contrôle" loading="lazy"><figcaption>Enveloppe convexe.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c7-boite.webp" alt="Boîte englobante alignée sur les axes" loading="lazy"><figcaption>Boîte englobante.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c7-variation.webp" alt="Une droite coupe la courbe au plus autant de fois que le polygone" loading="lazy"><figcaption>Diminution de la variation.</figcaption></figure>
+    </div>
+    <details class="box">
+        <summary><b>Exercice</b> : la Bézier de contrôle P₀(0, 0), P₁(5, 5), P₂(10, 5), P₃(15, 0) — calculer p(0), p(1/4), p(1/2), p(3/4), p(1).</summary>
+        <p>Pour u = 1/4, les poids \(B_i^3\) valent \(\frac{27}{64}, \frac{27}{64}, \frac{9}{64}, \frac{1}{64}\) ; pour u = 1/2, \(\frac18, \frac38, \frac38, \frac18\). On obtient p(0) = (0 ; 0), p(1/4) = (3,75 ; 2,81), p(1/2) = (7,5 ; 3,75), p(3/4) = (11,25 ; 2,81) et p(1) = (15 ; 0). La courbe est symétrique, comme son polygone.</p>
+    </details>
+
+    <h3>Algorithme de De Casteljau</h3>
+    <p>On évalue un point de la courbe par interpolations linéaires successives, sans calculer de polynômes. Partant de \(P_i^0 = P_i\) :</p>
+    <div class="box"><span class="bt">De Casteljau</span>
+        <div class="math">\[ P_i^{k+1} = (1 - u)\,P_i^k + u\,P_{i+1}^k, \qquad p(u) = P_0^n. \]</div>
+    </div>
+    <p>À chaque étape, on remplace chaque segment du polygone par le point situé à la fraction u de sa longueur ; il reste un point de moins. Après n étapes, il n'en reste qu'un : c'est le point de la courbe. Cela découle de la récurrence des polynômes de Bernstein :</p>
+    <div class="math">\[ p(u) = \sum_{i=0}^{n} B_i^n(u)\,P_i^0 = \sum_{i=0}^{n-1} B_i^{n-1}(u)\,P_i^1 = \dots = \sum_{i=0}^{0} B_i^0(u)\,P_i^n = P_0^n. \]</div>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c7-casteljau.webp" alt="Constructions successives de De Casteljau pour n = 3 et u = 1/4" loading="lazy"><figcaption>n = 3, u = 1/4 : \(P_0^3\) est le point p(1/4).</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c7-treillis.webp" alt="Treillis des barycentres de De Casteljau pour 5 points de contrôle" loading="lazy"><figcaption>Treillis des barycentres pour 5 points de contrôle.</figcaption></figure>
+    </div>
+    <p>L'algorithme est numériquement stable. En prime, les points intermédiaires \(P_0^0, P_0^1, \dots, P_0^n\) et \(P_0^n, P_1^{n-1}, \dots, P_n^0\) sont les points de contrôle des deux moitiés de la courbe coupée en u : c'est la base de la subdivision des courbes de Bézier.</p>
+
+    <h3>Raccorder des courbes</h3>
+    <p>Une seule courbe de Bézier de degré élevé est difficile à contrôler, car chaque point influence toute la courbe. On préfère raccorder des morceaux de bas degré, par exemple des cubiques. Soit deux courbes de points de contrôle \(P_1 \dots P_4\) et \(P'_1 \dots P'_4\) :</p>
+    <dl>
+        <dt>Continuité C<sup>0</sup> (ou G<sup>0</sup>)</dt><dd>Les points extrêmes coïncident : \(P_4 = P'_1\).</dd>
+        <dt>Continuité G<sup>1</sup> (géométrique)</dt><dd>Les points extrêmes coïncident et les segments extrêmes sont alignés : \(\vec{P_3P_4} = k\,\vec{P'_1P'_2}\) avec k &gt; 0. Les tangentes ont la même direction mais pas forcément la même norme.</dd>
+        <dt>Continuité C<sup>1</sup></dt><dd>Les points extrêmes coïncident et sont au milieu du point qui les précède et de celui qui les suit : \(\vec{P_3P_4} = \vec{P'_1P'_2}\). Les dérivées sont égales.</dd>
+        <dt>Continuité C<sup>2</sup></dt><dd>En plus, les dérivées secondes sont égales au raccord.</dd>
+    </dl>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c7-raccord-c0.webp" alt="Raccord C0 de deux courbes" loading="lazy"><figcaption>C<sup>0</sup>.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c7-raccord-g1.webp" alt="Raccord G1 de deux courbes" loading="lazy"><figcaption>G<sup>1</sup>.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c7-raccord-c1.webp" alt="Raccord C1 de deux courbes" loading="lazy"><figcaption>C<sup>1</sup>.</figcaption></figure>
+    </div>
+    <details class="box">
+        <summary><b>Exercice</b> : conditions de raccord C² de deux cubiques d'Hermite, et conséquence sur la courbure.</summary>
+        <p>Soit deux cubiques d'Hermite \(M_1(t)\) et \(M_2(t)\), \(t \in [0, 1]\), de paramètres \((P_0, P_1, V_0, V_1)\) et \((P'_0, P'_1, V'_0, V'_1)\). Il faut :</p>
+        <ul>
+            <li>C<sup>0</sup> : \(M_1(1) = M_2(0)\), soit \(P_1 = P'_0\) ;</li>
+            <li>C<sup>1</sup> : \(\dot M_1(1) = \dot M_2(0)\), soit \(V_1 = V'_0\) ;</li>
+            <li>C<sup>2</sup> : \(\ddot M_1(1) = \ddot M_2(0)\). Avec les matrices ci-dessus, \(\ddot p(1) = 6P_0 - 6P_1 + 2V_0 + 4V_1\) et \(\ddot p(0) = -6P_0 + 6P_1 - 4V_0 - 2V_1\), d'où \(6P_0 - 6P_1 + 2V_0 + 4V_1 = -6P'_0 + 6P'_1 - 4V'_0 - 2V'_1\).</li>
+        </ul>
+        <p>La courbure dépend des dérivées première et seconde : avec un raccord C<sup>2</sup>, elle varie <b>continûment</b> le long des deux courbes, sans saut au point de raccord. Elle n'est pas constante pour autant.</p>
+    </details>
+    <figure><img src="./assets/img/cours/mg/c7-complexe.webp" alt="Une Bézier de degré 12 comparée à six cubiques raccordées" loading="lazy"><figcaption>Une seule Bézier de degré 12 (à gauche) contre six Bézier de degré 3 raccordées C<sup>1</sup> (à droite) : la seconde suit bien mieux son polygone.</figcaption></figure>
+    <p class="credit">Chapitre compilé à partir des cours de Loïc Barthe (IRIT), Christian Jacquemin (LIMSI), Marc Daniel (LSIS) et Gilles Gesquière.</p>
+
+    <div class="tp" id="tp6">
+        <h3>TP 6 — Courbes d'Hermite et de Bézier</h3>
+        <h4>Exercice 1 — Hermite</h4>
+        <p>Écrivez une méthode qui trace une courbe d'Hermite à partir de ses quatre paramètres \((P_0, P_1, V_0, V_1)\). Retrouvez les courbes des exercices ci-dessus.</p>
+        <h4>Exercice 2 — Bézier par les polynômes de Bernstein</h4>
+        <p>Tracez la courbe de Bézier cubique de points de contrôle \(P_0 = (-2, -2, 0)\), \(P_1 = (-1, 1, 0)\), \(P_2 = (1, 1, 0)\) et \(P_3 = (2, -2, 0)\), avec la formule \(p(u) = \sum_i B_i^3(u)\,P_i\).</p>
+        <ol>
+            <li>Affichez le polygone de contrôle reliant les 4 points.</li>
+            <li>Tracez la courbe de Bézier.</li>
+            <li>Rendez les points de contrôle modifiables pendant l'exécution : les touches 0 à 3 sélectionnent un point (signalé par un petit carré), les touches Z, D, Q et S le déplacent vers le haut, la droite, la gauche et le bas.</li>
+        </ol>
+        <h4>Exercice 3 <span class="opt">(optionnel)</span> — De Casteljau</h4>
+        <p>Calculez la courbe avec l'algorithme de De Casteljau, pour un nombre de points de contrôle quelconque, et comparez avec l'exercice 2.</p>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c8" data-title="Surfaces paramétriques">
+    <header>
+        <p class="kicker">Chapitre 8</p>
+        <h2>Surfaces paramétriques</h2>
+        <p class="lead">On passe d'un paramètre à deux : une surface est un réseau de courbes. Surfaces balayées, carreaux, produit tensoriel, et carreaux de Bézier construits à partir des courbes du chapitre 7.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM_09_surfaces.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+        </div>
+    </header>
+
+    <h3>Représentation paramétrique</h3>
+    <p>Une courbe demande un paramètre : \(x(u), y(u), z(u)\). Une surface en demande deux : \(x(u, v), y(u, v), z(u, v)\). Les techniques de représentation des surfaces étendent celles des courbes dans la seconde dimension v, et les surfaces obtenues partagent beaucoup de propriétés avec les courbes correspondantes.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c8-carreau-plan.webp" alt="Carreau rectangulaire du plan XY entre a, c en x et b, d en y" loading="lazy"><figcaption>Carreau rectangulaire du plan : \(x = a + (c - a)u\), \(y = b + (d - b)v\), \(z = 0\).</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c8-carreau-3d.webp" alt="Carreau plan parallélogramme dans l'espace" loading="lazy"><figcaption>Carreau plan dans l'espace : \(P(u, v) = P_{00} + (P_{10} - P_{00})\,u + (P_{01} - P_{00})\,v\).</figcaption></figure>
+    </div>
+    <div class="side">
+        <div>
+            <p>La sphère de centre \((x_0, y_0, z_0)\) et de rayon r :</p>
+            <div class="math">\[ S(u, w) = \begin{cases} x = x_0 + r\cos u\cos w \\ y = y_0 + r\cos u\sin w \\ z = z_0 + r\sin u \end{cases} \quad u \in \left[-\tfrac\pi2, \tfrac\pi2\right],\ w \in [0, 2\pi]. \]</div>
+            <p>Les <b>parallèles</b> (latitude) sont les courbes iso-paramétriques à u constant, les <b>méridiens</b> (longitude) celles à w constant. Ici u est une latitude ; au chapitre 1, l'angle φ était mesuré depuis l'axe z.</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/mg/c8-sphere.webp" alt="Paramétrisation de la sphère par latitude et longitude" loading="lazy"></figure>
+    </div>
+
+    <h3>Surfaces balayées</h3>
+    <p>Une courbe <b>génératrice</b> se déplace le long d'une trajectoire et balaie la surface.</p>
+    <dl>
+        <dt>Surface de révolution</dt>
+        <dd>La génératrice tourne autour d'un axe de révolution. Un plan perpendiculaire à l'axe coupe la surface selon un cercle, appelé parallèle.</dd>
+    </dl>
+    <figure class="s"><img src="./assets/img/cours/mg/c8-revolution.webp" alt="Génératrice tournant autour d'un axe et la surface de révolution obtenue" loading="lazy"></figure>
+    <dl>
+        <dt>Surface cylindrique</dt>
+        <dd>La génératrice est translatée parallèlement à elle-même le long d'une courbe <b>directrice</b> (guide ou trajectoire). Si la génératrice est un cercle et la directrice une droite, on obtient un cylindre circulaire. L'<b>extrusion</b> des logiciels de CAO est ce cas : une directrice droite (direction et distance) et un profil quelconque (l'esquisse).</dd>
+    </dl>
+    <figure class="s"><img src="./assets/img/cours/mg/c8-cylindrique.webp" alt="Génératrice translatée le long d'une directrice" loading="lazy"></figure>
+    <dl>
+        <dt>Surface réglée</dt>
+        <dd>Par chaque point de la surface passe un segment de droite entièrement contenu dans la surface. On l'obtient en reliant deux courbes P(u) et Q(u), paramétrées sur [0, 1], point à point par des segments (si les courbes ont des paramètres différents, on effectue d'abord un changement de variable) :
+            <div class="math">\[ S(u, v) = (1 - v)\,P(u) + v\,Q(u). \]</div>
+        </dd>
+    </dl>
+    <figure class="s"><img src="./assets/img/cours/mg/c8-reglee.webp" alt="Surface réglée entre deux courbes, et paraboloïde hyperbolique" loading="lazy"></figure>
+
+    <h3>Carreaux de surface</h3>
+    <div class="side">
+        <div>
+            <p>Le <b>carreau</b> (<i>patch</i>) est l'élément de base des surfaces complexes, l'équivalent du segment pour les courbes. Il est bi-paramétrique, avec en général u et v dans [0, 1]. En fixant u ou v, on obtient une <b>courbe iso-paramétrique</b> ; la surface se décrit comme un réseau de ces courbes (ici, avec un pas de 0,1 en u et en v).</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/mg/c8-isoparam.webp" alt="Carreau représenté par ses courbes iso-paramétriques" loading="lazy"></figure>
+    </div>
+    <p>Formellement, une surface paramétrique est une fonction \(f : D \times E \to \mathbb{R}^3\), \((u, v) \mapsto p(u, v)\). Le point \(p(u_0, v_0)\) est l'intersection des deux iso-paramétriques \(u = u_0\) et \(v = v_0\).</p>
+    <h4>Produit tensoriel</h4>
+    <p>On construit souvent une surface comme <b>produit tensoriel</b> de deux courbes : une courbe directrice \(f_d(u)\) et une courbe génératrice \(f_g(v)\). La surface est obtenue en déplaçant et en déformant la génératrice le long de la directrice.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/mg/c8-produit-tensoriel.webp" alt="Génératrice déplacée le long d'une directrice" loading="lazy"><figcaption>Génératrice et directrice.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/mg/c8-coins.webp" alt="Coins et bords d'un carreau paramétré sur [a,b]×[c,d]" loading="lazy"><figcaption>Coins \(p(a, c), \dots, p(b, d)\) et bords \(p(u, c)\), \(p(a, v)\)… d'un carreau sur \([a, b] \times [c, d]\).</figcaption></figure>
+    </div>
+    <h4>Tangentes et normale</h4>
+    <div class="side">
+        <div>
+            <p>Le plan tangent en \(p(u_0, v_0)\) est engendré par les tangentes aux deux iso-paramétriques qui y passent, \(p^u = \partial p / \partial u\) et \(p^v = \partial p / \partial v\). La normale unitaire est leur produit vectoriel normalisé :</p>
+            <div class="math">\[ n(u_0, v_0) = \frac{p^u(u_0, v_0) \wedge p^v(u_0, v_0)}{\lVert p^u(u_0, v_0) \wedge p^v(u_0, v_0) \rVert}. \]</div>
+            <p>C'est elle qu'on utilise pour éclairer la surface une fois facettée.</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/mg/c8-normale.webp" alt="Tangentes pu et pv et normale n en un point du carreau" loading="lazy"></figure>
+    </div>
+
+    <h3>Carreaux bicubiques</h3>
+    <p>Un carreau bicubique est le produit tensoriel de fonctions polynomiales de degré 3 en u et en v :</p>
+    <div class="math">\[ p(u, v) = \sum_{i=0}^{3} \sum_{j=0}^{3} a_{ij}\,u^i v^j = U A V^T, \quad U = \begin{pmatrix} u^3 &amp; u^2 &amp; u &amp; 1 \end{pmatrix},\ V = \begin{pmatrix} v^3 &amp; v^2 &amp; v &amp; 1 \end{pmatrix},\ a_{ij} \in \mathbb{R}^3. \]</div>
+    <p>Comme pour les courbes, piloter la forme par les coefficients \(a_{ij}\) n'a rien d'intuitif ; d'où la forme d'Hermite.</p>
+    <h4>Carreau bicubique d'Hermite</h4>
+    <p>On reprend les fonctions d'Hermite \(F(u) = (F_1(u), F_2(u), F_3(u), F_4(u))\) du chapitre 7 :</p>
+    <div class="math">\[ p(u, v) = F(u)\, B\, F(v)^T, \qquad B = \begin{pmatrix} p_{00} &amp; p_{01} &amp; p^v_{00} &amp; p^v_{01} \\ p_{10} &amp; p_{11} &amp; p^v_{10} &amp; p^v_{11} \\ p^u_{00} &amp; p^u_{01} &amp; p^{uv}_{00} &amp; p^{uv}_{01} \\ p^u_{10} &amp; p^u_{11} &amp; p^{uv}_{10} &amp; p^{uv}_{11} \end{pmatrix}. \]</div>
+    <p>B regroupe les 4 coins, les tangentes en u et en v aux coins, et les 4 vecteurs de torsion \(p^{uv}\) (dérivées croisées), qui règlent la façon dont la surface « vrille » aux coins.</p>
+
+    <h3>Carreaux de Bézier</h3>
+    <div class="side">
+        <div>
+            <p>Avec \((u, v) \in [0, 1]^2\), la surface est contrôlée par un <b>maillage de contrôle</b> régulier de quadrilatères, de sommets \(S_{ij}\) numérotés selon u et selon v. Les n + 1 points de contrôle en u donnent le degré n des courbes en u, les m + 1 points en v le degré m des courbes en v. Pour un carreau bicubique, n = m = 3, soit 16 points de contrôle.</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/mg/c8-maillage-controle.webp" alt="Maillage de contrôle 4 × 4 d'un carreau de Bézier" loading="lazy"><figcaption>Les 16 points \(S_{00}\) à \(S_{33}\).</figcaption></figure>
+    </div>
+    <h4>Construction par produit tensoriel</h4>
+    <p>Pour évaluer \(p(u_0, v_0)\), on choisit les directrices dans la direction u :</p>
+    <ol>
+        <li>Chaque rangée de points \(S_{0j}, \dots, S_{nj}\) définit une courbe de Bézier directrice \(d_j(u) = \sum_{i=0}^{n} B_i^n(u)\,S_{ij}\), pour \(j = 0, \dots, m\).</li>
+        <li>On évalue chaque directrice en \(u_0\) : les points \(d_j(u_0)\) forment le polygone de contrôle d'une courbe génératrice \(g(v) = \sum_{j=0}^{m} B_j^m(v)\,d_j(u_0)\), tracée sur la surface.</li>
+        <li>Le point cherché est le point de cette génératrice en \(v_0\) : \(p(u_0, v_0) = g(v_0)\).</li>
+    </ol>
+    <figure class="s"><img src="./assets/img/cours/mg/c8-directrices.webp" alt="Directrices rouges évaluées en u0 et polygone bleu de la génératrice" loading="lazy"><figcaption>Les directrices (rouge) évaluées en \(u_0\) donnent le polygone de contrôle (bleu) de la génératrice.</figcaption></figure>
+    <p>En substituant \(d_j(u)\) dans \(g(v)\), on obtient la définition du carreau de Bézier :</p>
+    <div class="box"><span class="bt">Carreau de Bézier</span>
+        <div class="math">\[ p(u, v) = \sum_{i=0}^{n} \sum_{j=0}^{m} B_i^n(u)\,B_j^m(v)\,S_{ij}, \qquad (u, v) \in [0, 1]^2. \]</div>
+    </div>
+    <figure><img src="./assets/img/cours/mg/c8-bezier-carreau.webp" alt="Carreau bicubique avec son maillage de contrôle, puis seul" loading="lazy"><figcaption>Carreau bicubique : produit tensoriel de deux courbes de degré 3 (ordre 4).</figcaption></figure>
+    <p>Le choix des directrices en u ou en v ne change pas le résultat. On peut aussi appliquer De Casteljau ligne par ligne, puis sur la colonne obtenue.</p>
+    <h4>Fonctions de base</h4>
+    <div class="side">
+        <div>
+            <p>Un carreau de Bézier est une <b>combinaison barycentrique</b> de ses points de contrôle, avec les fonctions de base \(B_{ij}^{n,m}(u, v) = B_i^n(u)\,B_j^m(v)\). Les propriétés des courbes se transposent : le carreau passe par ses quatre points de coin, ses bords sont les courbes de Bézier des bords du maillage, il reste dans l'enveloppe convexe de ses points de contrôle, et il est invariant par transformation affine.</p>
+            <p>Pour un carreau bicubique, les 16 fonctions de base se déduisent les unes des autres par symétrie.</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/mg/c8-fonctions-base.webp" alt="Graphes de huit fonctions de base d'un carreau bicubique" loading="lazy"><figcaption>Fonctions \(B_{0j}^{3,3}\) et \(B_{1j}^{3,3}\) ; les autres s'obtiennent par symétrie.</figcaption></figure>
+    </div>
+    <h4>Modélisation par carreaux</h4>
+    <div class="side">
+        <p>Une surface complexe est un assemblage de carreaux, comme une <b>couture</b> : on joint les carreaux en jouant sur la position de leurs points de contrôle. Les conditions de continuité sont celles des courbes (chapitre 7), appliquées le long des bords communs : les points de contrôle du bord doivent coïncider (C<sup>0</sup>), et les points de part et d'autre doivent être alignés et à égale distance du bord (C<sup>1</sup>).</p>
+        <figure class="s"><img src="./assets/img/cours/mg/c8-couture.webp" alt="Surface composée de quatre carreaux de couleurs différentes" loading="lazy"></figure>
+    </div>
+    <div class="box"><span class="bt">Pour aller plus loin</span><p>Les <b>carreaux triangulaires de Bézier</b>, en coordonnées barycentriques, couvrent les zones où une grille rectangulaire ne convient pas. Les <b>carreaux de Coons</b> construisent une surface à partir de ses seules quatre courbes de bord. Les <b>NURBS</b> généralisent Bézier avec des fonctions de base à support local et des poids, et sont le standard de la CAO.</p></div>
+    <p class="credit">Chapitre compilé à partir des cours de modélisation géométrique de l'IRIT (équipe Vortex), de Christian Jacquemin (LIMSI), Marc Daniel (LSIS), Éric Béchet (Université de Liège), Antoine Brière-Côté (ÉTS, Canada) et Gilles Gesquière.</p>
+</section>
+
+
+        </main>
+    </div>
+</div>
 </body>
+</html>
