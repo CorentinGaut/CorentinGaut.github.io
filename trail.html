@@ -62,7 +62,8 @@
             <thead><tr>
                 <th class="l">Semaine du</th>
                 <th>Objectif</th>
-                <th class="l">Séance clé</th>
+                <th>Type</th>
+                <th class="l">Séance</th>
                 <th>Réalisé</th>
                 <th>Écart D+</th>
             </tr></thead>
@@ -212,26 +213,68 @@
         var body = document.getElementById('weeks-body');
         body.replaceChildren();
         var cur = null;
+        var labels = { ef: 'EF', qualite: 'Qualité', sl: 'Sortie longue' };
         data.semaines.forEach(function (x) {
             if (x.phase !== cur) {
                 cur = x.phase;
                 var trp = body.insertRow(); trp.className = 'phase';
-                var c = trp.insertCell(); c.colSpan = 5; c.textContent = data.phases[x.phase];
+                var c = trp.insertCell(); c.colSpan = 6; c.textContent = data.phases[x.phase];
             }
-            var d = parse(x.debut), tr = body.insertRow();
-            if (today >= d && today < addDays(d, 7)) tr.className = 'now';
-            var cells = [
-                [fmt(d, { day: 'numeric', month: 'short' }), 'l'],
-                [x.objectif_km == null ? '—' : nf(x.objectif_km) + ' km · ' + nf(x.objectif_dplus) + ' m', ''],
-                [x.seance_cle + (x.note ? ' — ' + x.note : ''), 'l s'],
-                [x.realise_km == null ? (d > today ? '' : '—') : nf(x.realise_km, 1) + ' km · ' + nf(x.realise_dplus) + ' m', '']
-            ];
-            cells.forEach(function (c) { var td = tr.insertCell(); td.textContent = c[0]; if (c[1]) td.className = c[1]; });
-            var gap = tr.insertCell();
+            var d = parse(x.debut);
+            var isNow = today >= d && today < addDays(d, 7);
+            var seances = (x.seances && x.seances.length) ? x.seances : null;
+            var N = seances ? seances.length : 1;
+
+            function makeBadge(type) {
+                var span = document.createElement('span');
+                span.className = 'sb sb-' + type;
+                return span;
+            }
+
+            var tr = body.insertRow();
+            if (isNow) tr.className = 'now';
+
+            var tdDate = tr.insertCell(); tdDate.className = 'l';
+            tdDate.textContent = fmt(d, { day: 'numeric', month: 'short' });
+            if (N > 1) tdDate.rowSpan = N;
+
+            var tdObj = tr.insertCell();
+            tdObj.textContent = x.objectif_km == null ? '—' : nf(x.objectif_km) + ' km · ' + nf(x.objectif_dplus) + ' m';
+            if (N > 1) tdObj.rowSpan = N;
+
+            if (seances) {
+                var tdType = tr.insertCell(); tdType.className = 'type-cell';
+                tdType.appendChild(makeBadge(seances[0].type));
+                tdType.appendChild(document.createTextNode(labels[seances[0].type] || seances[0].type));
+                var tdDesc = tr.insertCell(); tdDesc.className = 'l s';
+                tdDesc.textContent = seances[0].description;
+            } else {
+                var tdSc = tr.insertCell(); tdSc.className = 'l s'; tdSc.colSpan = 2;
+                tdSc.textContent = x.seance_cle + (x.note ? ' — ' + x.note : '');
+            }
+
+            var tdReal = tr.insertCell();
+            tdReal.textContent = x.realise_km == null ? (d > today ? '' : '—') : nf(x.realise_km, 1) + ' km · ' + nf(x.realise_dplus) + ' m';
+            if (N > 1) tdReal.rowSpan = N;
+
+            var tdGap = tr.insertCell();
             if (x.realise_dplus != null && x.objectif_dplus) {
                 var pct = Math.round((x.realise_dplus / x.objectif_dplus - 1) * 100);
-                gap.textContent = (pct > 0 ? '+' : '') + pct + ' %';
-                gap.className = pct >= -10 ? 'ok' : 'ko';
+                tdGap.textContent = (pct > 0 ? '+' : '') + pct + ' %';
+                tdGap.className = pct >= -10 ? 'ok' : 'ko';
+            }
+            if (N > 1) tdGap.rowSpan = N;
+
+            if (seances) {
+                for (var i = 1; i < seances.length; i++) {
+                    var trSub = body.insertRow();
+                    trSub.className = 'sess' + (isNow ? ' now' : '');
+                    var tdT = trSub.insertCell(); tdT.className = 'type-cell';
+                    tdT.appendChild(makeBadge(seances[i].type));
+                    tdT.appendChild(document.createTextNode(labels[seances[i].type] || seances[i].type));
+                    var tdD = trSub.insertCell(); tdD.className = 'l s';
+                    tdD.textContent = seances[i].description;
+                }
             }
         });
     }

@@ -25,6 +25,7 @@
    "objectif_km": null,
    "objectif_dplus": null,
    "seance_cle": "Fin de préparation Beaujolais",
+   "seances": [],
    "realise_km": 18.3,
    "realise_dplus": 318,
    "realise_heures": 1.8,
@@ -38,6 +39,7 @@
    "objectif_km": null,
    "objectif_dplus": null,
    "seance_cle": "Fin de préparation Beaujolais",
+   "seances": [],
    "realise_km": 27.8,
    "realise_dplus": 148,
    "realise_heures": 2.5,
@@ -51,6 +53,7 @@
    "objectif_km": null,
    "objectif_dplus": null,
    "seance_cle": "Trail du Beaujolais (22/11)",
+   "seances": [],
    "realise_km": 51.8,
    "realise_dplus": 1488,
    "realise_heures": 5.7,
@@ -64,6 +67,9 @@
    "objectif_km": 20,
    "objectif_dplus": 200,
    "seance_cle": "Footing facile 30–40 min, pas d'intensité",
+   "seances": [
+    { "type": "ef", "description": "2×35 min footing facile, pas d'intensité" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -77,6 +83,10 @@
    "objectif_km": 30,
    "objectif_dplus": 300,
    "seance_cle": "Reprise : 3 footings, dont 1 avec côtes douces",
+   "seances": [
+    { "type": "ef", "description": "2×35 min footing Z2" },
+    { "type": "ef", "description": "30 min avec côtes douces" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -90,6 +100,11 @@
    "objectif_km": 30,
    "objectif_dplus": 500,
    "seance_cle": "Sortie longue Z2 + 6×1 min en côte",
+   "seances": [
+    { "type": "ef", "description": "2×40 min EF Z2" },
+    { "type": "qualite", "description": "6×1 min en côte, récup descente" },
+    { "type": "sl", "description": "1h30 sortie longue Z2, D+200 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -103,6 +118,11 @@
    "objectif_km": 35,
    "objectif_dplus": 550,
    "seance_cle": "Seuil 3×8 min + escaliers 20 min",
+   "seances": [
+    { "type": "ef", "description": "2×40 min EF Z2" },
+    { "type": "qualite", "description": "Seuil 3×8 min + escaliers 20 min" },
+    { "type": "sl", "description": "1h45 sortie vallonnée, D+300 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -116,6 +136,10 @@
    "objectif_km": 35,
    "objectif_dplus": 600,
    "seance_cle": "Sortie longue vallonnée + renfo excentrique (fêtes : flexible)",
+   "seances": [
+    { "type": "ef", "description": "2×35 min EF (flexible fêtes)" },
+    { "type": "sl", "description": "2h sortie longue vallonnée + renfo excentrique" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -129,6 +153,10 @@
    "objectif_km": 25,
    "objectif_dplus": 450,
    "seance_cle": "Semaine allégée : footings + renfo",
+   "seances": [
+    { "type": "ef", "description": "2×35 min footing Z2 léger" },
+    { "type": "sl", "description": "1h30 sortie légère, renfo 20 min" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -142,6 +170,11 @@
    "objectif_km": 40,
    "objectif_dplus": 700,
    "seance_cle": "Seuil 3×8 min + escaliers 20 min",
+   "seances": [
+    { "type": "ef", "description": "2×40 min EF Z2" },
+    { "type": "qualite", "description": "Seuil 3×8 min + escaliers 20 min" },
+    { "type": "sl", "description": "2h sortie longue Z2, D+400 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -155,6 +188,11 @@
    "objectif_km": 40,
    "objectif_dplus": 750,
    "seance_cle": "Sortie longue vallonnée + renfo excentrique",
+   "seances": [
+    { "type": "ef", "description": "2×40 min EF Z2" },
+    { "type": "qualite", "description": "8×200 m de côte + renfo excentrique" },
+    { "type": "sl", "description": "2h sortie longue vallonnée, D+400 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -168,6 +206,11 @@
    "objectif_km": 40,
    "objectif_dplus": 750,
    "seance_cle": "Sortie longue Z2 + 6×1 min en côte",
+   "seances": [
+    { "type": "ef", "description": "2×40 min EF Z2" },
+    { "type": "qualite", "description": "6×1 min en côte, récup descente" },
+    { "type": "sl", "description": "2h sortie longue Z2, D+450 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -181,6 +224,10 @@
    "objectif_km": 30,
    "objectif_dplus": 550,
    "seance_cle": "Semaine allégée : footings + renfo",
+   "seances": [
+    { "type": "ef", "description": "2×35 min footing Z2 léger" },
+    { "type": "sl", "description": "1h30 sortie légère, renfo 20 min" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -194,6 +241,11 @@
    "objectif_km": 45,
    "objectif_dplus": 850,
    "seance_cle": "Sortie longue vallonnée + renfo excentrique",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "8×200 m de côte + renfo excentrique" },
+    { "type": "sl", "description": "2h30 sortie longue vallonnée, D+500 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -207,6 +259,11 @@
    "objectif_km": 45,
    "objectif_dplus": 900,
    "seance_cle": "Sortie longue Z2 + 6×1 min en côte",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "6×1 min en côte, récup descente" },
+    { "type": "sl", "description": "2h30 sortie longue Z2, D+550 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -220,6 +277,11 @@
    "objectif_km": 45,
    "objectif_dplus": 950,
    "seance_cle": "Seuil 3×8 min + escaliers 20 min",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Seuil 3×8 min + escaliers 20 min" },
+    { "type": "sl", "description": "2h30 sortie vallonnée, D+550 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -233,6 +295,10 @@
    "objectif_km": 35,
    "objectif_dplus": 700,
    "seance_cle": "Semaine allégée : footings + renfo",
+   "seances": [
+    { "type": "ef", "description": "2×35 min footing Z2 léger" },
+    { "type": "sl", "description": "1h45 sortie légère, renfo 20 min" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -246,6 +312,11 @@
    "objectif_km": 45,
    "objectif_dplus": 1000,
    "seance_cle": "Côtes longues 2×20 min à 10–15 %",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Côtes longues 2×20 min à 10–15 %" },
+    { "type": "sl", "description": "3h sortie D+600 m avec bâtons" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -259,6 +330,11 @@
    "objectif_km": 45,
    "objectif_dplus": 1050,
    "seance_cle": "Tapis 15 % 3×15 min + sortie longue D+",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Tapis 15 % 3×15 min" },
+    { "type": "sl", "description": "3h sortie longue D+700 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -272,6 +348,11 @@
    "objectif_km": 45,
    "objectif_dplus": 1150,
    "seance_cle": "Sortie longue 3–4 h avec bâtons",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Côtes longues 2×15 min à 10–15 %" },
+    { "type": "sl", "description": "3–4 h sortie longue avec bâtons, D+800 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -285,6 +366,10 @@
    "objectif_km": 35,
    "objectif_dplus": 850,
    "seance_cle": "Semaine allégée : volume −30 %",
+   "seances": [
+    { "type": "ef", "description": "2×35 min EF Z2 léger" },
+    { "type": "sl", "description": "2h sortie D+400 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -298,6 +383,11 @@
    "objectif_km": 50,
    "objectif_dplus": 1300,
    "seance_cle": "Tapis 15 % 3×15 min + sortie longue D+",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Tapis 15 % 3×15 min" },
+    { "type": "sl", "description": "3h30 sortie longue D+900 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -311,6 +401,11 @@
    "objectif_km": 50,
    "objectif_dplus": 1350,
    "seance_cle": "Sortie longue 3–4 h avec bâtons",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Côtes longues 2×20 min à 10–15 %" },
+    { "type": "sl", "description": "3–4 h sortie longue avec bâtons, D+1 000 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -324,6 +419,11 @@
    "objectif_km": 50,
    "objectif_dplus": 1450,
    "seance_cle": "Côtes longues 2×20 min à 10–15 %",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Côtes longues 2×20 min à 10–15 %" },
+    { "type": "sl", "description": "3h30 sortie D+1 000 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -337,6 +437,10 @@
    "objectif_km": 35,
    "objectif_dplus": 1050,
    "seance_cle": "Semaine allégée : volume −30 %",
+   "seances": [
+    { "type": "ef", "description": "2×35 min EF Z2 léger" },
+    { "type": "sl", "description": "2h sortie D+500 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -350,6 +454,11 @@
    "objectif_km": 55,
    "objectif_dplus": 1600,
    "seance_cle": "Sortie longue 3–4 h avec bâtons",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Côtes longues 2×20 min à 10–15 %" },
+    { "type": "sl", "description": "4 h sortie longue avec bâtons, D+1 200 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -363,6 +472,11 @@
    "objectif_km": 55,
    "objectif_dplus": 1650,
    "seance_cle": "Côtes longues 2×20 min à 10–15 %",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Côtes longues 2×20 min à 10–15 %" },
+    { "type": "sl", "description": "3h30 sortie D+1 100 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -376,6 +490,11 @@
    "objectif_km": 55,
    "objectif_dplus": 1750,
    "seance_cle": "Tapis 15 % 3×15 min + sortie longue D+",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Tapis 15 % 3×15 min" },
+    { "type": "sl", "description": "4 h sortie longue D+1 200 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -389,6 +508,10 @@
    "objectif_km": 45,
    "objectif_dplus": 1800,
    "seance_cle": "Trail test ~30 km / 1 500–2 000 m D+",
+   "seances": [
+    { "type": "ef", "description": "2×40 min EF Z2" },
+    { "type": "sl", "description": "Trail test ~30 km / 1 500–2 000 m D+" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -402,6 +525,11 @@
    "objectif_km": 50,
    "objectif_dplus": 1800,
    "seance_cle": "Week-end Alpes : 2 sorties > 1 500 m D+",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Montée technique 1 h, bâtons" },
+    { "type": "sl", "description": "Week-end Alpes : 2 sorties > 1 500 m D+" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -415,6 +543,11 @@
    "objectif_km": 50,
    "objectif_dplus": 1900,
    "seance_cle": "Descente technique + sortie longue 5 h",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Descente technique 45 min" },
+    { "type": "sl", "description": "Sortie longue 5 h, D+1 500 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -428,6 +561,11 @@
    "objectif_km": 50,
    "objectif_dplus": 2000,
    "seance_cle": "Bloc montagne : 2 jours consécutifs",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Montée technique 1 h" },
+    { "type": "sl", "description": "Bloc montagne : 2 jours consécutifs, D+1 500 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -441,6 +579,10 @@
    "objectif_km": 40,
    "objectif_dplus": 1450,
    "seance_cle": "Semaine allégée : volume −30 %",
+   "seances": [
+    { "type": "ef", "description": "2×35 min EF Z2 léger" },
+    { "type": "sl", "description": "2h30 sortie D+700 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -454,6 +596,11 @@
    "objectif_km": 55,
    "objectif_dplus": 2150,
    "seance_cle": "Descente technique + sortie longue 5 h",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Descente technique 1 h" },
+    { "type": "sl", "description": "Sortie longue 5 h, D+1 800 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -467,6 +614,11 @@
    "objectif_km": 55,
    "objectif_dplus": 2250,
    "seance_cle": "Bloc montagne : 2 jours consécutifs",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Montée technique 1 h" },
+    { "type": "sl", "description": "Bloc montagne : 2 jours consécutifs, D+2 000 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -480,6 +632,11 @@
    "objectif_km": 60,
    "objectif_dplus": 2300,
    "seance_cle": "Week-end Alpes : 2 sorties > 1 500 m D+",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Descente technique 1 h" },
+    { "type": "sl", "description": "Week-end Alpes : 2 sorties > 1 500 m D+" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -493,6 +650,10 @@
    "objectif_km": 40,
    "objectif_dplus": 1700,
    "seance_cle": "Semaine allégée : volume −30 %",
+   "seances": [
+    { "type": "ef", "description": "2×35 min EF Z2 léger" },
+    { "type": "sl", "description": "2h30 sortie D+800 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -506,6 +667,11 @@
    "objectif_km": 60,
    "objectif_dplus": 2500,
    "seance_cle": "Bloc montagne : 2 jours consécutifs",
+   "seances": [
+    { "type": "ef", "description": "2×45 min EF Z2" },
+    { "type": "qualite", "description": "Montée technique 1 h" },
+    { "type": "sl", "description": "Bloc montagne : 2 jours consécutifs, D+2 200 m" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -519,6 +685,10 @@
    "objectif_km": 45,
    "objectif_dplus": 2000,
    "seance_cle": "Dernière sortie longue 3 h, rythme course",
+   "seances": [
+    { "type": "ef", "description": "2×40 min EF Z2" },
+    { "type": "sl", "description": "Dernière sortie longue 3 h, rythme course" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -532,6 +702,10 @@
    "objectif_km": 35,
    "objectif_dplus": 1300,
    "seance_cle": "Volume −40 %, 1 séance tempo courte",
+   "seances": [
+    { "type": "ef", "description": "2×35 min EF Z2" },
+    { "type": "qualite", "description": "1 séance tempo courte 20 min" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -545,6 +719,9 @@
    "objectif_km": 25,
    "objectif_dplus": 800,
    "seance_cle": "Volume −60 %, rappels courts",
+   "seances": [
+    { "type": "ef", "description": "2×20 min rappels courts Z2" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,
@@ -558,6 +735,10 @@
    "objectif_km": 57,
    "objectif_dplus": 2900,
    "seance_cle": "Course : Maratrail 42 km (date à confirmer) + footings d'activation",
+   "seances": [
+    { "type": "ef", "description": "Footings d'activation 2×15 min" },
+    { "type": "sl", "description": "Course : Maratrail 42 km, 2 728 m D+" }
+   ],
    "realise_km": null,
    "realise_dplus": null,
    "realise_heures": null,

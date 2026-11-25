@@ -54,3 +54,13 @@
 .prep h3 { font-size: 15px; font-weight: bold; margin: 0 0 4px; }
 .prep .hr-line { stroke: var(--under); }
 .prep table.weeks td.wrap { white-space: normal; }
+
+/* Session type badges */
+.prep .sb { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 1px; }
+.prep .sb-ef      { background: var(--over); }
+.prep .sb-qualite { background: var(--done); }
+.prep .sb-sl      { background: var(--today); }
+
+/* Session sub-rows */
+.prep table.weeks tr.sess td { border-top: none; padding-top: 2px; padding-bottom: 2px; }
+.prep table.weeks td.type-cell { white-space: nowrap; color: var(--muted); font-size: 12px; }
