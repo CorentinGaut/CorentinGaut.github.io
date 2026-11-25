@@ -11,6 +11,28 @@
     <link rel="stylesheet" type="text/css" href="./assets/css/stylesheet.css">
     <link rel="stylesheet" type="text/css" href="./assets/css/trail.css">
     <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+    <style>
+        #ch-3d .pins { position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+        #ch-3d .pin { position:absolute; left:0; top:0; will-change:transform; }
+        #ch-3d .pin.hidden { opacity:0; }
+        #ch-3d .pin { transition:opacity .2s; }
+        #ch-3d .pin::before { content:""; position:absolute; left:-1px; bottom:0; width:2px; height:var(--h,34px); background:#fff; box-shadow:0 0 2px rgba(0,0,0,.6); }
+        #ch-3d .pin::after { content:""; position:absolute; left:-5px; top:-5px; width:10px; height:10px; border-radius:50%; background:var(--pc); border:2px solid #fff; box-sizing:border-box; }
+        #ch-3d .pin-b { position:absolute; left:0; bottom:var(--h,34px); transform:translateX(-50%); white-space:nowrap; background:rgba(255,255,255,.95); color:#222;
+            border-radius:6px; padding:3px 8px; font-size:12px; line-height:1.3; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,.35); border-top:3px solid var(--pc); }
+        #ch-3d .pin-b b { display:block; font-size:13px; }
+        #ch-3d .pin-b span { color:#555; }
+        #ch-3d .pin-summit { --pc:#5d4037; }
+        #ch-3d .pin-top { --pc:#c62828; }
+        #ch-3d .pin-km { --pc:#1772d0; --h:22px; }
+        #ch-3d .pin-runner { --pc:#ff3d00; --h:26px; }
+        #ch-3d .pin-runner::after { width:14px; height:14px; left:-7px; top:-7px; box-shadow:0 0 0 4px rgba(255,61,0,.35); }
+        #ch-3d .pin-runner .pin-b { font-variant-numeric:tabular-nums; }
+        #ch-3d .travel-btn { position:absolute; left:12px; bottom:12px; z-index:3; border:0; border-radius:6px; padding:8px 14px;
+            background:rgba(255,255,255,.95); color:#222; font:inherit; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.35); }
+        #ch-3d .travel-btn:hover { background:#fff; }
+        #ch-3d .travel-btn:focus-visible { outline:2px solid #1772d0; outline-offset:2px; }
+    </style>
     <script type="importmap">
     { "imports": {
         "three": "https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js",
@@ -67,6 +89,7 @@
     <div class="card" style="margin-bottom:16px">
         <h3>Tracé 3D — parcours GPS</h3>
         <p class="muted">Données Garmin, 45,7 km · 1 488 m D+, posées sur le relief IGN (RGE ALTI) et l'orthophoto.
+            Épingles : deux sommets principaux et passages aux 10 km, semi et marathon ; « Rejouer la course » lance un travelling au rythme réel.
             Clic-glisser pour déplacer, molette pour zoomer, Ctrl + glisser pour pivoter et incliner.</p>
         <div id="ch-3d" style="position:relative;height:440px;border-radius:6px;overflow:hidden"></div>
     </div>
@@ -391,6 +414,7 @@
 <script type="module">
 // Vue 3D iTowns : relief IGN (RGE ALTI) + orthophoto, tracé GPX drapé sur le terrain
 import * as itowns from 'itowns';
+import { Vector3 } from 'three';
 
 const box = document.getElementById('ch-3d');
 const GPX = './assets/data/activity_25161287113.gpx';
@@ -403,17 +427,64 @@ msg.textContent = 'Chargement du relief…';
 box.appendChild(msg);
 
 try {
-    // Emprise du tracé pour placer la caméra
+    // ---- Lecture du GPX : points, distance cumulée, temps ----------------
     const text = await fetch(GPX).then((r) => { if (!r.ok) throw new Error(r.status); return r.text(); });
     const tp = new DOMParser().parseFromString(text, 'application/xml').getElementsByTagName('trkpt');
     if (!tp.length) throw new Error('aucun point GPS');
-    let la0 = 90, la1 = -90, lo0 = 180, lo1 = -180;
-    for (let i = 0; i < tp.length; i += 10) {
-        const la = +tp[i].getAttribute('lat'), lo = +tp[i].getAttribute('lon');
-        la0 = Math.min(la0, la); la1 = Math.max(la1, la); lo0 = Math.min(lo0, lo); lo1 = Math.max(lo1, lo);
+    const P = [];
+    for (const n of tp) {
+        const e = n.getElementsByTagName('ele')[0], t = n.getElementsByTagName('time')[0];
+        P.push({ lat: +n.getAttribute('lat'), lon: +n.getAttribute('lon'), ele: e ? +e.textContent : 0, t: t ? Date.parse(t.textContent) : NaN, d: 0 });
     }
+    for (let i = 1; i < P.length; i++) {
+        const a = P[i - 1], b = P[i], k = Math.cos(a.lat * Math.PI / 180);
+        P[i].d = P[i - 1].d + Math.hypot((b.lon - a.lon) * k, b.lat - a.lat) * 111320;
+    }
+    // Recale la distance GPS sur celle de la montre (45,7 km) pour que les repères coïncident avec Garmin
+    const WATCH_KM = 45.7, kd = WATCH_KM * 1000 / P[P.length - 1].d;
+    P.forEach((p) => { p.d *= kd; });
+
+    let la0 = 90, la1 = -90, lo0 = 180, lo1 = -180;
+    P.forEach((p) => { la0 = Math.min(la0, p.lat); la1 = Math.max(la1, p.lat); lo0 = Math.min(lo0, p.lon); lo1 = Math.max(lo1, p.lon); });
     const latC = (la0 + la1) / 2, lonC = (lo0 + lo1) / 2;
     const extent = Math.max((la1 - la0) * 111320, (lo1 - lo0) * 111320 * Math.cos(latC * Math.PI / 180));
+
+    // ---- Repères : sommets principaux + passages 10 / 21,1 / 42,2 km -------
+    const fmtKm = (m) => (m / 1000).toLocaleString('fr-FR', { maximumFractionDigits: 1 }) + ' km';
+    const fmtT = (ms) => { const m = Math.round(ms / 60000); return Math.floor(m / 60) + 'h' + String(m % 60).padStart(2, '0'); };
+    const elapsed = (p) => (isNaN(p.t) || isNaN(P[0].t) ? '' : fmtT(p.t - P[0].t));
+
+    // Sommet = point le plus haut à ± 1,5 km, avec au moins 150 m de proéminence de chaque côté du tracé
+    const WIN = 1500, PROM = 150, summits = [];
+    let j0 = 0, j1 = 0;
+    for (let i = 0; i < P.length; i++) {
+        while (P[j0].d < P[i].d - WIN) j0++;
+        while (j1 < P.length - 1 && P[j1 + 1].d <= P[i].d + WIN) j1++;
+        let isMax = true;
+        for (let j = j0; j <= j1 && isMax; j++) if (P[j].ele > P[i].ele) isMax = false;
+        if (!isMax) continue;
+        let lo = P[i].ele, k = i; while (k > 0 && P[k - 1].ele <= P[i].ele) { k--; lo = Math.min(lo, P[k].ele); }
+        const left = P[i].ele - lo;
+        lo = P[i].ele; k = i; while (k < P.length - 1 && P[k + 1].ele <= P[i].ele) { k++; lo = Math.min(lo, P[k].ele); }
+        if (Math.min(left, P[i].ele - lo) < PROM) continue;
+        const prev = summits[summits.length - 1];
+        if (prev && P[i].d - prev.d < WIN) continue; // même crête
+        summits.push(P[i]);
+    }
+    // On ne garde que les deux sommets principaux (871 m et 735 m), dans l'ordre du parcours
+    summits.sort((a, b) => b.ele - a.ele).splice(2);
+    summits.sort((a, b) => a.d - b.d);
+    const top = summits.reduce((a, b) => (b.ele > a.ele ? b : a), summits[0]);
+
+    const pins = summits.map((p) => ({
+        p, kind: 'summit',
+        title: '▲ ' + Math.round(p.ele).toLocaleString('fr-FR') + ' m',
+        sub: (p === top ? 'Point culminant · ' : 'Sommet · ') + fmtKm(p.d),
+    }));
+    [[10000, '10 km'], [21097, 'Semi · 21,1 km'], [42195, 'Marathon · 42,2 km']].forEach(([m, label]) => {
+        const p = P.find((q) => q.d >= m);
+        if (p) pins.push({ p, kind: 'km', title: label, sub: elapsed(p) ? 'passé en ' + elapsed(p) : '' });
+    });
 
     const view = new itowns.GlobeView(box, {
         coord: new itowns.Coordinates('EPSG:4326', lonC, latC),
@@ -445,6 +516,130 @@ try {
     }));
 
     view.addEventListener(itowns.GLOBE_VIEW_EVENTS.GLOBE_INITIALIZED, () => msg.remove());
+
+    // ---- Épingles HTML, repositionnées à chaque image ----------------------
+    const layer = document.createElement('div');
+    layer.className = 'pins';
+    box.appendChild(layer);
+    pins.forEach((pin) => {
+        const el = document.createElement('div');
+        el.className = 'pin pin-' + pin.kind + (pin.p === top ? ' pin-top' : '');
+        const b = document.createElement('div'); b.className = 'pin-b';
+        const t = document.createElement('b'); t.textContent = pin.title; b.appendChild(t);
+        if (pin.sub) { const s2 = document.createElement('span'); s2.textContent = pin.sub; b.appendChild(s2); }
+        el.appendChild(b);
+        layer.appendChild(el);
+        pin.el = el;
+        pin.coord = new itowns.Coordinates('EPSG:4326', pin.p.lon, pin.p.lat, pin.p.ele);
+        pin.world = pin.coord.as(view.referenceCrs).toVector3();
+    });
+    const ndc = new Vector3();
+    // Occultation par le relief : on échantillonne le segment caméra → pied de l'épingle
+    // et on regarde si le terrain passe au-dessus (équivalent CPU d'un test de z-buffer)
+    const seg = new Vector3(), cW = new itowns.Coordinates(view.referenceCrs), cG = new itowns.Coordinates('EPSG:4326');
+    function occluded(cam, pin) {
+        const N = 48;
+        for (let i = 1; i < N; i++) {
+            seg.lerpVectors(cam.position, pin.world, i / N);
+            cW.setFromVector3(seg).as('EPSG:4326', cG);
+            const ground = itowns.DEMUtils.getElevationValueAt(view.tileLayer, cG);
+            if (ground != null && !isNaN(ground) && ground > cG.altitude + 2) return true;
+        }
+        return false;
+    }
+    function placePins() {
+        const cam = view.camera3D || view.camera.camera3D, W = box.clientWidth, H = box.clientHeight;
+        pins.forEach((pin) => {
+            // Altitude prise sur le relief chargé quand elle est disponible, sinon celle du GPS
+            const z = itowns.DEMUtils.getElevationValueAt(view.tileLayer, pin.coord);
+            if (z != null && !isNaN(z) && z !== pin.z) {
+                pin.z = z;
+                pin.world = new itowns.Coordinates('EPSG:4326', pin.p.lon, pin.p.lat, z).as(view.referenceCrs).toVector3();
+            }
+            ndc.copy(pin.world).project(cam);
+            pin.vis = ndc.z < 1 && Math.abs(ndc.x) < 1.1 && Math.abs(ndc.y) < 1.1 && !occluded(cam, pin);
+            pin.depth = cam.position.distanceTo(pin.world);
+            pin.x = (ndc.x + 1) / 2 * W; pin.y = (1 - ndc.y) / 2 * H;
+        });
+        pins.forEach((pin) => {
+            pin.el.classList.toggle('hidden', !pin.vis);
+            pin.el.style.zIndex = Math.round(1e6 - pin.depth); // la plus proche de la caméra passe devant
+            pin.el.style.transform = 'translate(' + pin.x.toFixed(1) + 'px,' + pin.y.toFixed(1) + 'px)';
+        });
+    }
+    view.addFrameRequester(itowns.MAIN_LOOP_EVENTS.AFTER_RENDER, placePins);
+    placePins();
+
+    // ---- Travelling : la caméra suit la trace au rythme réel de la course, accéléré --
+    const T0 = P[0].t, T1 = P[P.length - 1].t, PLAY_S = 75;          // course entière rejouée en 75 s
+    const SPEEDUP = (T1 - T0) / 1000 / PLAY_S;
+    const runner = { kind: 'runner', p: P[0] };
+    {
+        const el = document.createElement('div'); el.className = 'pin pin-runner hidden';
+        const b = document.createElement('div'); b.className = 'pin-b';
+        runner.tTitle = document.createElement('b'); runner.tSub = document.createElement('span');
+        b.append(runner.tTitle, runner.tSub); el.appendChild(b); layer.appendChild(el);
+        runner.el = el;
+    }
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'travel-btn';
+    btn.textContent = '▶ Rejouer la course';
+    btn.title = 'Course entière en ' + PLAY_S + ' s, au rythme réel accéléré ×' + Math.round(SPEEDUP);
+    box.appendChild(btn);
+
+    const pace = (i) => {                                              // allure sur ± 150 m autour du point
+        let a = i, b = i;
+        while (a > 0 && P[i].d - P[a].d < 150) a--;
+        while (b < P.length - 1 && P[b].d - P[i].d < 150) b++;
+        const v = (P[b].d - P[a].d) / ((P[b].t - P[a].t) / 1000);    // m/s
+        if (!(v > 0.3)) return '—';
+        const sk = Math.round(1000 / v); return Math.floor(sk / 60) + ':' + String(sk % 60).padStart(2, '0') + ' /km';
+    };
+    const bearing = (a, b) => Math.atan2((b.lon - a.lon) * Math.cos(a.lat * Math.PI / 180), b.lat - a.lat) * 180 / Math.PI;
+    const wrap = (x) => ((x + 540) % 360) - 180;
+
+    let playing = false, raf = 0, start = 0, last = 0, idx = 0, heading = 0, saved = null;
+    function stopTravel() {
+        playing = false; cancelAnimationFrame(raf);
+        btn.textContent = '▶ Rejouer la course';
+        if (view.controls) view.controls.enabled = true;
+        const i = pins.indexOf(runner); if (i >= 0) pins.splice(i, 1);
+        runner.el.classList.add('hidden');
+        if (saved) itowns.CameraUtils.animateCameraToLookAtTarget(view, view.camera3D, Object.assign({ time: 1500 }, saved));
+        view.notifyChange(view.camera3D);
+    }
+    function frameTravel(now) {
+        if (!playing) return;
+        const tr = T0 + (now - start) * SPEEDUP;
+        if (tr >= T1) { stopTravel(); return; }
+        while (idx < P.length - 2 && P[idx + 1].t <= tr) idx++;
+        const a = P[idx], b = P[idx + 1], f = b.t > a.t ? (tr - a.t) / (b.t - a.t) : 0;
+        const cur = { lat: a.lat + (b.lat - a.lat) * f, lon: a.lon + (b.lon - a.lon) * f, ele: a.ele + (b.ele - a.ele) * f };
+        // Cap : direction vers le point situé ~400 m plus loin, lissé pour éviter les à-coups
+        let k = idx; while (k < P.length - 1 && P[k].d - a.d < 400) k++;
+        const dt = Math.min(0.2, (now - last) / 1000); last = now;
+        heading += wrap(bearing(cur, P[k]) - heading) * (1 - Math.exp(-dt / 0.8));
+        runner.p = cur; runner.z = undefined;
+        runner.coord = new itowns.Coordinates('EPSG:4326', cur.lon, cur.lat, cur.ele);
+        runner.world = runner.coord.as(view.referenceCrs).toVector3();
+        runner.tTitle.textContent = fmtKm(a.d + (b.d - a.d) * f) + ' · ' + fmtT(tr - T0);
+        runner.tSub.textContent = Math.round(cur.ele) + ' m · ' + pace(idx);
+        itowns.CameraUtils.transformCameraToLookAtTarget(view, view.camera3D, {
+            coord: new itowns.Coordinates('EPSG:4326', cur.lon, cur.lat, cur.ele), range: 2500, tilt: 32, heading,
+        });
+        view.notifyChange(view.camera3D);
+        raf = requestAnimationFrame(frameTravel);
+    }
+    btn.addEventListener('click', () => {
+        if (playing) { stopTravel(); return; }
+        saved = itowns.CameraUtils.getTransformCameraLookingAtTarget(view, view.camera3D);
+        playing = true; idx = 0; heading = bearing(P[0], P[Math.min(P.length - 1, 40)]);
+        if (view.controls) view.controls.enabled = false;
+        if (pins.indexOf(runner) < 0) pins.push(runner);
+        btn.textContent = '■ Arrêter';
+        start = last = performance.now();
+        raf = requestAnimationFrame(frameTravel);
+    });
     setTimeout(() => msg.remove(), 8000); // filet de sécurité si l'événement n'arrive pas
 } catch (err) {
     msg.textContent = 'Vue 3D non disponible (' + (err && err.message || 'erreur') + ').';
