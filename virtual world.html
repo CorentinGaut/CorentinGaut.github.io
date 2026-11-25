@@ -1,26 +1,397 @@
-
-<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
-    <title>Corentin Le Bihan Gautier</title>
-
-
-    <meta name="author" content="Corentin Gautier">
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Mondes virtuels — Corentin Le Bihan Gautier</title>
+    <meta name="author" content="Corentin Le Bihan Gautier">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <meta name="description" content="Cours Mondes virtuels (GAMAGORA, M2) : génération procédurale de terrains, routes, arbres et villes.">
     <link rel="stylesheet" type="text/css" href="./assets/css/stylesheet.css">
-
+    <link rel="stylesheet" type="text/css" href="./assets/css/cours.css">
     <link rel="icon" type="image/png" href="./assets/img/favicon.png">
-<style type="text/css" id="operaUserStyle"></style></head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/contrib/auto-render.min.js"
+        onload="renderMathInElement(document.body, { delimiters: [{ left: '\\[', right: '\\]', display: true }, { left: '\\(', right: '\\)', display: false }] });"></script>
+    <script defer src="./assets/js/cours.js"></script>
+    <style>
+        .lsys { border: 1px solid var(--line); border-radius: 8px; padding: 12px 14px; margin: 16px 0; background: #fcfcfd; }
+        .lsys .ctl { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; font-size: 14px; margin-bottom: 8px; }
+        .lsys select, .lsys input { font: inherit; font-size: 14px; }
+        .lsys canvas { display: block; width: 100%; height: 360px; background: #fff; border: 1px solid var(--line); border-radius: 6px; }
+        .lsys .rules { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; color: var(--muted); margin-top: 8px; white-space: pre-wrap; }
+    </style>
+</head>
 <body>
-<table style="width:100%;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;"><tbody>
-    <tr>
-        <td style="padding:20px;width:100%;vertical-align:middle">
-            <a class="anchor-point" id="teaching"></a>
-            <heading>Mondes virtuels</heading>
-            <li><a href="./assets/pdf/CM_3D_Procedural.pdf">Cours</a></li>
-            <li><a href="https://github.com/CorentinGaut/GAMAGORA-Virtual-World-project">Projet Github</a></li>
+<div class="cours" data-course="Mondes virtuels">
 
-        </td>
-    </tr>
-</tbody></table>
+    <p class="top"><a href="./index.html#teaching">← Corentin Le Bihan Gautier</a> · <a href="./cours.html">Cours « Modélisation géométrique »</a></p>
+
+    <header class="course-head">
+        <h1>Mondes virtuels : la génération procédurale par l'exemple</h1>
+        <p>GAMAGORA, Université Lumière Lyon 2 — Master 2 Programmation et développement, 2024-2025.</p>
+        <p>Comment produire des mondes immenses (terrains, routes, forêts, villes) sans tout modéliser à la main.</p>
+    </header>
+
+    <div class="layout">
+        <nav class="toc" aria-label="Sommaire du cours">
+            <h2>Chapitres</h2>
+            <ol></ol>
+        </nav>
+
+        <main>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c1" data-title="Qu'est-ce que la génération procédurale ?">
+    <header>
+        <p class="kicker">Chapitre 1</p>
+        <h2>Qu'est-ce que la génération procédurale ?</h2>
+        <p class="lead">Au lieu de stocker un monde, on stocke la recette qui le fabrique.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM_3D_Procedural.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+            <a href="https://github.com/CorentinGaut/GAMAGORA-Virtual-World-project" target="_blank" rel="noopener"><span class="t g">GIT</span>Projet sur GitHub</a>
+        </div>
+    </header>
+
+    <h3>Définition</h3>
+    <blockquote class="box">
+        <p>« La génération procédurale de contenu (<i>Procedural Content Generation</i>, PCG) est une famille de méthodes où, au lieu de stocker des objets 3D, on stocke les paramètres d'un algorithme de construction. Ces méthodes ont été très utilisées dans les années 1970-1980, à l'époque où les ordinateurs avaient peu de mémoire. Pour créer des univers très étendus, on s'appuyait généralement sur ces méthodes qui utilisent beaucoup la notion d'aléatoire. »</p>
+        <p class="credit">— d'après la thèse de Jean-David Génevaux (LIRIS).</p>
+    </blockquote>
+
+    <h3>Amplifier les données</h3>
+    <p>L'intérêt principal est l'<b>amplification</b> : peu de données en entrée produisent un résultat riche et varié. Une fonction de bruit de Perlin et quelques opérations mathématiques suffisent à produire du feu, des nuages, du bois, du marbre ou un relief. Et si le contenu peut être généré à la volée :</p>
+    <ul>
+        <li>le <i>level designer</i> n'a pas à le concevoir à la main ;</li>
+        <li>il n'y a rien à stocker ni à transmettre, seulement une graine (<i>seed</i>) et des paramètres ;</li>
+        <li>la même graine redonne exactement le même monde, ce qui est indispensable pour le multijoueur ou la sauvegarde.</li>
+    </ul>
+    <p>En contrepartie, le contrôle artistique est plus indirect : on règle des paramètres et des contraintes, pas chaque détail. En production, la génération procédurale sert donc surtout d'<b>outil d'assistance</b> aux artistes, comme le montre l'étude de cas du chapitre 2.</p>
+
+    <h3>Plan du cours</h3>
+    <ol>
+        <li>Une étude de cas industrielle : <i>Ghost Recon Wildlands</i> (Ubisoft).</li>
+        <li>Les L-systems, pour générer des courbes fractales et des arbres.</li>
+        <li>La génération de villes.</li>
+        <li>La génération de terrains par bruit de Perlin.</li>
+        <li>Le projet de fin de cours et des ressources.</li>
+    </ol>
+    <div class="box"><span class="bt">Pour commencer</span>
+        <p>Deux conférences de la GDC pour entrer dans le sujet : <a href="https://www.youtube.com/watch?v=WumyfLEa6bU" target="_blank" rel="noopener"><i>Practical Procedural Generation for Everyone</i></a> de Kate Compton, et une <a href="https://www.youtube.com/watch?v=-d2-PtK4F6Y" target="_blank" rel="noopener">introduction en vidéo</a> à la génération procédurale.</p>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c2" data-title="Étude de cas : Ghost Recon Wildlands">
+    <header>
+        <p class="kicker">Chapitre 2</p>
+        <h2>Étude de cas : <i>Ghost Recon Wildlands</i></h2>
+        <p class="lead">Le plus grand monde ouvert d'action-aventure jamais produit par Ubisoft, et comment l'équipe a généré procéduralement une grande partie de son contenu.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM_3D_Procedural.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+            <a href="https://www.gdcvault.com/play/1024029/-Ghost-Recon-Wildlands-Terrain" target="_blank" rel="noopener"><span class="t f">GDC</span>Conférence complète (GDC 2017)</a>
+        </div>
+    </header>
+
+    <p>Le jeu se déroule en Bolivie, avec 11 biomes très différents. À cette échelle, peindre ou placer tout le contenu à la main n'est pas envisageable : l'équipe a développé une chaîne d'outils procéduraux, exécutés hors ligne dans l'éditeur, que les artistes pilotent et retouchent.</p>
+    <figure><img src="./assets/img/cours/vw/biomes.webp" alt="Bandes verticales montrant onze biomes différents du jeu" loading="lazy"><figcaption>11 biomes et 140 matériaux.</figcaption></figure>
+
+    <h3>Les chiffres</h3>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/vw/rivieres.webp" alt="Vallée brumeuse parcourue de rivières" loading="lazy"><figcaption>Lacs, rivières et ruisseaux sur 16 km².</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/vw/vegetation.webp" alt="Forêt de pins et chemin de terre" loading="lazy"><figcaption>Environ 840 000 arbres, 3,4 millions de buissons et 775 000 rochers.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/vw/routes.webp" alt="Route de terre au flanc d'une montagne" loading="lazy"><figcaption>Plus de 600 km de routes et 2 150 km de chemins.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/vw/villages.webp" alt="Village de nuit vu de loin" loading="lazy"><figcaption>58 villages entièrement procéduraux, plus de 200 lieux spécifiques (camps, avant-postes).</figcaption></figure>
+    </div>
+    <p>S'y ajoute un réseau ferré complet qui traverse le monde.</p>
+
+    <h3>Distribuer les matériaux du terrain</h3>
+    <p>Le terrain part de données réelles, retouchées avec des outils de sculpture (copier-coller, effacement…). Vu la taille de la carte, peindre les matériaux (roche, herbe, neige…) à la main aurait été une très mauvaise idée : il fallait un processus semi-automatique.</p>
+    <div class="side">
+        <p>Première règle : l'éditeur teintait déjà la carte de hauteurs selon la direction de la normale, pour mieux faire sentir le relief. Vue de loin, cette seule règle, <code>lerp(gris, blanc, normale.z)</code>, suffit presque à produire un sommet enneigé convaincant : la neige tient sur les zones plates, la roche reste à nu sur les pentes.</p>
+        <figure><img src="./assets/img/cours/vw/materiaux-normale.webp" alt="Montagne colorée en blanc sur les zones plates et gris sur les pentes" loading="lazy"></figure>
+    </div>
+    <div class="side">
+        <p>On ajoute ensuite des conditions sur la <b>pente</b>, l'<b>altitude</b>, du <b>bruit</b> et la <b>courbure</b>, ou des noyaux simples : des règles assez légères pour être évaluées en temps réel dans un <i>pixel shader</i>.</p>
+        <figure><img src="./assets/img/cours/vw/materiaux-regles.webp" alt="Paysage de montagne et code des règles de distribution" loading="lazy"></figure>
+    </div>
+
+    <h3>Le réseau routier</h3>
+    <p>Première idée : creuser les routes directement dans le terrain plutôt que de les représenter par de la géométrie. Mais les transitions de matériaux sont pauvres et les détails manquent. Les routes sont donc de vrais objets, dont le tracé est calculé par un <b>plus court chemin</b> sur le terrain, avec un coût qui pénalise les fortes pentes.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/vw/routes-grille.webp" alt="Plus court chemin sur une grille régulière" loading="lazy"><figcaption>Grille régulière : trajets en escalier, peu naturels.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/vw/routes-anisotrope.webp" alt="Plus court chemin sur une grille anisotrope" loading="lazy"><figcaption>Grille anisotrope (voisinage étendu) : des lacets réalistes.</figcaption></figure>
+    </div>
+    <div class="side">
+        <p>On obtient un réseau cohérent, avec plusieurs types de routes et de petits chemins. Tout est calculé hors ligne, donc le temps de calcul n'est pas critique : une dizaine de minutes pour une tuile de 2 km × 2 km. La méthode s'inspire des travaux de Galin, Peytavie, Maréchal et Guérin (LIRIS) sur la génération procédurale de routes.</p>
+        <figure><img src="./assets/img/cours/vw/reseau-routes.webp" alt="Vue aérienne d'un terrain montagneux" loading="lazy"></figure>
+    </div>
+    <div class="side">
+        <p><b>Ponts et tunnels.</b> Certains outils, comme celui des ponts, s'utilisent seuls pour créer un pont à la main, ou intégrés dans un outil plus large qui les place automatiquement. Ponts et tunnels sont assemblés à partir de <b>modules</b> : aucune géométrie nouvelle n'est créée, tout n'est qu'instanciation.</p>
+        <figure><img src="./assets/img/cours/vw/pont-tunnel.webp" alt="Entrée de tunnel dans une falaise boisée" loading="lazy"></figure>
+    </div>
+    <p class="credit">Images et chiffres tirés de la présentation d'Ubisoft à la GDC 2017, <a href="https://www.gdcvault.com/play/1024029/-Ghost-Recon-Wildlands-Terrain" target="_blank" rel="noopener"><i>Ghost Recon Wildlands: Terrain Tools and Technology</i></a>.</p>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c3" data-title="L-systems : fractales et arbres">
+    <header>
+        <p class="kicker">Chapitre 3</p>
+        <h2>L-systems : fractales et arbres</h2>
+        <p class="lead">Une grammaire de réécriture, une tortue qui dessine : de quoi produire flocons, dragons et forêts.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM_3D_Procedural.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+        </div>
+    </header>
+
+    <h3>Principe</h3>
+    <p>Les L-systems ont été introduits en 1968 par le biologiste Aristid Lindenmayer pour modéliser le développement des plantes. Ils excellent pour les objets organiques et les fractales. Un L-system est formé :</p>
+    <ul>
+        <li>d'un <b>axiome</b>, la chaîne de départ ;</li>
+        <li>de <b>règles de production</b> (de réécriture), de la forme <code>symbole → chaîne</code>.</li>
+    </ul>
+    <p>À chaque itération, <b>tous</b> les symboles qui ont une règle sont remplacés <b>en parallèle</b> ; c'est ce qui distingue un L-system d'une grammaire classique. Par exemple, avec les règles <code>A → B</code> et <code>B → ACA</code> (C est une constante, sans règle) et l'axiome <code>AA</code> :</p>
+<pre><code>AA → BB → ACAACA → BCBBCB → ACACACAACACACA → …</code></pre>
+
+    <h3>L'interprétation par une tortue</h3>
+    <div class="side">
+        <div>
+            <p>Pour dessiner, on lit la chaîne de gauche à droite comme des ordres donnés à une « tortue » qui a une position et un cap :</p>
+            <dl>
+                <dt><code>F</code></dt><dd>avancer d'un pas en traçant un trait ;</dd>
+                <dt><code>f</code></dt><dd>avancer d'un pas sans tracer ;</dd>
+                <dt><code>+</code> / <code>−</code></dt><dd>tourner à gauche / à droite d'un angle δ ;</dd>
+                <dt><code>[</code> / <code>]</code></dt><dd>empiler / dépiler l'état de la tortue (position et cap) : c'est ce qui permet de faire des branches.</dd>
+            </dl>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/vw/tortue.webp" alt="Tortue suivant la chaîne FFF-FF-F-F+F+FF-F-FFF sur une grille" loading="lazy"><figcaption>La chaîne <code>FFF−FF−F−F+F+FF−F−FFF</code> avec δ = 90°.</figcaption></figure>
+    </div>
+
+    <h3>Exemples</h3>
+    <div class="side">
+        <div>
+            <h4>Île de Koch quadratique</h4>
+            <p>Axiome <code>F−F−F−F</code>, δ = 90°, règle <code>F → F−F+F+FF−F−F+F</code>. Chaque segment est remplacé par une ligne brisée de 8 segments ; le carré initial devient une île au contour de plus en plus découpé.</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/vw/koch-quadratique.webp" alt="Île de Koch quadratique pour n = 0 à 3" loading="lazy"><figcaption>n = 0, 1, 2, 3.</figcaption></figure>
+    </div>
+    <div class="side">
+        <div>
+            <h4>Flocon de Koch</h4>
+            <p>Axiome <code>F−−F−−F</code> (un triangle), δ = 60°, règle <code>F → F+F−−F+F</code>. Chaque segment reçoit une « pointe » triangulaire en son milieu. <code>−−</code> correspond donc à un virage de 120°.</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/vw/koch-flocon.webp" alt="Flocon de Koch pour n = 0 à 4" loading="lazy"><figcaption>n = 0 à 4.</figcaption></figure>
+    </div>
+    <div class="side">
+        <div>
+            <h4>Courbe du dragon</h4>
+            <p>Axiome <code>F<sub>l</sub></code>, δ = 90°, règles <code>F<sub>l</sub> → F<sub>l</sub>+F<sub>r</sub>+</code> et <code>F<sub>r</sub> → −F<sub>l</sub>−F<sub>r</sub></code> ; \(F_l\) et \(F_r\) font tous deux avancer la tortue. Après 10 itérations, la courbe pave une forme de dragon sans jamais se croiser.</p>
+        </div>
+        <figure class="s"><img src="./assets/img/cours/vw/dragon.webp" alt="Courbe du dragon après 10 itérations" loading="lazy"></figure>
+    </div>
+
+    <div class="lsys" id="lsys">
+        <div class="ctl">
+            <label>Système <select id="ls-preset"></select></label>
+            <label>Itérations <input id="ls-n" type="range" min="0" max="6" value="3"> <output id="ls-n-out">3</output></label>
+            <span class="credit" id="ls-count"></span>
+        </div>
+        <canvas id="ls-canvas" width="900" height="360" aria-label="Dessin du L-system choisi"></canvas>
+        <div class="rules" id="ls-rules"></div>
+    </div>
+
+    <h3>Extensions</h3>
+    <p>Les L-systems de base ont inspiré de nombreuses variantes :</p>
+    <ul>
+        <li><b>à crochets</b> (<i>bracketed</i>) : sauvegarder et restaurer l'état avec <code>[ ]</code>, pour les branches ;</li>
+        <li><b>stochastiques</b> : plusieurs règles possibles pour un même symbole, choisies au hasard, pour que deux arbres ne soient pas identiques ;</li>
+        <li><b>contextuels</b> : une règle ne s'applique que selon les symboles voisins, pour propager un signal (une floraison, par exemple) ;</li>
+        <li><b>paramétriques</b> : les symboles portent des valeurs (longueur, épaisseur, angle) transmises entre productions.</li>
+    </ul>
+    <figure><img src="./assets/img/cours/vw/arbres.webp" alt="Quatre arbres générés par L-systems et une plante en fleurs" loading="lazy"><figcaption>Arbres et plante générés par L-systems (P. Prusinkiewicz).</figcaption></figure>
+
+    <h3>Pour aller plus loin</h3>
+    <ul>
+        <li><a href="http://algorithmicbotany.org/papers/" target="_blank" rel="noopener">Algorithmic Botany</a> : les publications de Prusinkiewicz et de son équipe, dont le livre <i>The Algorithmic Beauty of Plants</i> (1990), qui couvre en détail les variantes de L-systems et de nombreux types de plantes.</li>
+        <li><a href="http://arbaro.sourceforge.net/" target="_blank" rel="noopener">Arbaro</a> : un générateur d'arbres pour POV-Ray.</li>
+        <li><a href="https://www.youtube.com/watch?v=E1B4UoSQMFw" target="_blank" rel="noopener">Coding Challenge : Fractal Trees – L-System</a> (The Coding Train), et la <a href="https://www.youtube.com/watch?v=5HJSHJvlMFE" target="_blank" rel="noopener">construction d'arbres de Sören Pirk</a>.</li>
+    </ul>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c4" data-title="Génération de villes">
+    <header>
+        <p class="kicker">Chapitre 4</p>
+        <h2>Génération de villes</h2>
+        <p class="lead">Des L-systems guidés par des contraintes pour tracer les rues, puis d'autres grammaires pour les bâtiments.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM_3D_Procedural.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+            <a href="https://cgl.ethz.ch/Downloads/Publications/Papers/2001/p_Par01.pdf" target="_blank" rel="noopener"><span class="t">PDF</span>Parish &amp; Müller, 2001</a>
+        </div>
+    </header>
+
+    <p>L'article de référence est <i>Procedural Modeling of Cities</i> (Parish et Müller, SIGGRAPH 2001), à l'origine du logiciel CityEngine.</p>
+    <figure><img src="./assets/img/cours/vw/villes.webp" alt="Réseau de rues généré sur la carte de Manhattan" loading="lazy"><figcaption>Réseau routier généré, à partir de cartes de densité de population et d'eau.</figcaption></figure>
+    <ol>
+        <li>On part d'une seule rue.</li>
+        <li>Un L-system <b>paramétrique</b> la fait bifurquer et s'étendre.</li>
+        <li>Les paramètres de la chaîne sont ajustés par des <b>objectifs</b> et des <b>contraintes</b>. Les objectifs règlent la direction et l'espacement des rues (suivre la densité de population, adopter un plan en damier ou radial). Les contraintes tiennent compte de l'environnement : contourner l'eau et les parcs, créer des ponts, reconnecter une rue à un carrefour proche pour former des boucles.</li>
+        <li>Les rues délimitent des îlots, découpés en parcelles.</li>
+        <li>Sur chaque parcelle, un autre L-system génère le bâtiment, dont la forme est construite par opérations CSG (voir le cours de modélisation géométrique, chapitre 4) sur des formes simples.</li>
+    </ol>
+    <div class="box"><span class="bt">À explorer</span>
+        <ul>
+            <li><a href="http://martindevans.me/game-development/2015/12/11/Procedural-Generation-For-Dummies-Roads/" target="_blank" rel="noopener"><i>Procedural Generation for Dummies</i></a> (Martin Evans) : une série d'articles sur les routes (en grille ou aléatoires), les bâtiments, la végétation par L-system et le terrain.</li>
+            <li><a href="https://marian42.de/article/wfc/" target="_blank" rel="noopener">Une ville infinie générée par <i>Wave Function Collapse</i></a> (Marian Kleineberg) : une alternative aux grammaires, par contraintes d'adjacence entre tuiles.</li>
+            <li>En vidéo, avec Unity : <a href="https://www.youtube.com/watch?v=Jsc3BQaJndQ" target="_blank" rel="noopener">génération procédurale de ville</a>, <a href="https://www.youtube.com/watch?v=xGi0Hr-kNw0" target="_blank" rel="noopener">ville et système de grille</a>, <a href="https://www.youtube.com/watch?v=xkuniXI3SEE" target="_blank" rel="noopener"><i>Generating a Procedural City with Unity 5</i></a>.</li>
+        </ul>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c5" data-title="Terrains et bruit de Perlin">
+    <header>
+        <p class="kicker">Chapitre 5</p>
+        <h2>Terrains et bruit de Perlin</h2>
+        <p class="lead">Un bon bruit, sommé à plusieurs échelles, suffit à produire un relief crédible.</p>
+        <div class="res">
+            <a href="./assets/pdf/CM_3D_Procedural.pdf" download><span class="t">PDF</span>Diapositives du cours</a>
+        </div>
+    </header>
+
+    <h3>Fonctions de bruit</h3>
+    <p>Un pur aléatoire (une valeur indépendante par pixel) donne de la « neige » télévisuelle, inutilisable. Une <b>fonction de bruit</b> comme celle de Ken Perlin (1985) est un aléatoire <b>cohérent</b> :</p>
+    <ul>
+        <li>elle repose sur un générateur pseudo-aléatoire avec une graine : même graine, même résultat ;</li>
+        <li>elle est définie sur \(\mathbb{R}^n\) (1D, 2D, 3D…), et varie continûment : deux points proches ont des valeurs proches ;</li>
+        <li>elle approche un bruit gaussien filtré, avec des détails d'une taille caractéristique ;</li>
+        <li>elle est implémentée comme une spline pseudo-aléatoire : des gradients aléatoires aux nœuds d'une grille, interpolés de façon lisse.</li>
+    </ul>
+    <p>Tout l'enjeu est qu'elle soit rapide à évaluer. Unity la fournit directement : <code>Mathf.PerlinNoise(x, y)</code>.</p>
+
+    <h3>Sommer des octaves</h3>
+    <p>Un seul bruit donne des collines molles. Pour un relief naturel, on additionne plusieurs <b>octaves</b> : des bruits de plus en plus fins et de moins en moins forts (on parle de <i>fractal Brownian motion</i>) :</p>
+    <div class="math">\[ h(x, y) = \sum_{k=0}^{\text{octaves}-1} \text{persistance}^{k}\ \cdot\ \text{bruit}\!\left( \frac{\text{lacunarité}^{k}\,(x, y)}{\text{échelle}} \right). \]</div>
+    <dl>
+        <dt>Largeur / hauteur</dt><dd>la taille de la carte (ou texture) générée.</dd>
+        <dt>Échelle</dt><dd>le zoom sur le bruit : plus elle est grande, plus les reliefs sont larges.</dd>
+        <dt>Octaves</dt><dd>le nombre d'appels à la fonction de bruit, c'est-à-dire de couches de détail.</dd>
+        <dt>Persistance (&lt; 1)</dt><dd>le facteur qui réduit l'amplitude d'une octave à la suivante.</dd>
+        <dt>Lacunarité (&gt; 1)</dt><dd>le facteur qui augmente la fréquence d'une octave à la suivante.</dd>
+    </dl>
+    <p>Avec 4 à 6 octaves, une persistance de 0,5 et une lacunarité de 2, on obtient déjà un relief convaincant. La série vidéo <a href="https://www.youtube.com/watch?v=wbpMiKiSKm8" target="_blank" rel="noopener"><i>Procedural Landmass Generation</i></a> (Sebastian Lague) en déroule l'implémentation complète dans Unity ; voir aussi <a href="https://www.youtube.com/watch?v=WP-Bm65Q-1Y" target="_blank" rel="noopener">cette vidéo sur le bruit</a>.</p>
+
+    <h3>Ajouter de l'eau</h3>
+    <div class="side">
+        <p>Le plus simple : un seuil d'altitude. Tout ce qui est sous \(z_{\text{eau}}\) devient de l'eau, et l'on peut aplanir le relief à ce niveau. On peut ensuite colorer le terrain par altitude (sable, herbe, roche, neige) et par pente, comme dans <i>Ghost Recon Wildlands</i> (chapitre 2).</p>
+        <figure><img src="./assets/img/cours/vw/terrain-eau.webp" alt="Terrain fractal avec un lac sous le niveau de l'eau" loading="lazy"><figcaption>Terrain fractal et lac (F. K. Musgrave).</figcaption></figure>
+    </div>
+    <div class="box warn"><span class="bt">Limites</span><p>Un terrain issu d'une carte de hauteurs ne peut représenter ni arche, ni grotte, ni surplomb (voir les modèles volumiques du cours de modélisation géométrique, chapitre 4). Et le bruit ne connaît pas l'érosion : les vallées ne « coulent » pas. Les méthodes récentes ajoutent des simulations d'érosion hydraulique ou partent de réseaux de rivières.</p></div>
+
+    <h3>Partir du monde réel</h3>
+    <p>Plutôt que de tout inventer, on peut générer à partir de données observées : modèles numériques de terrain, cadastre, photographies aériennes. C'est l'approche interprétative développée au LIRIS, par exemple avec la Métropole de Lyon.</p>
+    <div class="figs">
+        <figure class="s"><img src="./assets/img/cours/vw/arches.webp" alt="Paysage généré à partir d'observations" loading="lazy"><figcaption>Projet <a href="http://arches.liris.cnrs.fr/" target="_blank" rel="noopener">ARCHES</a> (LIRIS) : génération à partir d'observations du monde réel.</figcaption></figure>
+        <figure class="s"><img src="./assets/img/cours/vw/donnees-reelles.webp" alt="Cartes et photographies aériennes de la Métropole de Lyon" loading="lazy"><figcaption>Données ouvertes de la Métropole de Lyon.</figcaption></figure>
+    </div>
+</section>
+
+<!-- ===================================================================== -->
+<section class="chap" id="c6" data-title="Projet de fin de cours">
+    <header>
+        <p class="kicker">Chapitre 6</p>
+        <h2>Projet de fin de cours</h2>
+        <p class="lead">Construire ensemble une carte complète, façon monde ouvert, réutilisable dans un futur jeu.</p>
+        <div class="res">
+            <a href="https://github.com/CorentinGaut/GAMAGORA-Virtual-World-project" target="_blank" rel="noopener"><span class="t g">GIT</span>Dépôt du projet 2024-2025</a>
+        </div>
+    </header>
+
+    <p>Les étudiants sont répartis en quatre groupes, chacun responsable d'un aspect de la génération procédurale, et le tout doit s'assembler en une seule carte, dans l'esprit d'un monde ouvert à la GTA. Chaque groupe a un <i>git master</i> et travaille sur le même dépôt.</p>
+    <div class="tw"><table class="t">
+        <tr><th>Groupe</th><th>Méthode</th><th>Objectif</th></tr>
+        <tr><td><b>Terrain</b></td><td>Bruit de Perlin (chapitre 5)</td><td>Le terrain le plus réaliste possible, en réservant une zone plane pour la ville.</td></tr>
+        <tr><td><b>Routes</b></td><td>Plus court chemin, A* ou Dijkstra (chapitre 2)</td><td>Des grands axes, qui évitent les zones de forte courbure du terrain, et des chemins de montagne.</td></tr>
+        <tr><td><b>Arbres</b></td><td>L-systems (chapitre 3)</td><td>Trois espèces d'arbres différentes, placées aléatoirement sur le terrain pour former des forêts.</td></tr>
+        <tr><td><b>Ville</b></td><td>L-systems (chapitre 4)</td><td>Générer les rues, puis les parcelles, puis les bâtiments.</td></tr>
+    </table></div>
+    <div class="box"><span class="bt">Points d'attention</span>
+        <ul>
+            <li><b>Les interfaces entre groupes</b> : le terrain doit exposer sa hauteur et sa pente aux routes et aux arbres ; les routes et la ville doivent réserver leur emprise pour que la forêt ne pousse pas dessus.</li>
+            <li><b>La reproductibilité</b> : tout le monde utilise une graine commune, pour que la même carte soit régénérée à l'identique.</li>
+            <li><b>Les performances</b> : instancier les arbres et les modules de bâtiments plutôt que dupliquer la géométrie, et prévoir des niveaux de détail (cours de modélisation géométrique, chapitre 5).</li>
+        </ul>
+    </div>
+    <p>Les pages des chapitres précédents donnent pour chaque groupe un point de départ (articles, vidéos, tutoriels).</p>
+</section>
+
+        </main>
+    </div>
+</div>
+
+<script>
+// Bac à sable L-system : réécriture parallèle puis interprétation par une tortue sur un canvas.
+(function () {
+    var presets = {
+        'Flocon de Koch': { axiom: 'F--F--F', rules: { F: 'F+F--F+F' }, angle: 60, max: 5, n: 3 },
+        'Île de Koch quadratique': { axiom: 'F-F-F-F', rules: { F: 'F-F+F+FF-F-F+F' }, angle: 90, max: 3, n: 2 },
+        'Courbe du dragon': { axiom: 'L', rules: { L: 'L+R+', R: '-L-R' }, angle: 90, max: 13, n: 10, draw: 'LR' },
+        'Plante (crochets)': { axiom: 'X', rules: { X: 'F+[[X]-X]-F[-FX]+X', F: 'FF' }, angle: 25, max: 6, n: 5, start: -65 },
+        'Arbre binaire': { axiom: 'F', rules: { F: 'F[+F]F[-F]F' }, angle: 25.7, max: 5, n: 4, start: -90 }
+    };
+    var sel = document.getElementById('ls-preset'), range = document.getElementById('ls-n'), out = document.getElementById('ls-n-out');
+    var cv = document.getElementById('ls-canvas'), rules = document.getElementById('ls-rules'), count = document.getElementById('ls-count');
+    if (!sel || !cv) return;
+    Object.keys(presets).forEach(function (k) { var o = document.createElement('option'); o.textContent = k; sel.appendChild(o); });
+
+    function expand(p, n) {
+        var s = p.axiom;
+        for (var i = 0; i < n; i++) {
+            var t = '';
+            for (var j = 0; j < s.length; j++) t += p.rules[s[j]] !== undefined ? p.rules[s[j]] : s[j];
+            s = t;
+            if (s.length > 400000) break;
+        }
+        return s;
+    }
+    function draw() {
+        var p = presets[sel.value], n = +range.value, s = expand(p, n), drawSet = p.draw || 'F';
+        out.textContent = n;
+        var a = (p.start || 0) * Math.PI / 180, d = p.angle * Math.PI / 180, x = 0, y = 0, stack = [], segs = [];
+        var minX = 0, maxX = 0, minY = 0, maxY = 0;
+        for (var i = 0; i < s.length; i++) {
+            var c = s[i];
+            if (drawSet.indexOf(c) >= 0) {
+                var nx = x + Math.cos(a), ny = y + Math.sin(a);
+                segs.push(x, y, nx, ny); x = nx; y = ny;
+                if (x < minX) minX = x; if (x > maxX) maxX = x; if (y < minY) minY = y; if (y > maxY) maxY = y;
+            } else if (c === 'f') { x += Math.cos(a); y += Math.sin(a); }
+            else if (c === '+') a -= d;
+            else if (c === '-') a += d;
+            else if (c === '[') stack.push([x, y, a]);
+            else if (c === ']') { var st = stack.pop(); x = st[0]; y = st[1]; a = st[2]; }
+        }
+        var dpr = window.devicePixelRatio || 1, W = cv.clientWidth, H = cv.clientHeight;
+        cv.width = W * dpr; cv.height = H * dpr;
+        var g = cv.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
+        var sc = Math.min((W - 24) / Math.max(1e-9, maxX - minX), (H - 24) / Math.max(1e-9, maxY - minY));
+        var ox = (W - (maxX - minX) * sc) / 2 - minX * sc, oy = (H - (maxY - minY) * sc) / 2 - minY * sc;
+        g.strokeStyle = '#1772d0'; g.lineWidth = 1; g.beginPath();
+        for (var k = 0; k < segs.length; k += 4) { g.moveTo(ox + segs[k] * sc, oy + segs[k + 1] * sc); g.lineTo(ox + segs[k + 2] * sc, oy + segs[k + 3] * sc); }
+        g.stroke();
+        var r = 'axiome : ' + p.axiom + '    angle : ' + p.angle + '°\n';
+        Object.keys(p.rules).forEach(function (k) { r += k + ' → ' + p.rules[k] + '\n'; });
+        if (p.draw) r += '(L et R font tous deux avancer la tortue en traçant)';
+        rules.textContent = r;
+        count.textContent = (segs.length / 4).toLocaleString('fr-FR') + ' segments';
+    }
+    sel.addEventListener('change', function () { var p = presets[sel.value]; range.max = p.max; range.value = p.n; draw(); });
+    range.addEventListener('input', draw);
+    var t; window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(draw, 150); });
+    // Le chapitre peut être masqué au chargement : on dessine quand il devient visible.
+    window.addEventListener('hashchange', function () { setTimeout(draw, 0); });
+    sel.dispatchEvent(new Event('change'));
+})();
+</script>
 </body>
+</html>
