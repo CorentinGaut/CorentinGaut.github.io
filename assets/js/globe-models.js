@@ -104,15 +104,11 @@ export function buildSTC() {
     // quatre états du même bâtiment, chacun à la hauteur de sa date
     const years = [1950, 1975, 2000, 2020];
     const kinds = ['house', 'house+', 'block', 'block+tower'];
-    const volume = [0.15, 0.3, 0.7, 1.0];                       // volume bâti relatif, pour la courbe
     const levels = years.map((_, i) => S * (0.06 + i * 0.235));
-    const versions = kinds.map((k, i) => {
-        const m = mat(0xf2efe8, { transparent: true, opacity: 0.9 }), mr = mat(0xb5523b, { transparent: true, opacity: 0.9 });
-        const b = building(k, m, mr);
+    kinds.forEach((k, i) => {
+        const b = building(k, mat(0xf2efe8), mat(0xb5523b));
         b.position.set(-40, -30, levels[i]);
-        b.userData.mats = [m, mr];
         g.add(b);
-        return b;
     });
     // lignes de vie : les coins de l'emprise principale relient les états successifs
     const pts = [];
@@ -121,38 +117,12 @@ export function buildSTC() {
     });
     g.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), lineMat(0xffd54f, 0.45)));
 
-    // courbe des changements sur la paroi arrière : volume bâti en fonction du temps
-    const curvePts = levels.map((z, i) => new THREE.Vector3(-S / 2 + 20 + volume[i] * (S - 60), S / 2 - 2, z));
-    curvePts.unshift(new THREE.Vector3(-S / 2 + 20 + 0.15 * (S - 60), S / 2 - 2, 0));
-    curvePts.push(new THREE.Vector3(-S / 2 + 20 + 1.0 * (S - 60), S / 2 - 2, S));
-    const curve = new THREE.CatmullRomCurve3(curvePts, false, 'centripetal');
-    g.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 120, 3.2, 8, false), new THREE.MeshBasicMaterial({ color: 0xff7043 })));
-    levels.forEach((z, i) => {
-        const dot = new THREE.Mesh(new THREE.SphereGeometry(8, 16, 12), new THREE.MeshBasicMaterial({ color: 0xff7043 }));
-        dot.position.copy(curvePts[i + 1]); g.add(dot);
-        // repère reliant l'état du bâtiment à son point sur la courbe
-        g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-40, -30 + 35, z + 10), curvePts[i + 1]]), lineMat(0xff7043, 0.4)));
-    });
-
-    // plan du temps qui balaie le cube
-    const plane = new THREE.Mesh(new THREE.PlaneGeometry(S, S), new THREE.MeshBasicMaterial({ color: 0x6cb2ff, transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false }));
-    g.add(plane);
-    const planeEdge = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.PlaneGeometry(S, S)), lineMat(0x6cb2ff, 0.9));
-    g.add(planeEdge);
-
     const notes = [
         { pos: [0, 0, S + 30], text: 'Space-time cube', cls: 'title' },
-        { pos: [-S / 2 + 20 + 0.55 * (S - 60) + 70, S / 2, S * 0.5], text: 'built volume' },
         ...years.map((y, i) => ({ pos: [-S / 2, -S / 2, levels[i]], text: String(y) })),
         { pos: [-S / 2, -S / 2, S], text: 'time ↑' },
     ];
-    function update(t) {
-        const z = ((t / 9) % 1) * S;
-        plane.position.z = z; planeEdge.position.z = z;
-        let cur = 0; levels.forEach((l, i) => { if (l <= z) cur = i; });
-        versions.forEach((v, i) => v.userData.mats.forEach((m) => { m.opacity = i === cur ? 1 : 0.28; m.emissive.setHex(i === cur ? 0x333333 : 0); }));
-    }
-    return { group: g, notes, update, size: S };
+    return { group: g, notes, update: null, size: S };
 }
 
 // ---- Hélice (Pacific Graphics 2024) : une frise temporelle paramétrique -------------------
@@ -209,6 +179,117 @@ export function buildHelix() {
         return v;
     };
     return { group: g, notes, update, notePos, size: Z0 + H };
+}
+
+// ---- STAG (ISPRS 2026) : casque Meta Quest 3 + 2 antennes GNSS RTK, sa GeoPose et le contenu virtuel ----
+export function buildSTAG() {
+    const g = new THREE.Group();
+    const K = 110, HZ = 200;                                   // casque grossi ×110, posé à 200 m
+    const hs = new THREE.Group();
+    hs.position.z = HZ; hs.scale.setScalar(K); g.add(hs);
+    const white = mat(0xf4f4f4), black = mat(0x1d1d1d), alu = mat(0xb4b8bc), blue = mat(0x1e63c8);
+    hs.add(box(1.0, 0.55, 0.55, white, 0, 0, -0.275));        // visière (regarde vers le nord, +y)
+    hs.add(box(0.9, 0.04, 0.42, black, 0, 0.29, -0.21));       // face avant
+    const strap = new THREE.Mesh(new THREE.TorusGeometry(0.55, 0.06, 8, 32, Math.PI), black);
+    strap.rotation.z = Math.PI; strap.position.y = -0.2; hs.add(strap);
+    hs.add(box(1.4, 0.12, 0.06, alu, 0, 0.12, 0.28));          // barre de fixation
+    [-0.62, 0.62].forEach((x) => { const a = cylZ(0.16, 0.26, black, 20); a.position.set(x, 0.12, 0.34); hs.add(a); });
+    hs.add(box(0.26, 0.16, 0.12, blue, -0.3, 0.12, 0.34));     // récepteur GNSS
+
+    // GeoPose : position + orientation du casque (axes est / nord / haut)
+    const o = new THREE.Vector3(0, 0, HZ);
+    [[1, 0, 0, 0xe53935], [0, 1, 0, 0x43a047], [0, 0, 1, 0x1e88e5]].forEach(([x, y, z, c]) =>
+        g.add(new THREE.ArrowHelper(new THREE.Vector3(x, y, z), o, 160, c, 30, 16)));
+
+    // contenu virtuel ancré par la GeoPose, et le champ de vision du casque
+    const VY = 420, vb = new THREE.Group(); vb.position.y = VY; g.add(vb);
+    const cyan = new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.22, depthWrite: false });
+    vb.add(box(150, 90, 170, cyan));
+    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(150, 90, 170)), lineMat(0x00e5ff));
+    edges.position.z = 85; vb.add(edges);
+    const eye = new THREE.Vector3(0, 0.3 * K, HZ), near = VY - 45;
+    const corners = [[-110, 0], [110, 0], [110, 200], [-110, 200]].map(([x, z]) => new THREE.Vector3(x, near, z));
+    const fr = [];
+    corners.forEach((c, i) => fr.push(eye, c, c, corners[(i + 1) % 4]));
+    g.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(fr), lineMat(0x00e5ff, 0.55)));
+
+    // satellites GNSS reliés aux deux antennes
+    const sat = () => {
+        const s = new THREE.Group();
+        s.add(box(14, 14, 14, alu, 0, 0, -7));
+        [-1, 1].forEach((k) => s.add(box(30, 2, 12, blue, k * 24, 0, -6)));
+        return s;
+    };
+    const ant = [-0.62, 0.62].map((x) => new THREE.Vector3(x * K, 0.12 * K, HZ + 0.47 * K));
+    const sl = [];
+    [[-260, -140, 470], [230, -220, 500], [280, 200, 460], [-200, 260, 520]].forEach(([x, y, z]) => {
+        const s = sat(); s.position.set(x, y, z); g.add(s);
+        ant.forEach((a) => sl.push(new THREE.Vector3(x, y, z), a));
+    });
+    g.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(sl), lineMat(0xffffff, 0.3)));
+
+    const notes = [
+        { pos: [0, 0, 600], text: 'STAG: outdoor AR with GeoPose', cls: 'title' },
+        { pos: [0, -40, HZ - 95], text: 'Meta Quest 3 + 2 RTK GNSS antennas' },
+        { pos: [185, 0, HZ + 30], text: 'GeoPose' },
+        { pos: [0, VY, 200], text: 'virtual 3D content' },
+        { pos: [0, 0, 545], text: 'GNSS satellites' },
+    ];
+    return { group: g, notes, update: null, size: 620 };
+}
+
+// ---- Intégration de documents multimédias dans une maquette 3D de ville (3DGeoInfo 2022) ------
+function docTexture(kind) {
+    const c = document.createElement('canvas'); c.width = 256; c.height = 200;
+    const x = c.getContext('2d');
+    x.fillStyle = '#ffffff'; x.strokeStyle = '#1772d0'; x.lineWidth = 10;
+    x.beginPath(); x.roundRect(6, 6, 244, 188, 18); x.fill(); x.stroke();
+    x.fillStyle = '#dfe8f3'; x.fillRect(28, 28, 200, 112);
+    x.fillStyle = '#1772d0';
+    if (kind === 'video') {
+        x.beginPath(); x.moveTo(110, 58); x.lineTo(110, 110); x.lineTo(152, 84); x.closePath(); x.fill();
+    } else if (kind === 'photo') {
+        x.beginPath(); x.moveTo(40, 132); x.lineTo(96, 66); x.lineTo(136, 112); x.lineTo(162, 86); x.lineTo(216, 132); x.closePath(); x.fill();
+        x.beginPath(); x.arc(186, 56, 14, 0, 2 * Math.PI); x.fill();
+    } else {
+        for (let i = 0; i < 5; i++) x.fillRect(44, 44 + i * 18, i === 4 ? 100 : 168, 8);
+    }
+    x.font = 'bold 30px sans-serif'; x.textAlign = 'center'; x.fillStyle = '#222';
+    x.fillText(kind, 128, 178);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+    return t;
+}
+export function buildMultimedia() {
+    const g = new THREE.Group(), W = 700, D = 480;
+    g.add(box(W, D, 8, mat(0xefe9dc)));
+    // rivière en méandre
+    const river = new THREE.Shape(), N = 40;
+    const rx = (t) => -W / 2 + t * W, ry = (t) => Math.sin(t * Math.PI * 2.2) * 110 - 20;
+    river.moveTo(rx(0), ry(0) - 22);
+    for (let i = 1; i <= N; i++) river.lineTo(rx(i / N), ry(i / N) - 22);
+    for (let i = N; i >= 0; i--) river.lineTo(rx(i / N), ry(i / N) + 22);
+    const rg = new THREE.ShapeGeometry(river); rg.translate(0, 0, 8.5);
+    g.add(new THREE.Mesh(rg, mat(0x8ec5ea)));
+    // bâtiments (tirage pseudo-aléatoire fixe), hors de la rivière
+    let seed = 7; const rnd = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+    const bm = mat(0xffffff), bm2 = mat(0xdadde2);
+    for (let i = 0; i < 260; i++) {
+        const x = (rnd() - 0.5) * (W - 40), y = (rnd() - 0.5) * (D - 40);
+        if (Math.abs(y - ry((x + W / 2) / W)) < 45) continue;
+        const w = 10 + rnd() * 22, d = 10 + rnd() * 22, h = 6 + rnd() * rnd() * 45;
+        g.add(box(w, d, h, rnd() < 0.7 ? bm : bm2, x, y, 8));
+    }
+    // documents posés dans la ville : une vignette au-dessus de leur lieu
+    const pin = mat(0xe53935), stems = [];
+    [['video', -200, 120, 150], ['photo', 90, -150, 170], ['text', 230, 140, 140], ['video', -60, -40, 190]].forEach(([k, x, y, z]) => {
+        const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: docTexture(k) }));
+        sp.scale.set(96, 75, 1); sp.position.set(x, y, z); g.add(sp);
+        const m = new THREE.Mesh(new THREE.SphereGeometry(7, 14, 10), pin); m.position.set(x, y, 14); g.add(m);
+        stems.push(new THREE.Vector3(x, y, 14), new THREE.Vector3(x, y, z - 38));
+    });
+    g.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(stems), lineMat(0xffffff, 0.9)));
+    const notes = [{ pos: [0, 0, 280], text: 'Multimedia documents in a 3D city model', cls: 'title' }];
+    return { group: g, notes, update: null, size: 260 };
 }
 
 // ---- Maquette Lego des Gratte-Ciel, à partir de la BD TOPO voxelisée -----------------------

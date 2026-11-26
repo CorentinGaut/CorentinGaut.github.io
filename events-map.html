@@ -90,7 +90,7 @@
         <div class="card-ev" id="card" hidden></div>
     </div>
     <p class="muted" style="margin-top:6px">
-        Drag to move, scroll to zoom, Ctrl + drag to rotate and tilt. Fly to Tampere, Huangshan or the Maison du projet in Villeurbanne to see 3D models of my research.
+        Drag to move, scroll to zoom, Ctrl + drag to rotate and tilt. Fly to Sydney, Tampere, Huangshan, Toronto or the Maison du projet in Villeurbanne to see 3D models of my research.
         Imagery: Esri World Imagery · relief: IGN RGE ALTI (France) and SRTM · buildings: IGN BD TOPO.
     </p>
     <div class="legend" id="legend"></div>
@@ -107,7 +107,7 @@
 // Globe iTowns : une épingle par lieu, regroupant les événements qui s'y sont tenus
 import * as itowns from 'itowns';
 import * as THREE from 'three';
-import { buildPin, buildSTC, buildHelix, buildLego, PIN_HEIGHT } from './assets/js/globe-models.js';
+import { buildPin, buildSTC, buildHelix, buildLego, buildSTAG, buildMultimedia, PIN_HEIGHT } from './assets/js/globe-models.js';
 const { Vector3 } = THREE;
 
 const KINDS = {
@@ -117,15 +117,19 @@ const KINDS = {
 };
 
 const PLACES = {
-    sydney:   { name: 'Sydney, Australia',   lat: -33.8688, lon: 151.2093 },
+    sydney:   { name: 'Sydney, Australia',   lat: -33.8688, lon: 151.2093,
+                model: { build: 'multimedia', lat: -33.8698, lon: 151.2165, lift: 0, look: { up: 90, range: 1350, tilt: 26, heading: 20 },
+                         about: 'In 3D here: multimedia documents (videos, photos, texts) placed in a 3D city model, as in my 3DGeoInfo 2022 paper.' } },
     // "model" : objet 3D de recherche posé près du lieu ; "look" : cadrage de la caméra sur l'objet
     tampere:  { name: 'Tampere, Finland',    lat: 61.4978,  lon: 23.7610,
-                model: { build: 'stc', lat: 61.5023, lon: 23.7610, lift: 0, look: { up: 210, range: 2100, tilt: 14, heading: 25 },
-                         about: 'In 3D here: one building changing over time inside a space-time cube, with its change curve, as in my IV 2023 paper.' } },
+                model: { build: 'stc', lat: 61.5023, lon: 23.7610, lift: 0, look: { up: 200, range: 1700, tilt: 14, heading: 25 },
+                         about: 'In 3D here: one building changing over time inside a space-time cube, its successive states stacked along the time axis, as in my IV 2023 paper.' } },
     huangshan:{ name: 'Huangshan, China',    lat: 29.7147,  lon: 118.3375,
-                model: { build: 'helix', lat: 29.7160, lon: 118.3455, lift: 0, look: { up: 520, range: 3600, tilt: 10, heading: 0 },
+                model: { build: 'helix', lat: 29.7160, lon: 118.3455, lift: 0, look: { up: 400, range: 2700, tilt: 10, heading: 0 },
                          about: 'In 3D here: a parametric helix timeline carrying successive building states, from my Pacific Graphics 2024 design space.' } },
-    toronto:  { name: 'Toronto, Canada',     lat: 43.6532,  lon: -79.3832 },
+    toronto:  { name: 'Toronto, Canada',     lat: 43.6532,  lon: -79.3832,
+                model: { build: 'stag', lat: 43.6560, lon: -79.3745, lift: 0, look: { up: 300, range: 1650, tilt: 12, heading: 70 },
+                         about: 'In 3D here: the STAG headset (Meta Quest 3 with two RTK GNSS antennas), its GeoPose and the virtual 3D content it anchors outdoors, as in my ISPRS 2026 paper.' } },
     // En France, une épingle par site ; "range" = distance de la caméra à l'arrivée (m)
     lyon:     { name: 'Lyon, France',        lat: 45.7640,  lon: 4.8357, range: 12000 },
     maisonprojet:{ name: 'Maison du projet, Villeurbanne', lat: 45.7695, lon: 4.8815, range: 2500,
@@ -392,6 +396,8 @@ try {
         const md = pin.model;
         if (md.build === 'stc') addModel(pin, buildSTC(), md.lon, md.lat);
         if (md.build === 'helix') addModel(pin, buildHelix(), md.lon, md.lat);
+        if (md.build === 'stag') addModel(pin, buildSTAG(), md.lon, md.lat);
+        if (md.build === 'multimedia') addModel(pin, buildMultimedia(), md.lon, md.lat);
         if (md.build === 'lego') {
             fetch('./assets/data/lego-gratte-ciel.json')
                 .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
@@ -516,7 +522,15 @@ try {
         const md = pin.model, lk = md && md.look;
         const lon = md ? md.lon : pin.lon, lat = md ? md.lat : pin.lat;
         const g0 = (md && md.anchor ? md.anchor.z : pin.anchor.z) || 0;
-        const coord = new itowns.Coordinates('EPSG:4326', lon, lat, g0 + (md ? md.lift + lk.up : 0));
+        let coord = new itowns.Coordinates('EPSG:4326', lon, lat, g0), range = lk ? lk.range : 0;
+        if (lk) {
+            // iTowns ramène la cible au sol : pour viser un point en l'air (le centre de l'objet),
+            // on vise le point du sol situé derrière lui sur la même ligne de visée, et on recule d'autant
+            const h = md.lift + lk.up, d = h / Math.tan(lk.tilt * rad);
+            const dn = Math.cos(lk.heading * rad) * d / 111320, de = Math.sin(lk.heading * rad) * d / (111320 * Math.cos(lat * rad));
+            coord = new itowns.Coordinates('EPSG:4326', lon + de, lat + dn, g0);
+            range = lk.range + h / Math.sin(lk.tilt * rad);
+        }
         const here = itowns.CameraUtils.getTransformCameraLookingAtTarget(view, cam);
         const dist = here && here.coord ? haversine(here.coord.as('EPSG:4326'), { lat, lon }) : 5e6;
         try {
@@ -527,7 +541,7 @@ try {
             }
             if (id !== flight) return;
             await itowns.CameraUtils.animateCameraToLookAtTarget(view, cam, lk
-                ? { coord, range: lk.range, tilt: lk.tilt, heading: lk.heading, time: opts.time || 2600 }
+                ? { coord, range, tilt: lk.tilt, heading: lk.heading, time: opts.time || 2600 }
                 : { coord, range: pin.range || 40000, tilt: 45, heading: 0, time: opts.time || 2200 });
         } catch (e) { /* animation interrompue */ }
     };
