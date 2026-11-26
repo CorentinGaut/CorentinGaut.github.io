@@ -144,6 +144,14 @@ Faces   : F0(S0,S1,S5,S3)  F1(S5,S7,S4,S3)  F2(S7,S4,S2,S6)
     <h3>Conclusion</h3>
     <p>Une surface se représente soit de manière continue (par une équation), soit de manière polyédrique. À partir de l'équation, on peut construire une facettisation, et l'équation sous-jacente permet de faire varier la résolution du modèle facetté.</p>
 
+    <details class="box">
+        <summary><b>Exercice</b> : combien de sommets, d'arêtes et de triangles pour une sphère à p parallèles et m méridiens, et pour un cylindre fermé à m méridiens ? Vérifier la formule d'Euler (chapitre 2).</summary>
+        <p><b>Sphère.</b> Les p parallèles portent chacun m sommets, plus les deux pôles : \(S = pm + 2\). Entre deux parallèles consécutifs, on a m quadrilatères, soit 2m triangles, et autour de chaque pôle un éventail de m triangles : \(F = 2m(p - 1) + 2m = 2mp\). Chaque triangle a 3 arêtes, chacune partagée par 2 triangles : \(A = 3F/2 = 3mp\). On vérifie \(S - A + F = pm + 2 - 3mp + 2mp = 2\).</p>
+        <p><b>Cylindre</b> dont chaque couvercle est un éventail autour de son centre : \(S = 2m + 2\), \(F = 2m\) (corps) \(+\ 2m\) (couvercles) \(= 4m\), \(A = 6m\), d'où \(S - A + F = 2\). Sans sommet central (couvercles triangulés en m − 2 triangles), \(S = 2m\), \(F = 4m - 4\), \(A = 6m - 6\) : on retrouve encore 2. Un résultat différent de 2 signale un trou ou des sommets dupliqués à la couture.</p>
+    </details>
+
+    <div class="box"><span class="bt">Fil rouge</span><p>Les TP s'enchaînent : les primitives du TP 1 sont chargées et exportées au TP 2, placées par le TP sur les transformations, simplifiées (TP 4) ou subdivisées (TP 5), puis remplacées par des courbes et des carreaux (TP 6 et 7). Gardez un seul projet tout au long du cours : vous construisez petit à petit votre propre modeleur.</p></div>
+
     <div class="tp" id="tp1">
         <h3>TP 1 — Polyèdres et quadriques</h3>
         <p>Les objets sont construits en <b>facettes triangulaires</b> dans l'environnement de votre choix (Unity, OpenGL…).</p>
@@ -159,6 +167,10 @@ Faces   : F0(S0,S1,S5,S3)  F1(S5,S7,S4,S3)  F2(S7,S4,S2,S6)
         <h4>Exercice 4 <span class="opt">(optionnel)</span> — Objets tronqués</h4>
         <p>Reprenez les exercices précédents pour produire des objets tronqués, par exemple une sphère dont on retire un quartier. Pensez à bien refermer les objets.</p>
         <figure class="s"><img src="./assets/img/cours/mg/tp1-sphere-tronquee.webp" alt="Sphère jaune dont un quartier a été retiré, refermée par deux faces planes" loading="lazy"><figcaption>Sphère tronquée attendue.</figcaption></figure>
+        <h4>Exercice 5 <span class="opt">(optionnel)</span> — Tore</h4>
+        <p>Écrivez une méthode <code>Tore(R, r, nbU, nbV)</code>, où R est le rayon du cercle central et r celui du tube :</p>
+        <div class="math">\[ x = (R + r\cos v)\cos u, \qquad y = (R + r\cos v)\sin u, \qquad z = r\sin v, \qquad u, v \in [0, 2\pi[. \]</div>
+        <p>La grille de \(nbU \times nbV\) sommets se referme dans les deux directions : réutilisez le plan de l'exercice 0 en reliant la dernière ligne à la première et la dernière colonne à la première. Vérifiez que \(S - A + F = 0\) : le tore est de genre 1. Il servira de cas de test au TP 2.</p>
     </div>
 </section>
 
@@ -302,6 +314,30 @@ fan   : [ 4,3,1,2 ]  →  (4,3,1), (4,1,2)</code></pre>
     <figure><img src="./assets/img/cours/mg/c2-numerisation.webp" alt="Centrale électrique de 13 millions de triangles et statue de David numérisée en 2 milliards de polygones" loading="lazy"><figcaption>Ordres de grandeur : 13 millions de triangles (centrale, UNC) et 2 milliards de polygones pour le David numérisé (Digital Michelangelo, Stanford).</figcaption></figure>
     <p class="credit">Ce chapitre s'appuie sur les cours de Loïc Barthe (IRIT), Nicolas Roussel (Inria Lille), Sylvain Brandel (LIRIS), Gilles Gesquière et Rémi Bénière (C4W).</p>
 
+    <details class="box">
+        <summary><b>Exercice</b> : genre du cube, du tore du TP 1 et d'un cube auquel on a retiré une face.</summary>
+        <p>Avec \(S - A + F = 2C - 2G - T\) et C = 1 :</p>
+        <ul>
+            <li>cube à faces carrées : \(8 - 12 + 6 = 2\), et T = 0, donc G = 0 ;</li>
+            <li>tore : \(nbU \cdot nbV - 3\,nbU \cdot nbV + 2\,nbU \cdot nbV = 0\), et T = 0, donc G = 1 ;</li>
+            <li>cube ouvert : \(8 - 12 + 5 = 1\), et T = 1 (un bord), donc G = 0. Retirer une face ne crée pas d'anse.</li>
+        </ul>
+    </details>
+    <details class="box">
+        <summary><b>Exercice</b> : écrire à la main la table des demi-arêtes du carré formé des triangles (0, 1, 2) et (0, 2, 3).</summary>
+        <p>On numérote les demi-arêtes dans l'ordre des faces. Pour chacune : sommet d'origine, face, demi-arête suivante, jumelle (− si la demi-arête est sur un bord).</p>
+        <table>
+            <tr><th>Demi-arête</th><th>Origine → fin</th><th>Face</th><th>Suivante</th><th>Jumelle</th></tr>
+            <tr><td>h0</td><td>0 → 1</td><td>0</td><td>h1</td><td>−</td></tr>
+            <tr><td>h1</td><td>1 → 2</td><td>0</td><td>h2</td><td>−</td></tr>
+            <tr><td>h2</td><td>2 → 0</td><td>0</td><td>h0</td><td>h3</td></tr>
+            <tr><td>h3</td><td>0 → 2</td><td>1</td><td>h4</td><td>h2</td></tr>
+            <tr><td>h4</td><td>2 → 3</td><td>1</td><td>h5</td><td>−</td></tr>
+            <tr><td>h5</td><td>3 → 0</td><td>1</td><td>h3</td><td>−</td></tr>
+        </table>
+        <p>Seule la diagonale (h2, h3) a une jumelle ; les 4 demi-arêtes sans jumelle forment un bord. Vérification : \(4 - 5 + 2 = 1 = 2 - 0 - 1\).</p>
+    </details>
+
     <div class="tp" id="tp2">
         <h3>TP 2 — Charger et exporter un fichier OFF</h3>
         <p>Les maillages utilisés sont au format <b>OFF</b>, un format texte (ASCII) :</p>
@@ -326,6 +362,12 @@ fan   : [ 4,3,1,2 ]  →  (4,3,1), (4,1,2)</code></pre>
             <li><b>Normalisation.</b> Divisez toutes les coordonnées par la plus grande coordonnée en valeur absolue : le maillage tient alors dans \([-1, 1]^3\) et tous les objets chargés ont à peu près la même taille.</li>
             <li><b>Normales.</b> Les fichiers OFF ne contiennent pas de normales : calculez la normale de chaque triangle, puis celle de chaque sommet. Comparez les deux éclairages.</li>
             <li><b>Export.</b> Écrivez la sauvegarde au format OFF. Pour tester, chargez un maillage, retirez-lui n faces ainsi que les sommets devenus isolés, enregistrez-le, puis ouvrez le résultat dans MeshLab.</li>
+        </ol>
+        <h4>Pour aller plus loin <span class="opt">(optionnel)</span> — Topologie et demi-arêtes</h4>
+        <ol start="6">
+            <li><b>Demi-arêtes.</b> Construisez une structure de demi-arêtes à partir du maillage chargé. Une table de hachage indexée par le couple (origine, fin) permet de retrouver la jumelle de chaque demi-arête en temps linéaire.</li>
+            <li><b>Diagnostic.</b> Comptez les arêtes de bord (sans jumelle) et les arêtes non variétés (partagées par plus de deux faces). Calculez \(S - A + F\), le nombre de bords et le genre de <a href="./assets/cube.off" download>cube.off</a>, <a href="./assets/bunny.off" download>bunny.off</a>, <a href="./assets/buddha.off" download>buddha.off</a> et du tore du TP 1. Les résultats sont-ils ceux que vous attendiez ?</li>
+            <li><b>Voisinage.</b> Écrivez une fonction qui renvoie le 1-voisinage d'un sommet (ses voisins dans l'ordre, en tournant autour de lui), puis sa valence. Elle resservira pour la fusion d'arêtes (TP 4) et le schéma de Loop (TP 5).</li>
         </ol>
         <p class="credit">Exercice inspiré d'un TP de Loïc Barthe (IRIT).</p>
     </div>
@@ -435,7 +477,43 @@ fan   : [ 4,3,1,2 ]  →  (4,3,1), (4,1,2)</code></pre>
         <figure class="s"><img src="./assets/img/cours/mg/c3-fuite2.webp" alt="Église dessinée avec deux points de fuite" loading="lazy"><figcaption>Deux points de fuite.</figcaption></figure>
         <figure class="s"><img src="./assets/img/cours/mg/c3-fuite3.webp" alt="Maison dessinée avec trois points de fuite" loading="lazy"><figcaption>Trois points de fuite.</figcaption></figure>
     </div>
+    <details class="box">
+        <summary><b>Exercice</b> : on agrandit un objet d'un facteur 2, on le tourne de 90° autour de z, puis on le translate de (3, 0, 0). Où arrive le point (1, 0, 0) ? Et si l'on translate avant de tourner ?</summary>
+        <p>La matrice est \(M = T\,R_z\,S\) : la transformation appliquée en premier est à droite. \(S\) envoie (1, 0, 0) en (2, 0, 0), \(R_z(90°)\) en (0, 2, 0), puis \(T\) en <b>(3, 2, 0)</b>.</p>
+        <p>Avec \(R_z\,T\,S\), on obtient (2, 0, 0), puis (5, 0, 0), puis <b>(0, 5, 0)</b> : la translation a été tournée elle aussi. C'est l'ordre « mise à l'échelle, rotation, translation » (TRS) qu'utilisent les moteurs de jeu.</p>
+    </details>
+    <details class="box">
+        <summary><b>Exercice</b> : tourner le point (2, 1) de 90° autour du point C(1, 1). Écrire la matrice correspondante.</summary>
+        <p>On se ramène à une rotation autour de l'origine : \(M = T(C)\,R(90°)\,T(-C)\). (2, 1) devient (1, 0) par \(T(-C)\), puis (0, 1) par la rotation, puis <b>(1, 2)</b> par \(T(C)\). En coordonnées homogènes 2D :</p>
+        <div class="math">\[ M = \begin{pmatrix} 1&amp;0&amp;1 \\ 0&amp;1&amp;1 \\ 0&amp;0&amp;1 \end{pmatrix} \begin{pmatrix} 0&amp;-1&amp;0 \\ 1&amp;0&amp;0 \\ 0&amp;0&amp;1 \end{pmatrix} \begin{pmatrix} 1&amp;0&amp;-1 \\ 0&amp;1&amp;-1 \\ 0&amp;0&amp;1 \end{pmatrix} = \begin{pmatrix} 0&amp;-1&amp;2 \\ 1&amp;0&amp;0 \\ 0&amp;0&amp;1 \end{pmatrix}. \]</div>
+    </details>
+    <details class="box">
+        <summary><b>Exercice</b> : inverser sans calcul général une transformation rigide \(M = \begin{pmatrix} R &amp; t \\ 0 &amp; 1 \end{pmatrix}\) (R rotation, t translation).</summary>
+        <p>Une rotation est orthogonale, donc \(R^{-1} = R^T\). En résolvant \(x = R\,x' + t\), on trouve \(x' = R^T x - R^T t\), d'où</p>
+        <div class="math">\[ M^{-1} = \begin{pmatrix} R^T &amp; -R^T t \\ 0 &amp; 1 \end{pmatrix}. \]</div>
+        <p>C'est ainsi qu'on calcule la matrice de vue à partir de la position et de l'orientation de la caméra.</p>
+    </details>
+    <details class="box">
+        <summary><b>Exercice</b> : avec le centre de projection à l'origine et le plan de projection en z = near, où est le point de fuite des droites de direction d = (d<sub>x</sub>, d<sub>y</sub>, d<sub>z</sub>) ?</summary>
+        <p>Un point de la droite s'écrit \(A + t\,d\). Sa projection a pour abscisse \(near \cdot \frac{A_x + t\,d_x}{A_z + t\,d_z}\), qui tend vers \(near \cdot d_x / d_z\) quand t tend vers l'infini, et de même pour y. Le point de fuite est donc</p>
+        <div class="math">\[ F = \left( near\,\frac{d_x}{d_z},\ near\,\frac{d_y}{d_z},\ near \right), \]</div>
+        <p>qui ne dépend que de la direction : toutes les parallèles convergent vers F. Si \(d_z = 0\), la droite est parallèle au plan de projection et n'a pas de point de fuite. Avec near = 1 et d = (1, 0, 2), on trouve F = (0,5 ; 0 ; 1).</p>
+    </details>
     <p class="credit">Chapitre tiré du cours de Gilles Gesquière (LIRIS).</p>
+
+    <div class="tp" id="tp-transfo">
+        <h3>TP complémentaire — Transformations et caméra</h3>
+        <p>Le moteur sait déjà tout faire : l'objectif est de le refaire soi-même pour comprendre ce qu'il calcule. Dans ce TP, ne vous servez pas des transformations de Unity (<code>Transform</code>, <code>Matrix4x4</code>…) : modifiez directement les sommets des maillages du TP 1.</p>
+        <h4>Exercice 1 — Une classe de matrices</h4>
+        <p>Écrivez une classe <code>Mat4</code> : produit de deux matrices, produit matrice-vecteur en coordonnées homogènes, et constructeurs <code>Translation(t)</code>, <code>Echelle(s)</code>, <code>RotationX/Y/Z(α)</code> et <code>Rotation(axe, α)</code> (rotation autour d'un axe quelconque, voir plus haut). Ajoutez l'inverse d'une transformation rigide (exercice ci-dessus). Testez sur un cube que \(M\,M^{-1} = I\) et que deux ordres différents donnent deux résultats différents.</p>
+        <h4>Exercice 2 — Modélisation hiérarchique</h4>
+        <p>Construisez un système solaire : le Soleil tourne sur lui-même, la Terre tourne autour du Soleil et sur elle-même, la Lune tourne autour de la Terre. Chaque astre a une matrice locale exprimée dans le repère de son parent ; sa matrice monde est le produit des matrices depuis la racine. Vérifiez que la Lune suit la Terre sans code spécifique.</p>
+        <p><span class="opt">Variante :</span> un bras articulé (base, bras, avant-bras, pince) dont les angles se règlent au clavier.</p>
+        <h4>Exercice 3 — Caméra orbitale</h4>
+        <p>Écrivez une fonction <code>LookAt(oeil, cible, haut)</code> qui construit le repère de la caméra : \(f = \frac{cible - oeil}{\lVert cible - oeil \rVert}\), \(r = \frac{f \wedge haut}{\lVert f \wedge haut \rVert}\), \(u = r \wedge f\). Elle renvoie la matrice de vue, inverse de la matrice qui place la caméra. Faites tourner la caméra autour de l'objet à la souris (deux angles et une distance, en coordonnées sphériques comme au chapitre 1).</p>
+        <h4>Exercice 4 <span class="opt">(optionnel)</span> — Projeter à la main</h4>
+        <p>Projetez vous-même les sommets avec la matrice de perspective vue en cours, effectuez la division par w, et tracez le maillage en fil de fer sur un plan 2D (<code>Gizmos.DrawLine</code>, ou un canvas HTML). Ajoutez un interrupteur qui passe en projection orthographique, puis cavalière. Faites varier near et observez les points de fuite d'un cube.</p>
+    </div>
 </section>
 
 <!-- ===================================================================== -->
@@ -550,6 +628,8 @@ fan   : [ 4,3,1,2 ]  →  (4,3,1), (4,1,2)</code></pre>
 
     <div class="tp" id="tp3">
         <h3>TP 3 — Modèles volumiques</h3>
+        <h4>Exercice 0 <span class="opt">(échauffement)</span> — Marching squares</h4>
+        <p>En 2D, sur une grille de potentiel \(f(x, y) = (x - x_0)^2 + (y - y_0)^2 - r^2\) (un cercle), tracez l'isocontour f = 0 : pour chaque cellule, calculez l'indice de configuration à partir du signe des 4 coins (16 cas), placez les points d'intersection sur les arêtes par interpolation linéaire, et reliez-les. Ajoutez un second cercle, en prenant le minimum des deux potentiels, pour faire apparaître les cas ambigus. Le passage aux marching cubes (256 cas) se fera sur le même principe.</p>
         <h4>Exercice 1 — Énumération spatiale</h4>
         <ol>
             <li>Représentez une sphère par énumération spatiale : englobez-la dans une boîte, subdivisez la boîte en cubes, et gardez les cubes dont le centre est dans la sphère.</li>
@@ -562,6 +642,12 @@ fan   : [ 4,3,1,2 ]  →  (4,3,1), (4,1,2)</code></pre>
         <h4>Exercice 2 — Surfaces implicites discrètes</h4>
         <p>Chaque cube stocke maintenant une valeur de potentiel, initialisée par exemple avec l'exercice 1 ; il est visible si son potentiel dépasse un seuil. Créez un outil qui ajoute ou retire de la matière : par exemple une sphère Unity que l'on déplace dans la scène et qui ajoute ou soustrait du potentiel aux cubes qu'elle touche.</p>
         <p><span class="opt">Pour aller plus loin :</span> remplacez l'affichage par cubes par une surface extraite par marching cubes.</p>
+        <h4>Exercice 3 <span class="opt">(optionnel)</span> — Octree</h4>
+        <p>Représentez la sphère de l'exercice 1 par un octree : une cellule entièrement dedans ou entièrement dehors devient une feuille ; une cellule qui coupe la surface est divisée en 8, jusqu'à une profondeur maximale. Affichez les feuilles pleines avec une couleur par profondeur. Pour des profondeurs de 3 à 7, comparez le nombre de feuilles avec les \(8^d\) cellules de la grille uniforme de même résolution. Comment évolue ce nombre à chaque niveau, et pourquoi ?</p>
+        <h4>Exercice 4 <span class="opt">(optionnel)</span> — CSG sur des distances signées</h4>
+        <p>Remplacez le test « dedans / dehors » par une <b>distance signée</b> (négative à l'intérieur), par exemple \(d(p) = \lVert p - c \rVert - r\) pour une sphère. Les opérateurs CSG s'écrivent alors \(\min(d_A, d_B)\) (union), \(\max(d_A, d_B)\) (intersection) et \(\max(d_A, -d_B)\) (différence). Reconstruisez un petit arbre CSG (un cube moins une sphère, union d'un cylindre), puis remplacez le min de l'union par un <i>minimum lissé</i>, qui fond les objets l'un dans l'autre :</p>
+        <div class="math">\[ h = \frac{\max(k - |d_A - d_B|,\ 0)}{k}, \qquad \mathrm{smin}(d_A, d_B) = \min(d_A, d_B) - \frac{h^2\,k}{4}. \]</div>
+        <p>Le paramètre k règle la largeur de la zone de raccord ; avec k → 0, on retrouve l'union classique.</p>
     </div>
 </section>
 
@@ -691,6 +777,17 @@ fan   : [ 4,3,1,2 ]  →  (4,3,1), (4,1,2)</code></pre>
     <p>Exemple d'une prairie (Frank Perbet, Imagis) : de près, chaque brin d'herbe est modélisé en 3D ; plus loin, une texture semi-transparente de brins est plaquée sur des polygones ; au loin, une simple texture verte suffit.</p>
     <p class="credit">Chapitre adapté du cours de Gilles Gesquière (LIRIS).</p>
 
+    <details class="box">
+        <summary><b>Exercice</b> : quadriques d'un coin de cube \(v_1 = (0, 0, 0)\), sur les plans x = 0, y = 0 et z = 0, et d'un sommet \(v_2 = (\frac12, \frac12, 0)\) au milieu de la face z = 0. Où placer le sommet issu de la fusion de l'arête \((v_1, v_2)\) ?</summary>
+        <p>Pour un plan \(ax + by + cz + d = 0\) de normale unitaire, on pose \(p = (a, b, c, d)^T\) et \(K_p = p\,p^T\) ; la quadrique d'un sommet est la somme des \(K_p\) de ses plans, et l'erreur en un point \(\bar v = (x, y, z, 1)^T\) est \(\bar v^T Q\, \bar v\).</p>
+        <ul>
+            <li>\(Q_1 = \mathrm{diag}(1, 1, 1, 0)\), soit une erreur \(x^2 + y^2 + z^2\) ;</li>
+            <li>\(Q_2 = \mathrm{diag}(0, 0, 1, 0)\), soit une erreur \(z^2\) ;</li>
+            <li>pour la fusion, \(Q = Q_1 + Q_2 = \mathrm{diag}(1, 1, 2, 0)\), soit une erreur \(x^2 + y^2 + 2z^2\).</li>
+        </ul>
+        <p>Placer le nouveau sommet en \(v_2\) coûte 0,5, au milieu de l'arête 0,125, et en \(v_1\) 0, ce qui est le minimum. La métrique ramène donc le sommet sur le coin : l'arête vive est préservée, ce que ne garantit pas la fusion au milieu.</p>
+    </details>
+
     <div class="tp" id="tp4">
         <h3>TP 4 — Simplification</h3>
         <h4>Exercice 1 — Simplification par partitionnement</h4>
@@ -719,6 +816,19 @@ fan   : [ 4,3,1,2 ]  →  (4,3,1), (4,1,2)</code></pre>
             <li>trouvez et testez des modèles qui lui posent problème (arêtes vives, changement de topologie…), sur une page.</li>
         </ol>
         <p class="credit">Réglages MeshLab adaptés du tutoriel <i>Polygon reduction with MeshLab</i> de Shapeways (page aujourd'hui retirée).</p>
+        <h4>Exercice 3 <span class="opt">(optionnel)</span> — Fusion d'arêtes et métrique quadrique</h4>
+        <p>Implémentez la décimation de Garland et Heckbert sur votre structure de demi-arêtes (TP 2) :</p>
+        <ol>
+            <li>calculez la quadrique \(Q_v\) de chaque sommet à partir des plans de ses faces ;</li>
+            <li>pour chaque arête, calculez le coût de sa fusion, en plaçant d'abord le nouveau sommet au milieu de l'arête, puis à la position optimale (résolution d'un système 3 × 3) ;</li>
+            <li>placez les arêtes dans une file de priorité, fusionnez la moins coûteuse, mettez à jour les quadriques et les coûts des arêtes voisines, et recommencez jusqu'au nombre de faces visé ;</li>
+            <li>refusez les fusions qui retournent une face, c'est-à-dire qui inversent sa normale.</li>
+        </ol>
+        <p>Comparez avec votre partitionnement (exercice 1) à nombre de faces égal, sur le Bouddha et sur un objet à arêtes vives.</p>
+        <h4>Exercice 4 <span class="opt">(optionnel)</span> — Mesurer l'erreur</h4>
+        <p>Dans MeshLab, <b>Filters › Sampling › Hausdorff Distance</b> mesure l'écart entre le maillage d'origine et sa version simplifiée. Pour chaque méthode, tracez la distance de Hausdorff (maximale et moyenne) en fonction du nombre de faces, de 100 % à 1 %. Quelle méthode est la meilleure, et à partir de quel taux l'écart devient-il visible ?</p>
+        <h4>Exercice 5 <span class="opt">(optionnel)</span> — Niveaux de détail à l'affichage</h4>
+        <p>Générez 3 ou 4 niveaux de détail d'un même objet (exercice 1 ou 3), puis affichez dans une scène une centaine d'instances. Le niveau est choisi d'après la distance à la caméra, ou d'après la taille de l'objet à l'écran (composant <code>LODGroup</code> de Unity, ou votre propre sélection). Affichez le nombre de triangles dessinés, ajoutez une marge (hystérésis) pour éviter le clignotement quand un objet passe d'un niveau à l'autre, et comparez la fréquence d'affichage avec et sans LOD.</p>
     </div>
 </section>
 
@@ -825,6 +935,19 @@ pour chaque face (x1, x2, x3) de M :
     <figure><img src="./assets/img/cours/mg/c6-adapt-dauphins.webp" alt="Dauphin subdivisé uniformément et de manière adaptative" loading="lazy"><figcaption>Subdivision adaptative d'un dauphin de 468 faces (S. Lanquetin) : 1 692, 5 022 et 5 133 faces, contre 1 872, 7 488 et 29 952 en subdivision uniforme.</figcaption></figure>
     <p class="credit">Chapitre compilé à partir des cours de Loïc Barthe (IRIT), Sandrine Lanquetin (Université de Bourgogne), Gilles Gesquière (LIRIS) et Ching-Kuang Shene (Michigan Tech).</p>
 
+    <details class="box">
+        <summary><b>Exercice</b> : appliquer à la main deux itérations de Chaikin au carré fermé (0, 0), (1, 0), (1, 1), (0, 1).</summary>
+        <p><b>Itération 1</b> : chaque côté donne deux points, au quart et aux trois quarts. On obtient l'octogone (0,25 ; 0), (0,75 ; 0), (1 ; 0,25), (1 ; 0,75), (0,75 ; 1), (0,25 ; 1), (0 ; 0,75), (0 ; 0,25).</p>
+        <p><b>Itération 2</b> : 16 points. Le côté (0,25 ; 0)–(0,75 ; 0) donne (0,375 ; 0) et (0,625 ; 0), et le côté coupé (0,75 ; 0)–(1 ; 0,25) donne (0,8125 ; 0,0625) et (0,9375 ; 0,1875). Les autres s'obtiennent par symétrie.</p>
+        <p>Les milieux des côtés d'origine, comme (0,5 ; 0), restent sur tous les polygones successifs : la courbe limite passe par eux et y est tangente au côté. Elle est formée de 4 arcs de parabole, ceux de la B-spline quadratique du carré.</p>
+    </details>
+    <details class="box">
+        <summary><b>Exercice</b> : une itération de Loop sur le tétraèdre (1, 1, 1), (1, −1, −1), (−1, 1, −1), (−1, −1, 1).</summary>
+        <p><b>Sommets d'arêtes.</b> Pour l'arête entre (1, 1, 1) et (1, −1, −1), les sommets opposés sont (−1, 1, −1) et (−1, −1, 1) : \(e = \frac38 (2, 0, 0) + \frac18 (-2, 0, 0) = (0{,}5 ;\ 0 ;\ 0)\). Les 6 arêtes donnent les 6 points \((\pm 0{,}5, 0, 0)\), \((0, \pm 0{,}5, 0)\), \((0, 0, \pm 0{,}5)\).</p>
+        <p><b>Anciens sommets.</b> Valence 3, donc \(\alpha = \frac{3}{16}\). Pour v = (1, 1, 1), la somme des voisins vaut (−1, −1, −1) : \(v' = \frac{7}{16}(1, 1, 1) - \frac{3}{16}(1, 1, 1) = (0{,}25 ;\ 0{,}25 ;\ 0{,}25)\).</p>
+        <p>Le maillage compte maintenant 10 sommets, 24 arêtes et 16 faces (\(10 - 24 + 16 = 2\)). Les sommets passent d'une distance \(\sqrt3 \approx 1{,}73\) à l'origine à 0,43 : un schéma approximant contracte fortement un maillage grossier.</p>
+    </details>
+
     <div class="tp" id="tp5">
         <h3>TP 5 — Subdivision</h3>
         <h4>Exercice 1 — Subdivision de courbes</h4>
@@ -833,6 +956,19 @@ pour chaque face (x1, x2, x3) de M :
         <p>Vérifiez que la courbe obtenue est bien une B-spline quadratique : comparez-la à la B-spline construite sur le même polygone de contrôle (chapitre 7).</p>
         <h4>Exercice 2 <span class="opt">(optionnel)</span> — Subdivision de surfaces</h4>
         <p>Implémentez le schéma de Loop sur l'un des modèles du TP 2 (par exemple <code>buddha.off</code>) ou sur <code>Cube.obj</code>, après l'avoir triangulé. Une structure de demi-arêtes (chapitre 2) facilite beaucoup l'accès aux sommets \(v_{\text{left}}\), \(v_{\text{right}}\) et aux voisins.</p>
+        <h4>Exercice 3 <span class="opt">(optionnel)</span> — Schéma à 4 points</h4>
+        <p>Implémentez le schéma interpolant à 4 points (Dyn, Levin et Gregory) : les anciens points sont conservés, et entre \(P_i\) et \(P_{i+1}\) on insère</p>
+        <div class="math">\[ P_{2i+1}^{k+1} = \frac{-P_{i-1}^k + 9\,P_i^k + 9\,P_{i+1}^k - P_{i+2}^k}{16}. \]</div>
+        <p>Superposez-le à Chaikin sur le même polygone : lequel passe par les points de contrôle, lequel reste dans leur enveloppe convexe ? Essayez un polygone avec un angle très aigu.</p>
+        <h4>Exercice 4 <span class="opt">(optionnel)</span> — Catmull-Clark</h4>
+        <p>Implémentez le schéma de Catmull-Clark directement sur les quadrilatères de <code>Cube.obj</code>, sans trianguler :</p>
+        <ol>
+            <li>un <b>point de face</b> par face : la moyenne de ses sommets ;</li>
+            <li>un <b>point d'arête</b> par arête : la moyenne des deux extrémités et des deux points de face adjacents ;</li>
+            <li>chaque ancien sommet P de valence n devient \(\frac{F + 2R + (n - 3)\,P}{n}\), où F est la moyenne des points de face adjacents et R celle des milieux des arêtes adjacentes ;</li>
+            <li>chaque face à k côtés est remplacée par k quadrilatères (sommet, point d'arête, point de face, point d'arête).</li>
+        </ol>
+        <p>Comparez la surface limite avec celle de Loop sur le cube triangulé : laquelle est la plus symétrique, et pourquoi ?</p>
     </div>
 </section>
 
@@ -978,6 +1114,21 @@ pour chaque face (x1, x2, x3) de M :
         <p>La courbure dépend des dérivées première et seconde : avec un raccord C<sup>2</sup>, elle varie <b>continûment</b> le long des deux courbes, sans saut au point de raccord. Elle n'est pas constante pour autant.</p>
     </details>
     <figure><img src="./assets/img/cours/mg/c7-complexe.webp" alt="Une Bézier de degré 12 comparée à six cubiques raccordées" loading="lazy"><figcaption>Une seule Bézier de degré 12 (à gauche) contre six Bézier de degré 3 raccordées C<sup>1</sup> (à droite) : la seconde suit bien mieux son polygone.</figcaption></figure>
+    <h3>Ouverture : B-splines uniformes</h3>
+    <p>Les B-splines raccordent automatiquement des morceaux de bas degré. Chaque segment ne dépend que de quelques points de contrôle consécutifs (contrôle <b>local</b>), et la continuité au raccord est garantie par construction. La courbe n'interpole pas ses points de contrôle. Pour un polygone \(P_0, \dots, P_n\), le segment i, \(t \in [0, 1]\), s'écrit :</p>
+    <div class="box"><span class="bt">B-splines uniformes</span>
+        <p>Quadratique (C<sup>1</sup>, 3 points par segment) :</p>
+        <div class="math">\[ p_i(t) = \tfrac12 (1 - t)^2\,P_i + \tfrac12 (-2t^2 + 2t + 1)\,P_{i+1} + \tfrac12 t^2\,P_{i+2}. \]</div>
+        <p>Cubique (C<sup>2</sup>, 4 points par segment) :</p>
+        <div class="math">\[ p_i(t) = \tfrac16 \Big[ (1 - t)^3\,P_i + (3t^3 - 6t^2 + 4)\,P_{i+1} + (-3t^3 + 3t^2 + 3t + 1)\,P_{i+2} + t^3\,P_{i+3} \Big]. \]</div>
+    </div>
+    <p>Comme pour Bézier, les fonctions de base sont positives et de somme 1 : la courbe reste dans l'enveloppe convexe de ses points. Les NURBS (chapitre 8) généralisent ces courbes avec des nœuds non uniformes et des poids.</p>
+    <details class="box">
+        <summary><b>Exercice</b> : montrer que la B-spline quadratique uniforme est la courbe limite de l'algorithme de Chaikin (chapitre 6).</summary>
+        <p>On a \(p_i(0) = \frac12 (P_i + P_{i+1})\) et \(p_i(1) = \frac12 (P_{i+1} + P_{i+2})\) : la courbe passe par les milieux des côtés du polygone. En t = 1/2 :</p>
+        <div class="math">\[ p_i(\tfrac12) = \tfrac18 P_i + \tfrac34 P_{i+1} + \tfrac18 P_{i+2}. \]</div>
+        <p>Chaikin remplace les côtés \([P_i P_{i+1}]\) et \([P_{i+1} P_{i+2}]\) par les points \(R_i = \frac14 P_i + \frac34 P_{i+1}\) et \(Q_{i+1} = \frac34 P_{i+1} + \frac14 P_{i+2}\). Le milieu de \([R_i Q_{i+1}]\), qui est un côté du nouveau polygone, vaut exactement \(\frac18 P_i + \frac34 P_{i+1} + \frac18 P_{i+2} = p_i(\frac12)\). La B-spline du polygone raffiné passe donc par des points de la B-spline d'origine, et on montre de même que tous ses points coïncident : chaque itération de Chaikin garde la même B-spline, avec un polygone de contrôle de plus en plus proche d'elle.</p>
+    </details>
     <p class="credit">Chapitre compilé à partir des cours de Loïc Barthe (IRIT), Christian Jacquemin (LIMSI), Marc Daniel (LSIS) et Gilles Gesquière.</p>
 
     <div class="tp" id="tp6">
@@ -993,6 +1144,16 @@ pour chaque face (x1, x2, x3) de M :
         </ol>
         <h4>Exercice 3 <span class="opt">(optionnel)</span> — De Casteljau</h4>
         <p>Calculez la courbe avec l'algorithme de De Casteljau, pour un nombre de points de contrôle quelconque, et comparez avec l'exercice 2.</p>
+        <h4>Exercice 4 <span class="opt">(optionnel)</span> — Couper une Bézier en deux</h4>
+        <p>À partir des points intermédiaires de De Casteljau en u = 1/2, construisez les polygones de contrôle des deux moitiés de la courbe, puis affichez-les dans deux couleurs. Appliquez la coupe récursivement : les polygones convergent vers la courbe. Arrêtez-vous quand le polygone est presque plat, c'est-à-dire quand les points intérieurs sont à moins d'une tolérance de la corde : vous obtenez un tracé adaptatif.</p>
+        <h4>Exercice 5 <span class="opt">(optionnel)</span> — Élévation de degré</h4>
+        <p>Une Bézier de degré n s'écrit aussi comme une Bézier de degré n + 1, avec les points \(P'_i = \frac{i}{n+1} P_{i-1} + \left(1 - \frac{i}{n+1}\right) P_i\) pour \(i = 0, \dots, n + 1\). Vérifiez à l'écran que la courbe ne change pas, et répétez l'opération : vers quoi tend le polygone ?</p>
+        <h4>Exercice 6 <span class="opt">(optionnel)</span> — Chemin fermé C<sup>1</sup></h4>
+        <p>Construisez un chemin fermé formé de plusieurs cubiques de Bézier, par exemple une piste de course. Quand l'utilisateur déplace un point de raccord, les deux points voisins suivent ; quand il déplace un point voisin, l'autre voisin est recalculé par symétrie pour garder la continuité C<sup>1</sup> (ou seulement G<sup>1</sup>, à choisir par une touche).</p>
+        <h4>Exercice 7 <span class="opt">(optionnel)</span> — Catmull-Rom</h4>
+        <p>Faites passer une courbe par une liste de points donnés : entre \(P_i\) et \(P_{i+1}\), utilisez la cubique d'Hermite de tangentes \(V_i = \frac12 (P_{i+1} - P_{i-1})\). Écrivez les points de contrôle de Bézier équivalents à chaque segment, et comparez avec une B-spline cubique sur les mêmes points.</p>
+        <h4>Exercice 8 <span class="opt">(optionnel)</span> — Vitesse constante</h4>
+        <p>Faites parcourir la courbe à un objet. Avec u qui augmente régulièrement, l'objet accélère dans les zones où les points de contrôle sont espacés. Corrigez cela : échantillonnez la courbe, construisez une table de la longueur d'arc cumulée en fonction de u, puis inversez-la par interpolation pour avancer d'une distance constante à chaque image. Orientez l'objet selon la tangente \(\dot p(u)\).</p>
     </div>
 </section>
 
@@ -1111,6 +1272,28 @@ pour chaque face (x1, x2, x3) de M :
     </div>
     <div class="box"><span class="bt">Pour aller plus loin</span><p>Les <b>carreaux triangulaires de Bézier</b>, en coordonnées barycentriques, couvrent les zones où une grille rectangulaire ne convient pas. Les <b>carreaux de Coons</b> construisent une surface à partir de ses seules quatre courbes de bord. Les <b>NURBS</b> généralisent Bézier avec des fonctions de base à support local et des poids, et sont le standard de la CAO.</p></div>
     <p class="credit">Chapitre compilé à partir des cours de modélisation géométrique de l'IRIT (équipe Vortex), de Christian Jacquemin (LIMSI), Marc Daniel (LSIS), Éric Béchet (Université de Liège), Antoine Brière-Côté (ÉTS, Canada) et Gilles Gesquière.</p>
+
+    <div class="tp" id="tp7">
+        <h3>TP 7 — Surfaces paramétriques</h3>
+        <p>On réutilise les courbes du TP 6, la facettisation du TP 1 et l'export OFF du TP 2. Toutes les surfaces sont évaluées sur une grille \((u_i, v_j)\) de résolution réglable, puis découpées en triangles comme le plan de l'exercice 0 du TP 1.</p>
+        <h4>Exercice 1 — Surface de révolution</h4>
+        <p>Prenez comme génératrice une courbe de Bézier du plan (x, z), \(g(v) = (r(v), z(v))\), et faites-la tourner autour de l'axe z : \(S(u, v) = \big(r(v)\cos u,\ r(v)\sin u,\ z(v)\big)\), \(u \in [0, 2\pi]\). Modélisez un vase ou une bouteille en déplaçant les points de contrôle. Fermez la surface quand le profil touche l'axe, et exportez le résultat en OFF pour l'ouvrir dans MeshLab.</p>
+        <h4>Exercice 2 — Surface réglée</h4>
+        <p>Reliez deux courbes de Bézier P(u) et Q(u) par \(S(u, v) = (1 - v)\,P(u) + v\,Q(u)\). Testez avec deux segments de droite non coplanaires : vous obtenez un paraboloïde hyperbolique, une surface courbe faite uniquement de segments.</p>
+        <h4>Exercice 3 — Carreau de Bézier bicubique</h4>
+        <ol>
+            <li>Affichez un maillage de contrôle de 4 × 4 points \(S_{ij}\), initialement plan.</li>
+            <li>Évaluez le carreau \(p(u, v) = \sum_i \sum_j B_i^3(u)\,B_j^3(v)\,S_{ij}\), puis facettez-le.</li>
+            <li>Calculez les normales par le produit vectoriel \(p^u \wedge p^v\), en dérivant les polynômes de Bernstein, et comparez l'éclairage avec les normales calculées par moyenne des faces (TP 2).</li>
+            <li>Rendez les points de contrôle modifiables au clavier, comme au TP 6, avec en plus une touche pour l'axe z.</li>
+        </ol>
+        <h4>Exercice 4 <span class="opt">(optionnel)</span> — Raccorder deux carreaux</h4>
+        <p>Placez deux carreaux côte à côte. Imposez d'abord la continuité C<sup>0</sup> (même rangée de points sur le bord commun), puis C<sup>1</sup> (points de part et d'autre du bord alignés et équidistants). Observez la différence sur l'éclairage : une discontinuité de tangente se voit tout de suite comme une arête.</p>
+        <h4>Exercice 5 <span class="opt">(optionnel)</span> — Carreau de Coons</h4>
+        <p>Construisez une surface à partir de ses seules quatre courbes de bord \(c_0(u)\), \(c_1(u)\), \(d_0(v)\) et \(d_1(v)\), qui se rejoignent aux coins :</p>
+        <div class="math">\[ S(u, v) = (1 - v)\,c_0(u) + v\,c_1(u) + (1 - u)\,d_0(v) + u\,d_1(v) - \big[(1 - u)(1 - v)\,P_{00} + u(1 - v)\,P_{10} + (1 - u)v\,P_{01} + uv\,P_{11}\big]. \]</div>
+        <p>Les deux premiers termes sont deux surfaces réglées (exercice 2) ; le terme soustrait corrige les coins, comptés deux fois.</p>
+    </div>
 </section>
 
 

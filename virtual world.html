@@ -131,6 +131,16 @@
         <figure><img src="./assets/img/cours/vw/pont-tunnel.webp" alt="Entrée de tunnel dans une falaise boisée" loading="lazy"></figure>
     </div>
     <p class="credit">Images et chiffres tirés de la présentation d'Ubisoft à la GDC 2017, <a href="https://www.gdcvault.com/play/1024029/-Ghost-Recon-Wildlands-Terrain" target="_blank" rel="noopener"><i>Ghost Recon Wildlands: Terrain Tools and Technology</i></a>.</p>
+
+    <div class="tp" id="tp-materiaux">
+        <h3>Exercice — Écrire des règles de matériaux</h3>
+        <p>Choisissez un biome (montagne enneigée, désert, forêt tropicale…) et écrivez sur papier, sous forme de pseudo-code, les règles qui choisissent le matériau d'un point du terrain à partir de son altitude h, de sa pente (\(1 - n_z\)), de sa courbure et d'un bruit b. Par exemple :</p>
+<pre><code>si pente &gt; 0,6                      → roche
+sinon si h &gt; 2 800 + 150·b          → neige
+sinon si courbure &lt; 0 et h &lt; 1 200  → sable (fonds de vallée)
+sinon                               → herbe, mélangée à la terre selon b</code></pre>
+        <p>Pourquoi ajouter du bruit aux seuils ? Comment éviter des transitions trop franches entre deux matériaux, par exemple avec un <code>lerp</code> sur une bande de pente ? Ces règles seront programmées au chapitre 5.</p>
+    </div>
 </section>
 
 <!-- ===================================================================== -->
@@ -216,6 +226,16 @@
         <li><a href="http://arbaro.sourceforge.net/" target="_blank" rel="noopener">Arbaro</a> : un générateur d'arbres pour POV-Ray.</li>
         <li><a href="https://www.youtube.com/watch?v=E1B4UoSQMFw" target="_blank" rel="noopener">Coding Challenge : Fractal Trees – L-System</a> (The Coding Train), et la <a href="https://www.youtube.com/watch?v=5HJSHJvlMFE" target="_blank" rel="noopener">construction d'arbres de Sören Pirk</a>.</li>
     </ul>
+
+    <div class="tp" id="tp-lsys">
+        <h3>Exercices — L-systems</h3>
+        <h4>Exercice 1 — Réécriture et tortue</h4>
+        <p>Programmez dans votre moteur (Unity ou autre) la réécriture parallèle et une tortue 2D qui gère <code>F</code>, <code>f</code>, <code>+</code>, <code>−</code>, <code>[</code> et <code>]</code>. Retrouvez les exemples du bac à sable ci-dessus. Mesurez la longueur de la chaîne à chaque itération : comment croît-elle pour le flocon de Koch ?</p>
+        <h4>Exercice 2 — Variété : règles stochastiques et paramétriques</h4>
+        <p>Donnez plusieurs productions à un même symbole, chacune avec une probabilité, par exemple <code>F → F[+F]F[−F]F</code> (1/3), <code>F → F[+F]F</code> (1/3) et <code>F → F[−F]F</code> (1/3), et générez une rangée de 10 arbres avec des graines différentes. Ajoutez ensuite des paramètres : une longueur et une épaisseur multipliées par un facteur (0,7 par exemple) à chaque niveau de branche, et un angle tiré au hasard autour de δ.</p>
+        <h4>Exercice 3 — Tortue 3D</h4>
+        <p>Passez en 3D : la tortue a un repère (cap H, gauche L, haut U) et de nouveaux symboles, <code>&amp;</code> / <code>^</code> (tangage), <code>\</code> / <code>/</code> (roulis), en plus de <code>+</code> / <code>−</code> (lacet). Chaque <code>F</code> produit un cylindre (TP 1 de modélisation géométrique) dont le rayon diminue avec la profondeur, et les extrémités reçoivent des feuilles (quadrilatères texturés). Fusionnez tout l'arbre en un seul maillage : c'est le point de départ du groupe « Arbres » du projet.</p>
+    </div>
 </section>
 
 <!-- ===================================================================== -->
@@ -245,6 +265,16 @@
             <li><a href="https://marian42.de/article/wfc/" target="_blank" rel="noopener">Une ville infinie générée par <i>Wave Function Collapse</i></a> (Marian Kleineberg) : une alternative aux grammaires, par contraintes d'adjacence entre tuiles.</li>
             <li>En vidéo, avec Unity : <a href="https://www.youtube.com/watch?v=Jsc3BQaJndQ" target="_blank" rel="noopener">génération procédurale de ville</a>, <a href="https://www.youtube.com/watch?v=xGi0Hr-kNw0" target="_blank" rel="noopener">ville et système de grille</a>, <a href="https://www.youtube.com/watch?v=xkuniXI3SEE" target="_blank" rel="noopener"><i>Generating a Procedural City with Unity 5</i></a>.</li>
         </ul>
+    </div>
+
+    <div class="tp" id="tp-ville">
+        <h3>Exercices — Une petite ville</h3>
+        <h4>Exercice 1 — Réseau de rues</h4>
+        <p>Commencez par un damier : une grille de rues dont on perturbe légèrement les nœuds avec du bruit. Puis une croissance façon Parish et Müller : partez d'un segment, et à chaque étape prolongez chaque extrémité active, avec une probabilité de bifurcation à 90°. Ajoutez deux contraintes : une extrémité qui arrive près d'une rue existante s'y raccorde (création d'un carrefour), et une rue ne sort pas d'une zone autorisée (un polygone, ou le terrain sous une certaine pente).</p>
+        <h4>Exercice 2 — Îlots et parcelles</h4>
+        <p>Récupérez les îlots, c'est-à-dire les cycles du graphe des rues, ou tout simplement les cellules du damier. Rétrécissez-les de la demi-largeur des rues, puis découpez-les récursivement en parcelles : coupez chaque polygone perpendiculairement à son plus long côté, jusqu'à une surface minimale, et écartez les parcelles qui n'ont pas d'accès à la rue.</p>
+        <h4>Exercice 3 — Bâtiments</h4>
+        <p>Sur chaque parcelle, extrudez son contour, réduit d'un retrait, à une hauteur qui dépend de la distance au centre-ville, plus un bruit. Pour aller plus loin, écrivez une mini-grammaire de façade (étages, puis travées, puis fenêtres ou portes) et instanciez des modules plutôt que de dupliquer la géométrie.</p>
     </div>
 </section>
 
@@ -293,6 +323,22 @@
     <div class="figs">
         <figure class="s"><img src="./assets/img/cours/vw/arches.webp" alt="Paysage généré à partir d'observations" loading="lazy"><figcaption>Projet <a href="http://arches.liris.cnrs.fr/" target="_blank" rel="noopener">ARCHES</a> (LIRIS) : génération à partir d'observations du monde réel.</figcaption></figure>
         <figure class="s"><img src="./assets/img/cours/vw/donnees-reelles.webp" alt="Cartes et photographies aériennes de la Métropole de Lyon" loading="lazy"><figcaption>Données ouvertes de la Métropole de Lyon.</figcaption></figure>
+    </div>
+
+    <div class="tp" id="tp-terrain">
+        <h3>Exercices — Terrains</h3>
+        <h4>Exercice 1 — Écrire son propre bruit</h4>
+        <p>Avant d'utiliser <code>Mathf.PerlinNoise</code>, écrivez un <b>bruit de valeur</b> : des valeurs aléatoires aux nœuds d'une grille, tirées d'une table de permutation initialisée par une graine, et interpolées avec le lissage \(s(t) = 6t^5 - 15t^4 + 10t^3\). Passez ensuite au <b>bruit de gradient</b> (Perlin) : des vecteurs aléatoires aux nœuds, puis le produit scalaire avec le vecteur qui va du nœud au point. Affichez les deux bruits en niveaux de gris : lequel montre des artefacts alignés sur la grille ?</p>
+        <h4>Exercice 2 — Carte de hauteurs et octaves</h4>
+        <p>Générez un maillage de terrain (grille du TP 1 de modélisation géométrique) dont la hauteur suit la formule des octaves. Exposez l'échelle, le nombre d'octaves, la persistance, la lacunarité et la graine dans l'inspecteur, et faites varier chaque paramètre seul. Variante : le bruit « ridged », \(1 - |\text{bruit}|\), donne des crêtes de montagne.</p>
+        <h4>Exercice 3 — Déformation du domaine</h4>
+        <p>Évaluez le bruit en un point décalé par un autre bruit : \(h(p) = \text{fbm}\big(p + k \cdot (\text{fbm}(p + a),\ \text{fbm}(p + b))\big)\), avec a et b deux décalages constants. Les reliefs se tordent et prennent un aspect plus organique. Faites varier k.</p>
+        <h4>Exercice 4 — Matériaux</h4>
+        <p>Programmez les règles écrites au chapitre 2 : calculez la normale de chaque sommet (TP 2 de modélisation géométrique), puis la pente, et attribuez une couleur par sommet, ou des poids de texture. Ajoutez l'eau sous un seuil d'altitude.</p>
+        <h4>Exercice 5 <span class="opt">(optionnel)</span> — Érosion</h4>
+        <p><b>Érosion thermique</b> : à chaque itération, quand la différence de hauteur avec un voisin dépasse un angle de talus, on déplace une fraction de la matière vers ce voisin. <b>Érosion hydraulique</b> : des gouttes tombent au hasard, descendent la pente, arrachent des sédiments quand elles accélèrent et les déposent quand elles ralentissent. Comparez le terrain avant et après : les vallées se creusent et les pentes s'adoucissent.</p>
+        <h4>Exercice 6 <span class="opt">(optionnel)</span> — Lien avec la modélisation géométrique</h4>
+        <p>Exportez le terrain au format OFF, puis simplifiez-le avec votre code du TP 4 ou avec MeshLab. Une grille de 1 000 × 1 000 sommets se réduit sans dommage visible dans les zones plates. Préparez plusieurs niveaux de détail par tuile pour le projet.</p>
     </div>
 </section>
 

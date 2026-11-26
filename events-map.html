@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <title>Where I presented my work — Corentin Gautier</title>
+
+    <meta name="author" content="Corentin Gautier">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="3D globe (iTowns) of the conferences and outreach events where Corentin Gautier presented his research.">
+
+    <link rel="stylesheet" type="text/css" href="./assets/css/stylesheet.css">
+    <link rel="stylesheet" type="text/css" href="./assets/css/trail.css">
+    <link rel="icon" type="image/png" href="./assets/img/favicon.png">
+    <style>
+        .prep { --paper:#1772d0; --outreach:#2e8b57; --seminar:#d9822b; }
+        .globe-wrap { position:relative; }
+        #globe { position:relative; height:520px; border-radius:6px; overflow:hidden; background:#05070d; }
+        #globe .pins { position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
+        #globe .pin { position:absolute; left:0; top:0; will-change:transform; transition:opacity .2s; --h:30px; }
+        #globe .pin.hidden { opacity:0; }
+        #globe .pin.hidden * { pointer-events:none !important; }
+        #globe .pin::before { content:""; position:absolute; left:-1px; bottom:0; width:2px; height:var(--h); background:#fff; box-shadow:0 0 2px rgba(0,0,0,.6); }
+        #globe .pin-dot { position:absolute; left:-7px; top:-7px; width:14px; height:14px; padding:0; border-radius:50%; background:var(--pc); border:2px solid #fff;
+            box-sizing:border-box; cursor:pointer; pointer-events:auto; }
+        #globe .pin-b { position:absolute; left:0; bottom:var(--h); transform:translateX(-50%); white-space:nowrap; background:rgba(255,255,255,.95); color:#222;
+            border-radius:6px; padding:3px 8px; font-size:12px; line-height:1.3; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,.35); border-top:3px solid var(--pc);
+            cursor:pointer; pointer-events:auto; }
+        #globe .pin-b b { display:block; font-size:13px; }
+        #globe .pin-b span { color:#555; }
+        /* Vue lointaine : simple point, l'étiquette n'apparaît qu'au survol ou à la sélection */
+        #globe .pin.far { --h:0px; }
+        #globe .pin.far .pin-b { display:none; }
+        #globe .pin.far:hover, #globe .pin.far.sel { --h:30px; }
+        #globe .pin.far:hover .pin-b, #globe .pin.far.sel .pin-b { display:block; }
+        #globe .pin.sel .pin-dot { box-shadow:0 0 0 5px rgba(255,255,255,.45); }
+        #globe .pin:hover, #globe .pin.sel { z-index:2000000 !important; }
+        .k-paper { --pc:var(--paper); } .k-outreach { --pc:var(--outreach); } .k-seminar { --pc:var(--seminar); }
+        #globe .tour-btn { position:absolute; left:12px; bottom:12px; z-index:3; border:0; border-radius:6px; padding:8px 14px;
+            background:rgba(255,255,255,.95); color:#222; font:inherit; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.35); }
+        #globe .tour-btn:hover { background:#fff; }
+        #globe .tour-btn:focus-visible, #globe .pin-dot:focus-visible { outline:2px solid #fff; outline-offset:2px; }
+        .card-ev { position:absolute; top:12px; right:12px; z-index:3; width:270px; max-height:calc(100% - 24px); overflow:auto; box-sizing:border-box;
+            background:rgba(255,255,255,.96); color:#222; border-radius:6px; padding:10px 12px; font-size:13px; line-height:1.45; box-shadow:0 1px 6px rgba(0,0,0,.35); }
+        .card-ev[hidden] { display:none; }
+        .card-ev h3 { margin:0 22px 6px 0; font-size:15px; }
+        .card-ev ul { margin:0; padding-left:16px; }
+        .card-ev li { margin-bottom:6px; }
+        .card-ev .d { color:#666; font-variant-numeric:tabular-nums; }
+        .card-ev .x { position:absolute; top:6px; right:8px; border:0; background:none; font-size:18px; line-height:1; cursor:pointer; color:#666; }
+        .legend .dotl { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:5px; vertical-align:-1px; border:1px solid #fff; box-shadow:0 0 0 1px var(--line); }
+        ul.evlist { list-style:none; padding:0; margin:8px 0 0; }
+        ul.evlist li { padding:7px 0; border-bottom:1px solid var(--line); line-height:1.45; }
+        ul.evlist li.sel { background:var(--panel); }
+        ul.evlist .d { display:inline-block; min-width:84px; color:var(--muted); font-variant-numeric:tabular-nums; }
+        ul.evlist button.goto { font:inherit; font-size:13px; border:0; background:none; padding:0; color:var(--done); cursor:pointer; text-decoration:underline; }
+        ul.evlist .dotl { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; background:var(--pc); }
+        @media (max-width:600px) {
+            #globe { height:420px; }
+            .card-ev { position:static; width:auto; max-height:none; margin-top:10px; box-shadow:none; border:1px solid var(--line); }
+        }
+    </style>
+    <script type="importmap">
+    { "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.174.0/build/three.module.js",
+        "itowns": "https://cdn.jsdelivr.net/npm/itowns@2.46.0/dist/itowns.js"
+    } }
+    </script>
+</head>
+<body>
+<table style="width:100%;max-width:800px;border:0px;border-spacing:0px;border-collapse:separate;margin-right:auto;margin-left:auto;table-layout:fixed;"><tbody>
+<tr style="padding:0px">
+<td style="padding:20px" class="prep">
+
+    <p><a href="./index.html#pub">← Corentin Gautier</a></p>
+
+    <heading>Where I presented my work</heading>
+    <p>
+        Conferences where my papers were presented and outreach events where I showed the augmented scale models, on a 3D globe built with
+        <a href="https://www.itowns-project.org/" target="_blank">iTowns</a>. Click a pin to fly there, or play the tour to visit them in date order.
+    </p>
+
+    <div class="globe-wrap">
+        <div id="globe"></div>
+        <div class="card-ev" id="card" hidden></div>
+    </div>
+    <p class="muted" style="margin-top:6px">
+        Drag to move, scroll to zoom, Ctrl + drag to rotate and tilt. Imagery: Esri World Imagery.
+    </p>
+    <div class="legend" id="legend"></div>
+
+    <br>
+    <heading>All events</heading>
+    <ul class="evlist" id="list"></ul>
+
+</td>
+</tr>
+</tbody></table>
+
+<script type="module">
+// Globe iTowns : une épingle par lieu, regroupant les événements qui s'y sont tenus
+import * as itowns from 'itowns';
+import { Vector3 } from 'three';
+
+const KINDS = {
+    paper: 'Conference paper',
+    outreach: 'Outreach event',
+    seminar: 'Seminar',
+};
+
+const PLACES = {
+    sydney:   { name: 'Sydney, Australia',   lat: -33.8688, lon: 151.2093 },
+    tampere:  { name: 'Tampere, Finland',    lat: 61.4978,  lon: 23.7610 },
+    huangshan:{ name: 'Huangshan, China',    lat: 29.7147,  lon: 118.3375 },
+    toronto:  { name: 'Toronto, Canada',     lat: 43.6532,  lon: -79.3832 },
+    lyon:     { name: 'Lyon area, France',   lat: 45.7640,  lon: 4.8357 },
+    marne:    { name: 'Champs-sur-Marne, France', lat: 48.8406, lon: 2.5875 },
+    strasbourg:{ name: 'Strasbourg, France', lat: 48.5734,  lon: 7.7521 },
+    futuroscope:{ name: 'Futuroscope, France', lat: 46.6692, lon: 0.3683 },
+};
+
+// Trié par date ; "when" est le libellé affiché, "date" sert au tri et à la visite
+const EVENTS = [
+    { date: '2022-10', when: 'Oct 2022', place: 'sydney', kind: 'paper', venue: '3DGeoInfo 2022',
+      title: 'Integrating multimedia documents in 3D city models for a better understanding of territories',
+      link: 'https://ui.adsabs.harvard.edu/abs/2022ISPAnX4W2...69G/abstract' },
+    { date: '2022', when: '2022', place: 'futuroscope', kind: 'seminar', venue: 'GéoDataDays 2022 challenges',
+      title: 'UD-SV, multi-dimensional urban data exploration platform (first jury prize)',
+      link: 'https://journals.openedition.org/mappemonde/8265' },
+    { date: '2023-01-23', when: 'Jan 2023', place: 'lyon', kind: 'outreach', venue: 'Anthropocene week',
+      title: '"A quoi rêvent les maquettes ?": augmented model of the Gratte-Ciel district for 50 students',
+      link: 'https://ecoleanthropocene.universite-lyon.fr/a-quoi-revent-les-maquettes--289281.kjsp?RH=2023prog' },
+    { date: '2023-05-12', when: 'May 2023', place: 'lyon', kind: 'outreach', venue: "Pop'Sciences Festival 2023, Villeurbanne",
+      title: 'Hybrid model of the Gier valley',
+      link: 'https://popsciences.universite-lyon.fr/le_festival/' },
+    { date: '2023-05-24', when: 'May 2023', place: 'marne', kind: 'outreach', venue: 'PEPR Sustainable City, Université Gustave Eiffel',
+      title: 'Inauguration of the PEPR: augmented model system on the Gratte-Ciel Lego model',
+      link: 'https://www.univ-gustave-eiffel.fr/luniversite/nos-projets-transformants/programme-et-equipement-prioritaire-de-recherche-pepr' },
+    { date: '2023-07', when: 'Jul 2023', place: 'tampere', kind: 'paper', venue: 'IV 2023',
+      title: 'Representation of urban geometry evolution through space-time cube',
+      link: 'https://hal.science/hal-04200467/' },
+    { date: '2024-01-20', when: 'Jan 2024', place: 'lyon', kind: 'outreach', venue: 'Musée des Confluences',
+      title: 'The science of water: projection on the augmented table',
+      link: 'https://www.museedesconfluences.fr/fr/agenda/la-science-de-leau' },
+    { date: '2024-01-22', when: 'Jan 2024', place: 'lyon', kind: 'outreach', venue: 'Learning Centre, Bron campus',
+      title: '"A quoi rêvent les maquettes ?": mediation workshop on the building model',
+      link: 'https://github.com/VCityTeam/VCity/blob/master/Projects/Phd_Corentin_Gautier/Projets/Maquette/RetoursMaquette.md#retours-maquette-tangible' },
+    { date: '2024-11', when: 'Nov 2024', place: 'strasbourg', kind: 'paper', venue: 'JFIG 2024',
+      title: "Représentation de l'évolution urbaine à travers une maquette tangible de territoires",
+      link: 'https://hal.science/hal-04924304v1/file/JFIG_2024.pdf' },
+    { date: '2024-10', when: 'Oct 2024', place: 'huangshan', kind: 'paper', venue: 'Pacific Graphics 2024',
+      title: 'Evolutive 3D Urban Data Representation through Timeline Design Space',
+      link: 'https://onlinelibrary.wiley.com/doi/abs/10.1111/cgf.15237' },
+    { date: '2025-02-15', when: 'Feb 2025', place: 'lyon', kind: 'outreach', venue: 'Workshop',
+      title: 'Digital mapping, open data and the Gratte-Ciel in Lego®',
+      link: './projects.html' },
+    { date: '2025-05-22', when: '22 May 2025', place: 'lyon', kind: 'paper', venue: 'PhD defense, Université de Lyon',
+      title: 'Représentations dynamiques, virtuelles et tangibles de la ville',
+      link: 'https://theses.hal.science/tel-05269366v1/preview/these_internet_gautier_c.pdf' },
+    { date: '2026', when: '2026', place: 'marne', kind: 'seminar', venue: 'IGN research day 2026',
+      title: 'STAG, post-doctoral research work at LASTIG',
+      link: 'https://isprs-annals.copernicus.org/articles/XI-4-2026/213/2026/' },
+    { date: '2026-07', when: 'Jul 2026', place: 'toronto', kind: 'paper', venue: 'ISPRS Congress 2026',
+      title: 'STAG: System for ouTdoor Augmented reality using Geopose',
+      link: 'https://isprs-annals.copernicus.org/articles/XI-4-2026/213/2026/' },
+].sort((a, b) => a.date.localeCompare(b.date));
+
+// ---- Regroupement par lieu ----------------------------------------------
+const pins = Object.entries(PLACES).map(([id, p]) => {
+    const evs = EVENTS.filter((e) => e.place === id);
+    // couleur de l'épingle : article s'il y en a un, sinon le type majoritaire
+    const kind = evs.some((e) => e.kind === 'paper') ? 'paper' : evs[0] && evs[0].kind;
+    return { id, ...p, evs, kind };
+}).filter((p) => p.evs.length);
+const pinOf = (id) => pins.find((p) => p.id === id);
+
+const box = document.getElementById('globe');
+const card = document.getElementById('card');
+const list = document.getElementById('list');
+
+// ---- Légende et liste chronologique (lisibles même sans WebGL) -----------
+const legend = document.getElementById('legend');
+Object.keys(KINDS).filter((k) => EVENTS.some((e) => e.kind === k)).forEach((k) => {
+    const s = document.createElement('span');
+    s.className = 'k-' + k;
+    s.innerHTML = '<span class="dotl" style="background:var(--pc)"></span>';
+    s.append(KINDS[k]);
+    legend.appendChild(s);
+});
+
+function link(e) {
+    const a = document.createElement('a');
+    a.href = e.link; a.textContent = e.title;
+    if (!e.link.startsWith('./')) a.target = '_blank';
+    return a;
+}
+EVENTS.forEach((e) => {
+    const li = document.createElement('li');
+    li.className = 'k-' + e.kind;
+    li.dataset.place = e.place;
+    const d = document.createElement('span'); d.className = 'd'; d.textContent = e.when;
+    const dot = document.createElement('span'); dot.className = 'dotl'; dot.title = KINDS[e.kind];
+    const go = document.createElement('button');
+    go.type = 'button'; go.className = 'goto'; go.textContent = PLACES[e.place].name;
+    go.addEventListener('click', () => { cancelTour(); box.scrollIntoView({ behavior: 'smooth', block: 'center' }); select(pinOf(e.place), true); });
+    li.append(d, dot, link(e), document.createTextNode(' — ' + e.venue + ', '), go);
+    list.appendChild(li);
+});
+
+// ---- Carte de détail du lieu sélectionné ---------------------------------
+let selected = null, view = null, cancelTour = () => {}, flyTo = () => {};
+function showCard(pin) {
+    card.textContent = '';
+    if (!pin) { card.hidden = true; return; }
+    const x = document.createElement('button');
+    x.type = 'button'; x.className = 'x'; x.textContent = '×'; x.setAttribute('aria-label', 'Close');
+    x.addEventListener('click', () => { cancelTour(); select(null); });
+    const h = document.createElement('h3'); h.textContent = pin.name;
+    const ul = document.createElement('ul');
+    pin.evs.forEach((e) => {
+        const li = document.createElement('li');
+        const d = document.createElement('span'); d.className = 'd'; d.textContent = e.when + ' · ' + e.venue;
+        li.append(d, document.createElement('br'), link(e));
+        ul.appendChild(li);
+    });
+    card.append(x, h, ul);
+    card.hidden = false;
+}
+function select(pin, fly) {
+    selected = pin;
+    pins.forEach((p) => p.el && p.el.classList.toggle('sel', p === pin));
+    list.querySelectorAll('li').forEach((li) => li.classList.toggle('sel', !!pin && li.dataset.place === pin.id));
+    showCard(pin);
+    if (pin && fly && view) flyTo(pin);
+    if (view) view.notifyChange(view.camera3D);
+}
+
+// ---- Vue 3D --------------------------------------------------------------
+const msg = document.createElement('p');
+msg.className = 'muted';
+msg.style.cssText = 'position:absolute;inset:0;margin:0;display:flex;align-items:center;justify-content:center;z-index:2;pointer-events:none;color:#ccc';
+msg.textContent = 'Loading the globe…';
+box.appendChild(msg);
+
+try {
+    view = new itowns.GlobeView(box, {
+        coord: new itowns.Coordinates('EPSG:4326', 30, 30),
+        range: 18000000, tilt: 89, heading: 0,
+    });
+    view.addLayer(new itowns.ColorLayer('imagery', {
+        source: new itowns.TMSSource({
+            url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}',
+            crs: 'EPSG:3857', format: 'image/jpeg', isInverted: true, zoom: { min: 0, max: 17 },
+            attribution: { name: 'Esri, Maxar, Earthstar Geographics', url: 'https://www.esri.com/' },
+        }),
+    }));
+    view.addEventListener(itowns.GLOBE_VIEW_EVENTS.GLOBE_INITIALIZED, () => msg.remove());
+    const cam3D = () => view.camera3D || view.camera.camera3D;
+
+    // ---- Épingles HTML, repositionnées à chaque image ----------------------
+    const layer = document.createElement('div');
+    layer.className = 'pins';
+    box.appendChild(layer);
+    pins.forEach((pin) => {
+        const el = document.createElement('div');
+        el.className = 'pin k-' + pin.kind;
+        const dot = document.createElement('button');
+        dot.type = 'button'; dot.className = 'pin-dot'; dot.setAttribute('aria-label', pin.name);
+        const b = document.createElement('div'); b.className = 'pin-b';
+        const t = document.createElement('b');
+        t.textContent = pin.name.split(',')[0];
+        const s = document.createElement('span');
+        s.textContent = pin.evs.length > 1 ? pin.evs.length + ' events' : pin.evs[0].venue.split(',')[0];
+        b.append(t, s);
+        el.append(b, dot);
+        [dot, b].forEach((n) => n.addEventListener('click', () => { cancelTour(); select(pin, true); }));
+        layer.appendChild(el);
+        pin.el = el;
+        pin.world = new itowns.Coordinates('EPSG:4326', pin.lon, pin.lat, 0).as(view.referenceCrs).toVector3();
+    });
+
+    const ndc = new Vector3(), toCam = new Vector3();
+    const FAR = 2500000; // au-delà de 2 500 km d'altitude, les épingles se réduisent à un point
+    function placePins() {
+        const cam = cam3D(), W = box.clientWidth, H = box.clientHeight;
+        const far = cam.position.length() - 6371000 > FAR;
+        pins.forEach((pin) => {
+            // Face cachée du globe : la caméra est sous l'horizon local du point
+            toCam.subVectors(cam.position, pin.world);
+            const front = toCam.dot(pin.world) > 0;
+            ndc.copy(pin.world).project(cam);
+            const vis = front && ndc.z < 1 && Math.abs(ndc.x) < 1.1 && Math.abs(ndc.y) < 1.1;
+            pin.el.classList.toggle('hidden', !vis);
+            pin.el.classList.toggle('far', far);
+            pin.el.style.zIndex = Math.round(1e6 - toCam.length() / 1000);
+            pin.el.style.transform = 'translate(' + ((ndc.x + 1) / 2 * W).toFixed(1) + 'px,' + ((1 - ndc.y) / 2 * H).toFixed(1) + 'px)';
+        });
+    }
+    view.addFrameRequester(itowns.MAIN_LOOP_EVENTS.AFTER_RENDER, placePins);
+    placePins();
+
+    const rad = Math.PI / 180;
+    const haversine = (c, p) => {
+        const a = Math.sin((p.lat - c.y) * rad / 2) ** 2
+            + Math.cos(c.y * rad) * Math.cos(p.lat * rad) * Math.sin((p.lon - c.x) * rad / 2) ** 2;
+        return 2 * 6371000 * Math.asin(Math.sqrt(a));
+    };
+
+    // ---- Vol vers un lieu : on prend de la hauteur, puis on descend ---------
+    let flight = 0;
+    flyTo = async function (pin, opts = {}) {
+        const id = ++flight, cam = cam3D();
+        itowns.CameraUtils.stop(view, cam);
+        const coord = new itowns.Coordinates('EPSG:4326', pin.lon, pin.lat, 0);
+        const here = itowns.CameraUtils.getTransformCameraLookingAtTarget(view, cam);
+        const dist = here && here.coord ? haversine(here.coord.as('EPSG:4326'), pin) : 5e6;
+        try {
+            if (dist > 300000) {
+                await itowns.CameraUtils.animateCameraToLookAtTarget(view, cam, {
+                    coord, range: Math.min(9000000, Math.max(1500000, dist * 0.8)), tilt: 89, heading: 0, time: opts.time || 2200,
+                });
+            }
+            if (id !== flight) return;
+            await itowns.CameraUtils.animateCameraToLookAtTarget(view, cam, {
+                coord, range: 40000, tilt: 45, heading: 0, time: opts.time || 2200,
+            });
+        } catch (e) { /* animation interrompue */ }
+    };
+
+    // ---- Visite guidée dans l'ordre chronologique ---------------------------
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'tour-btn';
+    btn.textContent = '▶ Play the tour';
+    box.appendChild(btn);
+    let touring = false, saved = null;
+    // un clic de l'utilisateur pendant la visite l'interrompt sans ramener la caméra
+    cancelTour = () => { if (touring) { touring = false; flight++; btn.textContent = '▶ Play the tour'; } };
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    function stopTour() {
+        touring = false; flight++;
+        btn.textContent = '▶ Play the tour';
+        itowns.CameraUtils.stop(view, cam3D());
+        if (saved) itowns.CameraUtils.animateCameraToLookAtTarget(view, cam3D(), Object.assign({ time: 1800 }, saved)).catch(() => {});
+        select(null);
+    }
+    btn.addEventListener('click', async () => {
+        if (touring) { stopTour(); return; }
+        touring = true; btn.textContent = '■ Stop';
+        saved = itowns.CameraUtils.getTransformCameraLookingAtTarget(view, cam3D());
+        // un arrêt par lieu, dans l'ordre de la première visite
+        const order = [];
+        EVENTS.forEach((e) => { if (!order.includes(e.place)) order.push(e.place); });
+        for (const id of order) {
+            if (!touring) return;
+            const pin = pinOf(id);
+            select(pin);
+            await flyTo(pin);
+            if (!touring) return;
+            await wait(2500);
+        }
+        if (touring) stopTour();
+    });
+} catch (err) {
+    msg.textContent = 'The 3D globe could not be loaded in this browser. The list below shows every event.';
+}
+</script>
+</body>
+</html>
