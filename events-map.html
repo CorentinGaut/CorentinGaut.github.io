@@ -14,7 +14,15 @@
     <style>
         .prep { --paper:#1772d0; --outreach:#2e8b57; --seminar:#d9822b; }
         .globe-wrap { position:relative; }
-        #globe { position:relative; height:520px; border-radius:6px; overflow:hidden; background:#05070d; }
+        #globe { position:relative; height:640px; border-radius:6px; overflow:hidden; background:#05070d; }
+        /* vue agrandie : le globe et sa fiche occupent toute la fenêtre */
+        .globe-wrap.expanded { position:fixed; inset:0; z-index:1000; background:#05070d; }
+        .globe-wrap.expanded #globe { height:100vh; height:100dvh; border-radius:0; }
+        body.globe-open { overflow:hidden; }
+        #globe .expand-btn { position:absolute; left:12px; top:12px; z-index:3; border:0; border-radius:6px; padding:7px 12px;
+            background:rgba(255,255,255,.95); color:#222; font:inherit; font-size:13px; font-weight:600; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.35); }
+        #globe .expand-btn:hover { background:#fff; }
+        #globe .expand-btn:focus-visible { outline:2px solid #fff; outline-offset:2px; }
         #globe .pins { position:absolute; inset:0; pointer-events:none; z-index:1; overflow:hidden; }
         #globe .pin { position:absolute; left:0; top:0; will-change:transform; transition:opacity .2s; --h:8px; }
         #globe .pin.hidden { opacity:0; }
@@ -61,8 +69,8 @@
         ul.evlist button.goto { font:inherit; font-size:13px; border:0; background:none; padding:0; color:var(--done); cursor:pointer; text-decoration:underline; }
         ul.evlist .dotl { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:6px; background:var(--pc); }
         @media (max-width:600px) {
-            #globe { height:420px; }
-            .card-ev { position:static; width:auto; max-height:none; margin-top:10px; box-shadow:none; border:1px solid var(--line); }
+            #globe { height:480px; }
+            .globe-wrap:not(.expanded) .card-ev { position:static; width:auto; max-height:none; margin-top:10px; box-shadow:none; border:1px solid var(--line); }
         }
     </style>
     <script type="importmap">
@@ -551,6 +559,23 @@ try {
     btn.type = 'button'; btn.className = 'tour-btn';
     btn.textContent = '▶ Play the tour';
     box.appendChild(btn);
+
+    // ---- Agrandir la vue en plein écran (Échap ou le bouton pour revenir) ---
+    const wrap = box.parentElement;
+    const exp = document.createElement('button');
+    exp.type = 'button'; exp.className = 'expand-btn';
+    box.appendChild(exp);
+    function setExpanded(on) {
+        wrap.classList.toggle('expanded', on);
+        document.body.classList.toggle('globe-open', on);
+        exp.textContent = on ? '✕ Exit full view' : '⤢ Expand';
+        exp.setAttribute('aria-pressed', on);
+    }
+    setExpanded(false);
+    exp.addEventListener('click', () => setExpanded(!wrap.classList.contains('expanded')));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && wrap.classList.contains('expanded')) setExpanded(false); });
+    // le rendu suit la taille du conteneur (agrandissement, rotation d'écran, redimensionnement)
+    new ResizeObserver(() => { view.resize(box.clientWidth, box.clientHeight); view.notifyChange(cam3D()); }).observe(box);
     let touring = false, saved = null;
     // un clic de l'utilisateur pendant la visite l'interrompt sans ramener la caméra
     cancelTour = () => { if (touring) { touring = false; flight++; btn.textContent = '▶ Play the tour'; } };
